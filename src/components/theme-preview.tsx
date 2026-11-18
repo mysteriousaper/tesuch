@@ -106,7 +106,7 @@ export function ThemePreview({ theme, n, findings }: { theme: "official" | "fint
                   type="button"
                   onClick={() => setFixed((s) => new Set(s).add(i))}
                   disabled={fixed.has(i)}
-                  className="rounded-theme bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60"
+                  className="shrink-0 whitespace-nowrap rounded-theme bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60"
                 >
                   {t("markFixed")}
                 </button>
