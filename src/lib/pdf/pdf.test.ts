@@ -4,7 +4,7 @@ import type { Finding } from "../rules/types";
 import { noticePlan } from "./notice";
 import { renderChecklist, renderDismissalNotice, renderFixedTermEndNotice, renderProbationOrder } from "./render";
 
-const company = { name: "«Արարատ Սոֆթ» ՍՊԸ", taxId: "02612345", directorName: "Directorian D." };
+const company = { name: "«Դեմո Սոֆթ» ՍՊԸ", taxId: "02612345", directorName: "Directorian D." };
 const employee = { name: "Արամ Պետրոսյան", position: "Հաշվապահ" };
 const isPdf = (b: Buffer) => b.subarray(0, 5).toString("latin1") === "%PDF-";
 

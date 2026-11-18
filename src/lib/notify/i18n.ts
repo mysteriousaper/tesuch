@@ -7,7 +7,7 @@ export type Locale = "hy" | "ru" | "en";
 export const LOCALES: Locale[] = ["hy", "ru", "en"];
 
 export const SEVERITY_LABEL: Record<Locale, Record<EffectiveSeverity, string>> = {
-  hy: { red: "Խախտում", amber: "Ռիսկ", advisory: "Խորհրդատվական", info: "Հիշեցում" },
+  hy: { red: "Խախտում", amber: "Ռիսկ", advisory: "Նախազգուշական", info: "Հիշեցում" },
   ru: { red: "Нарушение", amber: "Риск", advisory: "Рекомендация", info: "Напоминание" },
   en: { red: "Violation", amber: "Risk", advisory: "Advisory", info: "Reminder" },
 };
