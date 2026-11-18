@@ -48,5 +48,20 @@
     "markFixed": "Mark fixed",
     "streak": "{count, plural, one {# clean week in a row} other {# clean weeks in a row}}",
     "demoNote": "All names are fictional."
+  },
+  "auth": {
+    "title": "Sign in",
+    "email": "Email",
+    "send": "Email me a sign-in link",
+    "sent": "Check your inbox: we sent you a sign-in link.",
+    "error": "Could not send. Please try again.",
+    "notConfigured": "Sign-in is not connected yet (Supabase not configured).",
+    "signOut": "Sign out"
+  },
+  "onboarding": {
+    "title": "Create your firm",
+    "name": "Firm name",
+    "create": "Create",
+    "yourOrgs": "Your firms"
   }
 }
