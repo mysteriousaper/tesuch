@@ -14,3 +14,9 @@
 | 10 | 2026-11-18 | Nightly job on Vercel Cron (Hobby: daily) calling a Next.js route; pg_cron is the fallback. | Rules engine is TypeScript; one runtime for app and job. |
 | 11 | 2026-11-18 | RLS tests run on plain Postgres with a small Supabase shim, not the Supabase CLI. | No Docker daemon or Supabase network access in the build environment; fast and runs in free CI. |
 | 12 | 2026-11-18 | Next.js 15 (not 16). | Stable with next-intl and the current shadcn setup; upgrade later. |
+| 13 | 2026-11-18 | Sign-in uses a 6-digit email code (`verifyOtp`), not a magic link. | PKCE links fail when the email opens in a different browser (e.g. Gmail app). Codes work on any device. Needs the Supabase email templates to include `{{ .Token }}`. |
+| 14 | 2026-11-18 | Telegram linking via one-time deep-link tokens (30 min, single use); webhook URL from Vercel system env, never the Host header; Vercel protection bypass in the webhook query string. | The webhook secret is sent to whatever URL is registered, so it must not be attacker-influenced. |
+| 15 | 2026-11-18 | On-demand rule runs (`runRulesForCompany`) use the service role only after the user's own RLS client proves edit rights on the company. | Findings stay system-written; tenancy still enforced. |
+| 16 | 2026-11-18 | Supabase project in eu-west-1 (Ireland). | EU hosting requirement met. |
+| 17 | 2026-11-18 | postcss pinned to a patched version via pnpm override. | `pnpm audit --prod` clean. |
+| 18 | 2026-11-18 | Parallel "arena" lanes with strict file ownership; one translation file per feature (`messages/<locale>/<ns>.json`). | Lets agents work concurrently without merge conflicts. |

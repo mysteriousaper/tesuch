@@ -5,11 +5,14 @@ Nothing here is adopted until approved in writing.
 ## Needed now (free)
 | Item | Why | Status |
 |---|---|---|
-| Supabase account + project in an **EU region** (Free) | Database, auth | ⏸ waiting |
-| Vercel account (Hobby) | Hosting, preview deploys, daily cron | ⏸ waiting |
-| Telegram bot via @BotFather | Alerts and weekly digest | ⏸ waiting |
-| Resend account (Free) | Email alerts | ⏸ waiting |
+| Supabase account + project in an **EU region** (Free) | Database, auth | ✅ done (eu-west-1) |
+| Vercel account (Hobby) | Hosting, preview deploys, daily cron | ✅ done (tesuch.vercel.app, protected) |
+| Telegram bot via @BotFather | Alerts and weekly digest | ✅ done (@Tesuch1234_bot) |
+| Resend account (Free) | Email alerts | ✅ done; ⏸ verify a sending domain (until then mail only reaches the Resend account owner) |
 | A sample ArmSoft HR/staff export (anonymised) | Import preset | ⏸ waiting |
+
+| Supabase email templates must include `{{ .Token }}` (sign-in code) | Real users can't sign in otherwise | ⏸ waiting |
+| Vercel ↔ GitHub login connection | Auto-deploy previews on every push | ⏸ optional |
 
 ## Legal (blocking any "red" alert)
 | Item | Why |
