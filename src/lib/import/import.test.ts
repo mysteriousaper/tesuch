@@ -1,0 +1,201 @@
+import { describe, expect, it } from "vitest";
+import { RULES } from "../rules/catalog";
+import { evaluateCompany } from "../rules/engine";
+import type { Contract, Employee } from "../rules/types";
+import {
+  autoMap,
+  buildImport,
+  excelSerialToIso,
+  missingRequiredFields,
+  parseBool,
+  parseContractType,
+  parseCsv,
+  parseDate,
+  parseInitiator,
+  toMapping,
+  toTable,
+} from "./index";
+
+const ids = () => {
+  let n = 0;
+  return () => `id-${++n}`;
+};
+const opts = () => ({ orgId: "org", companyId: "co", newId: ids() });
+
+describe("parseDate", () => {
+  it.each([
+    ["15.01.2026", "2026-01-15"],
+    ["5.1.2026", "2026-01-05"],
+    ["15/01/2026", "2026-01-15"],
+    ["15-01-2026", "2026-01-15"],
+    ["2026-01-15", "2026-01-15"],
+    ["2026-01-15T00:00:00Z", "2026-01-15"],
+    ["29.02.2028", "2028-02-29"],
+    ["46037", "2026-01-15"],
+  ])("%s → %s", (input, expected) => {
+    expect(parseDate(input)).toEqual({ ok: true, value: expected });
+  });
+  it("accepts Excel serials and Date objects", () => {
+    expect(parseDate(46037)).toEqual({ ok: true, value: "2026-01-15" });
+    expect(parseDate(new Date(Date.UTC(2026, 0, 15)))).toEqual({ ok: true, value: "2026-01-15" });
+  });
+  it("is exact from 1 March 1900 and rejects the ambiguous earlier serials", () => {
+    expect(excelSerialToIso(61)).toBe("1900-03-01");
+    expect(excelSerialToIso(1)).toBeNull(); // Excel's fake 29 Feb 1900 makes serials < 61 off by one
+    expect(excelSerialToIso(0)).toBeNull();
+  });
+  it("treats blanks as null", () => {
+    expect(parseDate("  ")).toEqual({ ok: true, value: null });
+    expect(parseDate(null)).toEqual({ ok: true, value: null });
+  });
+  it.each(["29.02.2026", "31.04.2026", "2026-13-01", "tomorrow", "01.15.2026", "15.01.26"])("rejects %s", (input) => {
+    expect(parseDate(input).ok).toBe(false);
+  });
+});
+
+describe("parseBool / contract type / initiator", () => {
+  it.each(["Այո", "да", "Yes", "1", "TRUE", "+"])("%s is true", (v) => expect(parseBool(v)).toEqual({ ok: true, value: true }));
+  it.each(["ոչ", "Нет", "no", "0", "", "-"])("%s is false", (v) => expect(parseBool(v)).toEqual({ ok: true, value: false }));
+  it("rejects unknown words", () => expect(parseBool("maybe").ok).toBe(false));
+
+  it.each([
+    ["Անորոշ ժամկետով", "indefinite"],
+    ["бессрочный", "indefinite"],
+    ["Permanent", "indefinite"],
+    ["Որոշակի ժամկետով", "fixed_term"],
+    ["Срочный", "fixed_term"],
+    ["fixed-term", "fixed_term"],
+  ])("contract type %s → %s", (v, expected) => expect(parseContractType(v)).toEqual({ ok: true, value: expected }));
+
+  it.each([
+    ["Գործատու", "employer"],
+    ["по собственному желанию", "employee"],
+    ["Կողմերի համաձայնությամբ", "mutual"],
+  ])("initiator %s → %s", (v, expected) => expect(parseInitiator(v)).toEqual({ ok: true, value: expected }));
+});
+
+describe("autoMap", () => {
+  it("maps Armenian headers", () => {
+    const m = toMapping(autoMap(["Անուն Ազգանուն", "Ծննդյան ամսաթիվ", "Ընդունման ամսաթիվ", "Փորձաշրջանի ավարտ", "Պայմանագրի տեսակ"]));
+    expect(m).toEqual({ 0: "full_name", 1: "birth_date", 2: "start_date", 3: "probation_end", 4: "contract_type" });
+  });
+  it("maps Russian headers, including punctuation and ё", () => {
+    const m = toMapping(autoMap(["ФИО", "Дата рождения:", "Дата приёма", "Дата окончания договора", "Окончание испытательного срока", "Табельный №"]));
+    expect(m).toEqual({ 0: "full_name", 1: "birth_date", 2: "start_date", 3: "end_date", 4: "probation_end", 5: "external_ref" });
+  });
+  it("maps English headers and separate name parts", () => {
+    const m = toMapping(autoMap(["Last name", "First name", "Hire date", "Termination date", "Notes"]));
+    expect(m).toEqual({ 0: "last_name", 1: "first_name", 2: "start_date", 3: "terminated_on", 4: null });
+  });
+  it("gives exact matches confidence 1 and partial matches less", () => {
+    const g = autoMap(["Дата рождения", "Дата рождения сотрудника"]);
+    expect(g[0]).toMatchObject({ field: "birth_date", confidence: 1 });
+    expect(g[1].field).not.toBe("birth_date"); // each field used once
+  });
+  it("partial match scores below 1", () => {
+    const [g] = autoMap(["Ծննդյան ամսաթիվ (օր.ամիս.տարի)"]);
+    expect(g.field).toBe("birth_date");
+    expect(g.confidence).toBeGreaterThan(0.5);
+    expect(g.confidence).toBeLessThan(1);
+  });
+  it("does not match short aliases inside other words", () => {
+    expect(autoMap(["Video"])[0].field).toBeNull();
+  });
+  it("reports missing required fields", () => {
+    expect(missingRequiredFields({ 0: "birth_date" })).toEqual(["full_name", "start_date"]);
+    expect(missingRequiredFields({ 0: "first_name", 1: "last_name", 2: "start_date" })).toEqual([]);
+  });
+});
+
+describe("CSV → insert rows", () => {
+  const csv = [
+    "﻿Անուն Ազգանուն;Ծննդյան ամսաթիվ;Ընդունման ամսաթիվ;Պայմանագրի ավարտ;Փորձաշրջանի ավարտ;Վեցօրյա;ՊԵԿ-ում գրանցված",
+    "Արամ Պետրոսյան;10.05.1990;15.01.2026;;14.04.2026;ոչ;այո",
+    ";;;;;;",
+    "Անի Սարգսյան;01.02.2009;15.01.2026;31.12.2026;15.04.2026;այո;ոչ",
+    "Գոռ Հակոբյան;31.02.1990;15.01.2026;;;;",
+    ";01.01.1990;;;;;",
+    "Լիլիթ Գրիգորյան;01.01.1990;15.01.2026;01.01.2026;;;",
+  ].join("\n");
+
+  const table = toTable(parseCsv(csv));
+  const result = buildImport(table, toMapping(autoMap(table.headers)), opts());
+
+  it("detects ; delimiter, strips BOM, skips blank rows but keeps row numbers", () => {
+    expect(table.headers[0]).toBe("Անուն Ազգանուն");
+    expect(table.rows.map((r) => r.rowNumber)).toEqual([2, 4, 5, 6, 7]);
+  });
+
+  it("outputs insert-ready employees and contracts", () => {
+    expect(result.employees).toEqual([
+      { id: "id-1", org_id: "org", company_id: "co", full_name: "Արամ Պետրոսյան", birth_date: "1990-05-10", six_day_week: false, external_ref: null },
+      { id: "id-3", org_id: "org", company_id: "co", full_name: "Անի Սարգսյան", birth_date: "2009-02-01", six_day_week: true, external_ref: null },
+    ]);
+    expect(result.contracts[0]).toMatchObject({ id: "id-2", employee_id: "id-1", type: "indefinite", start_date: "2026-01-15", probation_end: "2026-04-14", src_registered: true });
+    expect(result.contracts[1]).toMatchObject({ employee_id: "id-3", type: "fixed_term", end_date: "2026-12-31", src_registered: false });
+  });
+
+  it("returns per-row errors with message keys and never throws", () => {
+    expect(result.errors).toEqual([
+      { row: 5, field: "birth_date", key: "import.error.invalidDate" },
+      { row: 6, field: "full_name", key: "import.error.required" },
+      { row: 6, field: "start_date", key: "import.error.required" },
+      { row: 7, field: "end_date", key: "import.error.endBeforeStart" },
+    ]);
+    expect(result.rowCount).toBe(5);
+  });
+
+  it("feeds straight into the rules engine", async () => {
+    const employees: Employee[] = result.employees.map((e) => ({ id: e.id, companyId: e.company_id, birthDate: e.birth_date, sixDayWeek: e.six_day_week }));
+    const contracts: Contract[] = result.contracts.map((c) => ({
+      id: c.id, employeeId: c.employee_id, type: c.type, startDate: c.start_date, endDate: c.end_date,
+      probationEnd: c.probation_end, probationSpecialCase: c.probation_special_case, hiredByTransfer: c.hired_by_transfer,
+      fixedTermGround: c.fixed_term_ground, srcRegistered: c.src_registered, terminatedOn: c.terminated_on,
+      terminationGround: c.termination_ground, terminationInitiator: c.termination_initiator,
+      noticeGivenOn: c.notice_given_on, workforceReduction: c.workforce_reduction,
+    }));
+    const found = (await evaluateCompany(RULES, { employees, contracts, leave: [] }, "2026-02-01")).map((f) => `${f.employeeId}:${f.ruleId}`);
+    // Ani: minor on probation, probation one day over 3 months, fixed term with no ground, not registered with SRC.
+    expect(found).toEqual(["id-3:fixed-term-ground", "id-3:probation-max", "id-3:probation-minor", "id-3:src-registration"]);
+  });
+});
+
+describe("row pipeline with Excel-typed cells", () => {
+  it("handles Date, number and boolean cells as read-excel-file returns them", () => {
+    const table = toTable([
+      ["Full name", "Date of birth", "Hire date", "Contract type", "Contract end", "Six-day week", "Termination initiator"],
+      ["Test Person", new Date(Date.UTC(1990, 4, 10)), 46037, "Fixed-term", 46387, true, null],
+    ]);
+    const r = buildImport(table, toMapping(autoMap(table.headers)), opts());
+    expect(r.errors).toEqual([]);
+    expect(r.employees[0]).toMatchObject({ birth_date: "1990-05-10", six_day_week: true });
+    expect(r.contracts[0]).toMatchObject({ type: "fixed_term", start_date: "2026-01-15", end_date: "2026-12-31" });
+  });
+
+  it("flags explicit contract-type contradictions", () => {
+    const table = toTable([
+      ["Name", "Start date", "End date", "Contract type"],
+      ["A", "2026-01-01", "2026-06-30", "бессрочный"],
+      ["B", "2026-01-01", "", "срочный"],
+      ["C", "2026-01-01", "", "unknown"],
+    ]);
+    const r = buildImport(table, toMapping(autoMap(table.headers)), opts());
+    expect(r.errors).toEqual([
+      { row: 2, field: "end_date", key: "import.error.endDateOnIndefinite" },
+      { row: 3, field: "end_date", key: "import.error.fixedTermWithoutEnd" },
+      { row: 4, field: "contract_type", key: "import.error.invalidContractType" },
+    ]);
+    expect(r.employees).toEqual([]);
+  });
+
+  it("builds full name from last + first + patronymic and honours user overrides", () => {
+    const table = toTable([
+      ["Фамилия", "Имя", "Отчество", "Колонка X"],
+      ["Петросян", "Арам", "Ваганович", "01.03.2026"],
+    ]);
+    const mapping = { ...toMapping(autoMap(table.headers)), 3: "start_date" as const };
+    const r = buildImport(table, mapping, opts());
+    expect(r.employees[0].full_name).toBe("Петросян Арам Ваганович");
+    expect(r.contracts[0].start_date).toBe("2026-03-01");
+  });
+});
