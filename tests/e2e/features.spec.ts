@@ -9,11 +9,6 @@ test.describe("dashboard (lane A)", () => {
   test.fixme("marking a finding fixed updates the score", async () => {});
 });
 
-test.describe("import (lane B)", () => {
-  // TODO(lane B): upload CSV fixture → map columns → preview errors → commit → findings appear.
-  test.fixme("CSV import with hy headers creates employees and findings", async () => {});
-});
-
 test.describe("documents and quiz (lane C)", () => {
   // TODO(lane C): download each PDF (status 200, %PDF, Armenian font embedded); answer weekly quiz, streak/badge shown.
   test.fixme("probation order PDF downloads", async () => {});
