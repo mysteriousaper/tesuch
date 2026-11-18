@@ -1,0 +1,11 @@
+{
+  "id": "maternity-min", "version": 1, "article": null, "status": "needs_lawyer_review", "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
+  "basis": "brief: 140/155/180 days; article number missing",
+  "scope": "employee", "severity": "amber",
+  "title": { "hy": "Հղիության և ծննդաբերության արձակուրդը նվազագույնից կարճ է", "ru": "Отпуск по беременности и родам короче минимального", "en": "Maternity leave is shorter than the minimum" },
+  "conditions": { "all": [
+    { "fact": "shortestMaternityLeaveDays", "operator": "lessThan", "value": 140 }
+  ] },
+  "due": { "date": "asOf", "offsetDays": 0 },
+  "edge_cases": ["Only the 140-day base is checked; 155/180 depend on medical facts we do not store."]
+}
