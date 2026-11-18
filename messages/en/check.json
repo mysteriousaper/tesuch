@@ -1,0 +1,72 @@
+{
+  "check": {
+    "meta": {
+      "title": "Free self-check",
+      "description": "10 questions about your company's HR practice. Get your inspection readiness score in 2 minutes."
+    },
+    "eyebrow": "Free self-check",
+    "title": "Would you pass? Find out in 2 minutes",
+    "intro": "10 questions about how your company actually works. Your answers stay in your browser unless you choose to send them.",
+    "progress": "Question {n} of {total}",
+    "answers": { "yes": "Yes", "no": "No", "unsure": "Not sure" },
+    "back": "Back",
+    "questions": {
+      "probation-minor": { "q": "Have you ever set a probation period for an employee under 18?", "why": "Probation may not be set for minors." },
+      "probation-transfer": { "q": "Have you ever set probation for an employee who joined by transfer from another employer?", "why": "No probation applies to an employee transferred by agreement between employers." },
+      "probation-max": { "q": "Is every probation period 3 months or shorter (apart from the special cases the law allows)?", "why": "Probation normally may not exceed 3 months, or 12 in special cases." },
+      "probation-ending": { "q": "Do you track probation end dates and, if you let someone go, give at least 3 days' written notice?", "why": "Ending a contract during probation requires at least 3 days' written notice." },
+      "fixed-term-ground": { "q": "Does every fixed-term contract state its lawful ground?", "why": "A fixed-term contract may only be concluded on a ground the law allows." },
+      "fixed-term-ending": { "q": "Do you know in advance when your fixed-term contracts end?", "why": "Letting the end date slip by can leave the legal status unclear. A lawyer must confirm the consequences." },
+      "termination-ground": { "q": "Does every dismissal order state its ground?", "why": "The ground for ending an employment contract must be stated." },
+      "annual-leave-min": { "q": "Does every employee get at least 20 working days of annual leave a year (24 on a six-day week)?", "why": "Minimum annual leave is 20 working days, or 24 on a six-day week." },
+      "leave-cash-swap": { "q": "Have you ever paid cash instead of annual leave to an employee who stays with you?", "why": "Annual leave may not be replaced by money, normally except when employment ends." },
+      "notice-period": { "q": "When you dismiss someone, do you give notice by length of service (14–60 days, 2 months for staff cuts)?", "why": "The notice period depends on length of service; for a reduction in staff it is 2 months." }
+    },
+    "result": {
+      "title": "Your result",
+      "scoreLabel": "Inspection readiness",
+      "bands": {
+        "good": { "t": "Well prepared", "d": "The main risks are under control. Tesuch helps you stay here every day, not just today." },
+        "mid": { "t": "Some risks", "d": "A few points could become a problem during an inspection. Start with the ones below." },
+        "low": { "t": "High risk", "d": "An inspection would very likely find violations. It's worth starting the fixes now." }
+      },
+      "issuesTitle": "What to look at",
+      "okTitle": "Looking good",
+      "unsureNote": "“Not sure” is a risk too: better to find out before an inspection does.",
+      "yourAnswer": "Your answer: {answer}",
+      "article": "Art. {n}",
+      "articlePending": "Article pending review",
+      "advisory": "Advisory: not yet verified by a lawyer",
+      "source": "Source: arlis.am",
+      "disclaimer": "This self-check is for information only and is not legal advice. Talk to a lawyer before making a decision.",
+      "restart": "Start again"
+    },
+    "lead": {
+      "title": "Want to join the pilot?",
+      "desc": "We're choosing the first firms now. Leave your email and we'll get in touch.",
+      "email": "Email",
+      "size": "Who are you",
+      "sizes": {
+        "firm": "Accounting firm",
+        "1-9": "Company with 1–9 staff",
+        "10-49": "Company with 10–49 staff",
+        "50-99": "Company with 50–99 staff",
+        "100+": "Company with 100+ staff"
+      },
+      "role": "Your role",
+      "roles": {
+        "owner": "Owner or director",
+        "hr": "HR or accountant",
+        "accountant_firm": "Accounting firm staff",
+        "other": "Other"
+      },
+      "consent": "I agree that Tesuch may store my email and self-check result to contact me. I can ask for them to be deleted at any time.",
+      "submit": "Send",
+      "sending": "Sending…",
+      "success": "Thank you! We'll be in touch soon.",
+      "error": "Couldn't send. Please try again a bit later.",
+      "throttled": "This address was just submitted. Try again in a few minutes.",
+      "invalid": "Check your email and the consent box."
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "landing": {
+    "meta": {
+      "title": "Tesuch — would you pass a labour inspection today?",
+      "description": "Tesuch checks employment contract deadlines every night, scores your inspection readiness and alerts you on Telegram and by email before a legal deadline is missed."
+    },
+    "nav": {
+      "how": "How it works",
+      "firms": "For firms",
+      "owners": "For employers",
+      "trust": "Trust",
+      "faq": "FAQ",
+      "login": "Sign in",
+      "check": "Free check",
+      "menu": "Sections"
+    },
+    "hero": {
+      "eyebrow": "Labour Code compliance for Armenia",
+      "title": "If the inspector came today, would you pass?",
+      "subtitle": "Tesuch checks every employment contract each night, scores your inspection readiness and warns you on Telegram or by email before a legal deadline is missed.",
+      "ctaCheck": "Take the free check",
+      "ctaLogin": "Sign in",
+      "note": "2 minutes · no sign-up",
+      "mockCompany": "Demo Logistics LLC",
+      "mockFixed": "Fixed",
+      "mockItems": [
+        "Probation longer than 3 months",
+        "Fixed-term contract ends in 12 days",
+        "Dismissal notice period not respected"
+      ]
+    },
+    "stats": {
+      "rules": "{n} rules",
+      "rulesHint": "checked every night",
+      "langs": "3 languages",
+      "langsHint": "Armenian, Russian, English",
+      "deterministic": "0 guesses",
+      "deterministicHint": "only explicit, versioned rules",
+      "eu": "EU",
+      "euHint": "data stored in an EU region"
+    },
+    "how": {
+      "eyebrow": "Four steps",
+      "title": "How it works",
+      "steps": [
+        { "t": "Import your staff", "d": "A CSV or Excel file with headers in Armenian, Russian or English. Columns are recognised automatically." },
+        { "t": "Nightly check", "d": "Every night the rules check each contract and calculate the deadlines." },
+        { "t": "Alerts in time", "d": "A new issue triggers a Telegram message and an email, and every Monday you get a weekly digest." },
+        { "t": "Fix and tick it off", "d": "Download the order template as a PDF, fix the issue and watch the score go up." }
+      ]
+    },
+    "firms": {
+      "eyebrow": "For accounting firms",
+      "title": "Every client on one dashboard",
+      "desc": "20–50 companies, each with its own score. The riskiest sit at the top, so you know where to start this week.",
+      "points": [
+        "Companies sorted by score",
+        "Employee timeline: contract, probation, leave",
+        "Roles: owner, accountant, viewer"
+      ],
+      "mockTitle": "Clients",
+      "mockSort": "by score ↑",
+      "mockStaff": "{n} staff"
+    },
+    "owners": {
+      "eyebrow": "For employers",
+      "title": "One message a week",
+      "desc": "No need to read the whole Labour Code. Every Monday you get a short Telegram digest with 1–3 concrete steps.",
+      "tgBot": "Tesuch",
+      "tgTitle": "Weekly digest",
+      "tgLines": [
+        "Score: 72/100 (+8 on last week)",
+        "Probation ends in 5 days — decide whether to confirm",
+        "Fixed-term contract ends in 12 days"
+      ],
+      "tgFooter": "Advisory: not yet verified by a lawyer"
+    },
+    "trust": {
+      "eyebrow": "No magic",
+      "title": "Why you can trust it",
+      "items": [
+        { "t": "Explicit rules, not AI", "d": "Every check is written as a versioned rule and covered by tests. The same data always gives the same result." },
+        { "t": "Cites the law", "d": "Every alert names its source and links to arlis.am." },
+        { "t": "Honest status", "d": "All rules are still being reviewed by a lawyer, so they show as “Advisory”. We never invent article numbers." },
+        { "t": "Data stays in the EU", "d": "The database runs in a European Union region. We keep only what the rules need." },
+        { "t": "Firms are isolated", "d": "Each firm sees only its own data — enforced in the database itself and verified by automated tests." }
+      ],
+      "status": "{n} rules · all in lawyer review"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        { "q": "Is this legal advice?", "a": "No. Tesuch is an information tool. It shows risks and points to the law, but talk to a lawyer before you decide. Rules a lawyer hasn't verified yet are marked “Advisory”." },
+        { "q": "We already use ArmSoft. Why Tesuch?", "a": "ArmSoft stores your HR records; Tesuch checks them against the law and warns you before deadlines. You can import staff from an ArmSoft CSV or Excel export." },
+        { "q": "What employee data do you store?", "a": "Only what the rules need: name, date of birth (for the minors rule), and contract and leave dates. No passport details, addresses or salaries." },
+        { "q": "Which rules do you check?", "a": "Probation, fixed-term contracts, dismissal grounds and notice periods, annual leave, maternity leave and contract registration on the SRC e-platform. The list will grow." },
+        { "q": "How much does it cost?", "a": "Pricing isn't set yet. We're choosing the first pilot firms now — leave your email after the self-check." }
+      ]
+    },
+    "cta": {
+      "title": "Start with a 2-minute check",
+      "desc": "10 questions about how your company actually works. See your result straight away.",
+      "button": "Start the check"
+    },
+    "footer": {
+      "disclaimer": "Tesuch is an information tool, not legal advice. Rules marked “Advisory” have not yet been verified by a lawyer. Before making a decision, consult a lawyer and check the current text of the law on arlis.am.",
+      "made": "Made for Armenia"
+    }
+  }
+}
