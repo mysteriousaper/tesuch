@@ -92,4 +92,23 @@ select pg_temp.expect_rows($q$select * from public.audit_log where table_name = 
 select pg_temp.expect_error($q$insert into public.audit_log (action, table_name) values ('x', 'y')$q$, 'users cannot forge audit entries');
 select pg_temp.expect_error($q$insert into public.rules (id, version, status, definition, source_url) values ('x', 1, 'verified', '{}', 'https://www.arlis.am/')$q$, 'users cannot write rules');
 reset role;
+
+-- ----- Telegram linking -----
+set role authenticated;
+select pg_temp.as_user('aaaaaaaa-0000-0000-0000-000000000001');
+select public.create_telegram_link_token() as tok \gset
+select pg_temp.expect_rows('select * from public.telegram_link_tokens', 0, 'users cannot read link tokens');
+reset role;
+insert into public.telegram_links (user_id, chat_id) values ('aaaaaaaa-0000-0000-0000-000000000001', 111), ('bbbbbbbb-0000-0000-0000-000000000001', 222);
+set role authenticated;
+select pg_temp.expect_rows('select * from public.telegram_links', 1, 'user sees only own telegram link');
+select pg_temp.expect_error($q$insert into public.telegram_links (user_id, chat_id) values ('aaaaaaaa-0000-0000-0000-000000000001', 999)$q$, 'users cannot link a chat directly');
+select pg_temp.as_user('bbbbbbbb-0000-0000-0000-000000000001');
+delete from public.telegram_links where chat_id = 111;
+reset role;
+select pg_temp.expect_rows('select * from public.telegram_links where chat_id = 111', 1, 'B cannot unlink A telegram');
+select pg_temp.expect_rows(format('select * from public.telegram_link_tokens where token = %L and length(token) = 64', :'tok'), 1, 'token stored, 64 chars');
+set role anon;
+select pg_temp.expect_error('select public.create_telegram_link_token()', 'anon cannot create link tokens');
+reset role;
 \echo 'RLS cross-tenant tests: all passed'

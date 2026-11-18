@@ -63,5 +63,17 @@
     "name": "Firm name",
     "create": "Create",
     "yourOrgs": "Your firms"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "telegram": "Telegram",
+    "connect": "Connect Telegram",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "disconnect": "Disconnect",
+    "email": "Email: {email}",
+    "test": "Send a test alert",
+    "testSent": "Sent: {channels}.",
+    "testNone": "Nothing was sent. Connect Telegram or check the settings."
   }
 }
