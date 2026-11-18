@@ -10,7 +10,6 @@ Nothing here is adopted until approved in writing.
 | Telegram bot via @BotFather | Alerts and weekly digest | ✅ done (@Tesuch1234_bot) |
 | Resend account (Free) | Email alerts | ✅ done; ⏸ verify a sending domain (until then mail only reaches the Resend account owner) |
 | A sample ArmSoft HR/staff export (anonymised) | Import preset | ⏸ waiting |
-
 | Supabase email templates must include `{{ .Token }}` (sign-in code) | Real users can't sign in otherwise | ⏸ waiting |
 | Vercel ↔ GitHub login connection | Auto-deploy previews on every push | ⏸ optional |
 
