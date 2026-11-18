@@ -1,0 +1,25 @@
+{
+  "documents": {
+    "title": "Documents",
+    "intro": "Pick a company and download draft orders and notices. Every template must be checked by a lawyer.",
+    "company": "Company",
+    "choose": "Choose",
+    "checklist": "Checklist (PDF)",
+    "checklistHint": "All open findings for the company in one document",
+    "employees": "Employees and contracts",
+    "contract": "Contract from {start}",
+    "fixedTerm": "fixed-term",
+    "indefinite": "indefinite",
+    "terminated": "terminated {date}",
+    "probationConfirm": "Order: confirm after probation",
+    "probationTerminate": "Order: end employment after probation",
+    "fixedTermEnd": "Notice: fixed-term contract ending",
+    "dismissal": "Notice: dismissal",
+    "noticeDate": "Notice date",
+    "download": "Download",
+    "noCompanies": "No companies yet. Add one on the dashboard or import your staff.",
+    "noEmployees": "No employees in this company yet.",
+    "noContracts": "No contracts",
+    "draftNote": "Draft templates: check with a lawyer before use."
+  }
+}

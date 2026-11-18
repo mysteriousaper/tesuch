@@ -1,0 +1,30 @@
+{
+  "quiz": {
+    "title": "Weekly surprise inspection",
+    "intro": "5 questions for this week. Answer them and keep your streak.",
+    "week": "{year}, week {week}",
+    "company": "Company",
+    "choose": "Choose",
+    "question": "Question {n}/{total}",
+    "submit": "Finish",
+    "unanswered": "Answer every question.",
+    "result": "Score: {correct}/{total}",
+    "correct": "Correct",
+    "wrong": "Wrong",
+    "yourAnswer": "Your answer",
+    "rightAnswer": "Right answer",
+    "source": "Source",
+    "alreadyTaken": "You already took this week’s quiz. New questions on Monday.",
+    "streak": "Current streak",
+    "longest": "Longest streak",
+    "weeks": "{count, plural, one {# week} other {# weeks}}",
+    "badges": "Badges",
+    "noBadges": "No badges yet. A clean week plus the quiz earns the first one.",
+    "streakRule": "A week counts when the quiz is done and no open violation is overdue at the end of the week.",
+    "viewerNote": "Owners and accountants can take the quiz.",
+    "noCompanies": "Add a company first to take the quiz.",
+    "error": "Could not save. Refresh the page and try again.",
+    "stale": "The week has changed. Refresh the page for new questions.",
+    "disclaimer": "This is not legal advice."
+  }
+}
