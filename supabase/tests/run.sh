@@ -12,3 +12,7 @@ PSQL=(psql -h "$DATA" -p "$PORT" -U postgres -d postgres -v ON_ERROR_STOP=1 -q)
 "${PSQL[@]}" -f "$ROOT/supabase/tests/00_supabase_shim.sql"
 for f in "$ROOT"/supabase/migrations/*.sql; do "${PSQL[@]}" -f "$f"; done
 "${PSQL[@]}" -o /dev/null -f "$ROOT/supabase/tests/rls_cross_tenant.sql" 2>&1 | sed "s/^psql:[^ ]* NOTICE:  //"
+
+# Demo seed must keep applying cleanly to the current schema.
+"${PSQL[@]}" -o /dev/null -f "$ROOT/supabase/seed/demo.sql"
+"${PSQL[@]}" -tA -c "select 'demo seed: ' || (select count(*) from public.employees) || ' employees total after seed'"
