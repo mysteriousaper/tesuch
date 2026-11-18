@@ -1,0 +1,52 @@
+{
+  "common": {
+    "appName": "Tesuch",
+    "score": "Inspection readiness",
+    "disclaimer": "This is not legal advice. This rule is still being checked by a lawyer.",
+    "articlePending": "Article pending review",
+    "severity": {
+      "red": "Violation",
+      "amber": "Attention",
+      "advisory": "Advisory",
+      "info": "Reminder"
+    },
+    "overdue": "Overdue",
+    "due": "Due {date}",
+    "language": "Language",
+    "article": "Art. {n}"
+  },
+  "home": {
+    "title": "If the inspector came today, would you pass?",
+    "subtitle": "Tesuch tracks employment contract deadlines and warns you before a legal deadline is missed.",
+    "ctaThemes": "See the design options",
+    "building": "The app is under construction."
+  },
+  "themes": {
+    "title": "Pick a look",
+    "intro": "Three options on the same data. Pick one and the whole app will be built on it.",
+    "option": "Option {n}",
+    "official": {
+      "name": "Official",
+      "desc": "Calm, trustworthy, document-like"
+    },
+    "fintech": {
+      "name": "Modern",
+      "desc": "High contrast, built around the numbers"
+    },
+    "warm": {
+      "name": "Warm",
+      "desc": "Apricot and tuff stone: friendly and Armenian"
+    },
+    "light": "Light",
+    "dark": "Dark",
+    "companies": "Companies",
+    "sortedByScore": "by score",
+    "employees": "{count} staff",
+    "openFindings": "{count, plural, =0 {No issues} one {# open issue} other {# open issues}}",
+    "firmScore": "Firm average score",
+    "fixThisWeek": "Fix this week",
+    "markFixed": "Mark fixed",
+    "streak": "{count, plural, one {# clean week in a row} other {# clean weeks in a row}}",
+    "demoNote": "All names are fictional."
+  }
+}
