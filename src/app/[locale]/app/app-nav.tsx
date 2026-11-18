@@ -18,7 +18,7 @@ export function AppNav() {
   return (
     <nav aria-label="App" className="-mx-4 flex gap-1 overflow-x-auto px-4 text-sm sm:mx-0 sm:px-0">
       {ITEMS.map((i) => {
-        const active = i.href === "/app" ? pathname === "/app" : pathname.startsWith(i.href);
+        const active = i.href === "/app" ? pathname === "/app" || pathname.startsWith("/app/companies") : pathname.startsWith(i.href);
         return (
           <Link
             key={i.href}
