@@ -1,0 +1,12 @@
+{
+  "app": {
+    "nav": {
+      "dashboard": "Панель",
+      "import": "Импорт",
+      "documents": "Документы",
+      "quiz": "Викторина",
+      "settings": "Настройки"
+    },
+    "comingSoon": "Скоро"
+  }
+}

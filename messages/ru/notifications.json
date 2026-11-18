@@ -1,0 +1,14 @@
+{
+  "notifications": {
+    "title": "Уведомления",
+    "telegram": "Telegram",
+    "connect": "Подключить Telegram",
+    "connected": "Подключён",
+    "notConnected": "Не подключён",
+    "disconnect": "Отключить",
+    "email": "Почта: {email}",
+    "test": "Отправить тестовое уведомление",
+    "testSent": "Отправлено: {channels}.",
+    "testNone": "Ничего не отправлено. Подключите Telegram или проверьте настройки."
+  }
+}

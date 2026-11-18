@@ -1,0 +1,18 @@
+{
+  "common": {
+    "appName": "Tesuch",
+    "score": "Inspection readiness",
+    "disclaimer": "This is not legal advice. This rule is still being checked by a lawyer.",
+    "articlePending": "Article pending review",
+    "severity": {
+      "red": "Violation",
+      "amber": "Attention",
+      "advisory": "Advisory",
+      "info": "Reminder"
+    },
+    "overdue": "Overdue",
+    "due": "Due {date}",
+    "language": "Language",
+    "article": "Art. {n}"
+  }
+}

@@ -1,9 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { LocaleSwitcher } from "@/components/locale-switcher";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
 import type { Locale } from "@/lib/notify/i18n";
-import { createOrg, signOut } from "./actions";
+import { createOrg } from "./actions";
 import { NotificationsCard } from "./notifications-card";
 
 export const dynamic = "force-dynamic";
@@ -11,8 +10,6 @@ export const dynamic = "force-dynamic";
 export default async function AppHome({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return redirect({ href: "/login", locale });
-
   const supabase = await supabaseForUser();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect({ href: "/login", locale });
@@ -20,20 +17,9 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
   const { data: orgs } = await supabase.from("orgs").select("id, name").order("created_at");
   const { data: link } = await supabase.from("telegram_links").select("chat_id").eq("user_id", user.id).maybeSingle();
   const t = await getTranslations("onboarding");
-  const a = await getTranslations("auth");
-  const c = await getTranslations("common");
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <header className="mb-8 flex items-center justify-between gap-3">
-        <span className="text-lg font-bold">{c("appName")}</span>
-        <div className="flex items-center gap-3">
-          <LocaleSwitcher />
-          <form action={async () => { "use server"; await signOut(); redirect({ href: "/login", locale }); }}>
-            <button className="text-sm text-muted hover:text-ink">{a("signOut")}</button>
-          </form>
-        </div>
-      </header>
+    <div className="max-w-3xl">
       {orgs && orgs.length > 0 ? (
         <section className="flex flex-col gap-6">
           <h1 className="text-2xl font-bold">{t("yourOrgs")}</h1>
@@ -52,6 +38,6 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
           </form>
         </section>
       )}
-    </main>
+    </div>
   );
 }

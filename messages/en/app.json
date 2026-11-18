@@ -1,0 +1,12 @@
+{
+  "app": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "import": "Import",
+      "documents": "Documents",
+      "quiz": "Quiz",
+      "settings": "Settings"
+    },
+    "comingSoon": "Coming soon"
+  }
+}
