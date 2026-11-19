@@ -38,7 +38,10 @@ grant execute on all functions in schema pg_temp to authenticated, anon;
 set role authenticated;
 select pg_temp.as_user('e0000000-0000-0000-0000-00000000000a');
 select public.create_org('Firm EA') as org_a \gset
+-- Clients cannot insert memberships (only create_org / accept_invitation); seed the viewer as setup.
+reset role;
 insert into public.memberships (user_id, org_id, role) values ('e0000000-0000-0000-0000-00000000000c', :'org_a', 'viewer');
+set role authenticated;
 select pg_temp.as_user('e0000000-0000-0000-0000-00000000000b');
 select public.create_org('Firm EB') as org_b \gset
 

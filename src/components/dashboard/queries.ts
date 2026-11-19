@@ -15,12 +15,23 @@ export const todayIso = () => format(new Date(), "yyyy-MM-dd");
 /** Cookie holding the org the user last picked. Only a hint: it is always checked against memberships. */
 export const ORG_COOKIE = "tesuch_org";
 
-/** Every org the user belongs to, oldest membership first. Read through RLS. */
+/**
+ * Every org the user belongs to, oldest membership first (ties broken by org id, so the default org never
+ * flips between requests). Read through RLS; rows are re-checked to be the caller's own memberships.
+ * Memberships are only created by create_org / accept_invitation, so created_at cannot be backdated by a client.
+ */
 export async function userOrgs(supabase: UserClient, userId: string): Promise<OrgInfo[]> {
-  const { data } = await supabase.from("memberships").select("role, created_at, orgs(id, name, locale)").eq("user_id", userId).order("created_at");
+  const { data } = await supabase
+    .from("memberships")
+    .select("user_id, org_id, role, created_at, orgs(id, name, locale)")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true })
+    .order("org_id", { ascending: true });
   return (data ?? []).flatMap((m) => {
     const org = m.orgs as unknown as { id: string; name: string; locale: string } | null;
-    return org ? [{ ...org, role: m.role as Role }] : [];
+    if (!org || m.user_id !== userId || org.id !== m.org_id) return [];
+    if (m.role !== "owner" && m.role !== "accountant" && m.role !== "viewer") return [];
+    return [{ ...org, role: m.role as Role }];
   });
 }
 

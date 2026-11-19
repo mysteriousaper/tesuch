@@ -4,7 +4,7 @@ Source: `docs/qa/RESULTS.md` (judged 2026-11-19). Owned by the program manager (
 
 | Id | Severity | Area | Files | Fix summary | Status |
 |---|---|---|---|---|---|
-| C-1 | critical | security | `supabase/migrations/20261118000000_init.sql:286-288`, `src/components/dashboard/queries.ts:20` | Drop `memberships_owner_write`; revoke insert/update; grant `update (role)`; owner-only update policy; delete for owner or self; DB test that an owner cannot insert another user's membership | open |
+| C-1 | critical | security | `supabase/migrations/20261118000000_init.sql:286-288`, `src/components/dashboard/queries.ts:20` | Drop `memberships_owner_write`; revoke insert/update; grant `update (role)`; owner-only update policy; delete for owner or self; DB test that an owner cannot insert another user's membership | fixed in branch (migration `20261120000000_memberships_lockdown.sql`, tests `supabase/tests/lane_memberships.sql`: 20 checks, attack fails with permission denied; fails without the migration). Lead must apply migration; then e2e members/tenancy specs can run |
 | C-2 | critical | data | `src/components/dashboard/queries.ts:44-46`, `src/lib/jobs/run.ts:46-49` | Grouped count RPC (or exact head counts) for dashboard; paged reads in `runRulesForCompany`; unit test with 1001 rows | open |
 | C-3 | critical | data | `src/lib/import/normalize.ts:74-76`, `src/lib/import/pipeline.ts:50,74`, `src/lib/import/fields.ts`, `src/lib/rules/facts.ts`, `rules/annual-leave-min.json`, `rules/src-registration.json`, `rules/fixed-term-ground.json`, `src/components/import/import-wizard.tsx` | Tri-state unknown for SRC flag and fixed-term ground; rules skip unknown; skip leave rule without leave records; preview lists unmapped fields and impact; leave columns in import | open |
 | C-4 | critical | owner | Supabase Auth settings, `src/app/[locale]/login/login-form.tsx:24` | Enable CAPTCHA (dashboard) and pass `captchaToken`; real SMTP provider with verified domain and higher email rate limit; localized 429 message | open |
@@ -78,3 +78,5 @@ Status: **waiting for owner** (needs dashboard access; not doable from the repo)
 3. Supabase dashboard > Authentication > Emails > SMTP Settings > "Enable Custom SMTP". Use Resend (or another provider) with a verified sending domain (add the SPF/DKIM DNS records it shows). Fill host, port, user, password, sender `Tesuch <noreply@your-domain>`. Save.
 4. Supabase dashboard > Authentication > Rate Limits: raise "Rate limit for sending emails" (only editable after step 3) from the default 30/hour to e.g. 200/hour; keep "Rate limit for sign-ups and sign-ins" per IP.
 5. Re-test: request 5 OTPs from one IP, confirm CAPTCHA is demanded and other users can still sign in.
+
+| m-32 | minor | security | `supabase/migrations/**` | Supabase grants TRUNCATE to `authenticated` on public tables and it ignores RLS; revoke truncate on all public tables (found during C-1; only memberships done) | open |

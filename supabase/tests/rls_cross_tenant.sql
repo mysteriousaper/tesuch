@@ -33,7 +33,10 @@ select pg_temp.as_user('aaaaaaaa-0000-0000-0000-000000000001');
 select public.create_org('Firm A') as org_a \gset
 insert into public.companies (org_id, name) values (:'org_a', 'A Co') returning id as co_a \gset
 insert into public.employees (org_id, company_id, full_name) values (:'org_a', :'co_a', 'Test Employee A') returning id as emp_a \gset
+-- Clients cannot insert memberships (only create_org / accept_invitation); seed the viewer as setup.
+reset role;
 insert into public.memberships (user_id, org_id, role) values ('aaaaaaaa-0000-0000-0000-000000000002', :'org_a', 'viewer');
+set role authenticated;
 
 select pg_temp.as_user('bbbbbbbb-0000-0000-0000-000000000001');
 select public.create_org('Firm B') as org_b \gset

@@ -82,7 +82,7 @@ test.describe("cross-tenant isolation (live Supabase)", () => {
     const co = await asB.from("companies").insert({ org_id: orgA, name: "evil" });
     expect(co.error?.message).toMatch(/row-level security/);
     const m = await asB.from("memberships").insert({ user_id: b.id, org_id: orgA, role: "owner" });
-    expect(m.error?.message).toMatch(/row-level security/);
+    expect(m.error?.message).toMatch(/permission denied/);
   });
 
   test("B cannot attach rows to A's company even with its own org id", async () => {

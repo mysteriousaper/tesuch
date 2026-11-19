@@ -27,7 +27,10 @@ set role authenticated;
 select pg_temp.as_user('c0000000-0000-0000-0000-00000000000a');
 select public.create_org('Firm CA') as org_a \gset
 insert into public.companies (org_id, name) values (:'org_a', 'CA Co') returning id as co_a \gset
+-- Clients cannot insert memberships (only create_org / accept_invitation); seed the viewer as setup.
+reset role;
 insert into public.memberships (user_id, org_id, role) values ('c0000000-0000-0000-0000-00000000000c', :'org_a', 'viewer');
+set role authenticated;
 select pg_temp.as_user('c0000000-0000-0000-0000-00000000000b');
 select public.create_org('Firm CB') as org_b \gset
 insert into public.companies (org_id, name) values (:'org_b', 'CB Co') returning id as co_b \gset

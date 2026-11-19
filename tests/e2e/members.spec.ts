@@ -40,7 +40,8 @@ test.describe("team, audit and data rights", () => {
     ]);
     [asOwner, asOutsider] = await Promise.all([clientAs(owner), clientAs(outsider)]);
     org = (await asOwner.rpc("create_org", { p_name: "QA Eng Firm" })).data as string;
-    const ins = await asOwner.from("memberships").insert([
+    // Clients cannot insert memberships (C-1); invitations are covered below, so seed these two as setup.
+    const ins = await admin().from("memberships").insert([
       { user_id: viewer.id, org_id: org, role: "viewer" },
       { user_id: accountant.id, org_id: org, role: "accountant" },
     ]);
@@ -90,7 +91,8 @@ test.describe("team, audit and data rights", () => {
     await expect(list.getByText(viewer.email, { exact: true })).toBeHidden();
     expect((await admin().from("memberships").select("user_id").eq("org_id", org).eq("user_id", viewer.id)).data).toEqual([]);
     // Restore the viewer for later tests.
-    expect((await asOwner.from("memberships").insert({ user_id: viewer.id, org_id: org, role: "viewer" })).error).toBeNull();
+    expect((await asOwner.from("memberships").insert({ user_id: viewer.id, org_id: org, role: "viewer" })).error).not.toBeNull();
+    expect((await admin().from("memberships").insert({ user_id: viewer.id, org_id: org, role: "viewer" })).error).toBeNull();
     expect(errors).toEqual([]);
   });
 
