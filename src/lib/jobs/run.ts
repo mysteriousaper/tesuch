@@ -4,9 +4,10 @@ import { deliverAlerts } from "@/lib/notify/deliver";
 import type { Locale } from "@/lib/notify/i18n";
 import type { AlertItem } from "@/lib/notify/messages";
 import { RULES } from "@/lib/rules/catalog";
-import { evaluateCompany } from "@/lib/rules/engine";
+import { evaluateCompanyDetailed } from "@/lib/rules/engine";
 import { inspectionReadyScore } from "@/lib/rules/score";
 import type { Finding } from "@/lib/rules/types";
+import { chunk, groupByPatch, patchJobs, runPool, ID_CHUNK, INSERT_CHUNK, POOL } from "./batch";
 import { toContract, toEmployee, toLeave, toRuleRow, type ContractRow, type EmployeeRow, type LeaveRow } from "./mappers";
 import { readAll } from "./paging";
 import { planSync, type StoredFinding } from "./sync";
@@ -55,7 +56,7 @@ export async function runRulesForCompany(
       db.from("findings").select("id, rule_id, rule_version, employee_id, contract_id, severity, due_date, status").eq("company_id", co.id).order("id").range(from, to)),
   ]);
 
-  const computed = await evaluateCompany(
+  const { findings: computed, skipped } = await evaluateCompanyDetailed(
     RULES,
     {
       employees: empRows.map(toEmployee),
@@ -65,7 +66,7 @@ export async function runRulesForCompany(
     asOf,
   );
   const stored = fndRows;
-  const plan = planSync(co.org_id, computed, stored);
+  const plan = planSync(co.org_id, computed, stored, skipped);
 
   const names = new Map(empRows.map((e) => [e.id, e.full_name]));
   const key = (rule: string, employee: string, contract: string | null) => `${rule}|${employee}|${contract ?? ""}`;
@@ -74,25 +75,31 @@ export async function runRulesForCompany(
   const item = (f: Finding): AlertItem => ({ finding: f, companyName: co.name, employeeName: names.get(f.employeeId) ?? "" });
   const toAlert: (AlertItem & { findingId: string })[] = [];
 
-  if (plan.inserts.length) {
-    const { data: ins, error } = await db.from("findings").insert(plan.inserts).select("id, rule_id, employee_id, contract_id");
+  for (const rows of chunk(plan.inserts, INSERT_CHUNK)) {
+    const { data: ins, error } = await db.from("findings").insert(rows).select("id, rule_id, employee_id, contract_id");
     if (error) throw new Error(error.message);
     for (const r of ins ?? []) {
       const f = byKey.get(key(r.rule_id, r.employee_id, r.contract_id));
       if (f && f.severity !== "info") toAlert.push({ ...item(f), findingId: r.id });
     }
   }
-  for (const u of plan.updates) {
-    const patch = { rule_version: u.rule_version, severity: u.severity, due_date: u.due_date, status: u.status, last_seen_at: new Date().toISOString() };
-    const { error } = await db.from("findings").update(patch).eq("id", u.id);
+  // One UPDATE per distinct patch payload and chunk of ids, not one per finding.
+  const seenAt = new Date().toISOString();
+  const jobs = patchJobs(
+    groupByPatch(plan.updates, (u) => ({ rule_version: u.rule_version, severity: u.severity, due_date: u.due_date, status: u.status, last_seen_at: seenAt })),
+  );
+  await runPool(jobs, POOL, async (j) => {
+    const { error } = await db.from("findings").update(j.patch).in("id", j.ids);
     if (error) throw new Error(error.message);
+  });
+  for (const u of plan.updates) {
     const f = byKey.get(storedKey.get(u.id) ?? "");
     if (u.reopened && f) toAlert.push({ ...item(f), findingId: u.id });
   }
-  if (plan.autoResolve.length) {
-    const { error } = await db.from("findings").update({ status: "fixed" }).in("id", plan.autoResolve);
+  await runPool(chunk(plan.autoResolve, ID_CHUNK), POOL, async (ids) => {
+    const { error } = await db.from("findings").update({ status: "fixed" }).in("id", ids);
     if (error) throw new Error(error.message);
-  }
+  });
 
   const alertsSent = opts.sendAlerts ? await deliverAlerts(db, co.org_id, co.locale ?? "hy", toAlert) : 0;
   return {
