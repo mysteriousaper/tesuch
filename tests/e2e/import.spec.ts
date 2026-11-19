@@ -66,10 +66,12 @@ test.describe("staff import (lane B)", () => {
     expect(emps?.map((e) => e.full_name)).toEqual(["Թեստ Աշխատող Երկու", "Թեստ Աշխատող Մեկ"]);
     const { data: findings } = await db.from("findings").select("rule_id").eq("company_id", companyId);
     expect(findings?.map((f) => f.rule_id)).toContain("probation-minor");
-    // Known: "Open the company page" prefetches /app/companies/<id>, which lane A has not merged yet (QA_REPORT D-2).
-    const unexpected404 = notFound.filter((p) => !/^\/en\/app\/companies\/[0-9a-f-]+$/.test(p));
-    expect(unexpected404, "unexpected 404s").toEqual([]);
-    expect(errors.filter((e) => !e.includes("404")), "console errors").toEqual([]);
+    // D-2 resolved: the "Open the company page" link now resolves (lane A), so no 404s at all.
+    expect(notFound, "404 responses").toEqual([]);
+    expect(errors, "console errors").toEqual([]);
+
+    await page.getByRole("link", { name: "Open the company page" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "QA Import Co" })).toBeVisible();
   });
 
   test("re-importing the same file does not duplicate employees", async ({ page }) => {

@@ -10,6 +10,9 @@ const PAGES: { path: string; lang: string }[] = [
   { path: "/hy/login", lang: "hy" },
   { path: "/ru/login", lang: "ru" },
   { path: "/en/login", lang: "en" },
+  { path: "/hy/check", lang: "hy" },
+  { path: "/ru/check", lang: "ru" },
+  { path: "/en/check", lang: "en" },
 ];
 
 test.describe("public pages", () => {
