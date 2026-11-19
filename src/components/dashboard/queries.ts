@@ -1,10 +1,11 @@
 import "server-only";
 import { format } from "date-fns";
 import { cookies } from "next/headers";
-import { firmScore, inspectionReadyScore } from "@/lib/rules/score";
+import { inspectionReadyScore } from "@/lib/rules/score";
 import type { EffectiveSeverity } from "@/lib/rules/types";
 import type { supabaseForUser } from "@/lib/supabase/server";
 
+import { buildOverview, type StatRow } from "./stats";
 import { pickOrg, type OrgInfo, type Role } from "./pick-org";
 
 export type { OrgInfo, Role };
@@ -47,26 +48,20 @@ export function scoreOf(findings: OpenFinding[], today = todayIso()) {
   return inspectionReadyScore(findings.map((f) => ({ severity: f.severity, overdue: f.due_date < today })));
 }
 
-export interface CompanyRow { id: string; name: string; score: number; open: number; staff: number }
+export type { CompanyRow } from "./stats";
+
+/** Grouped counts from the database (no 1000-row cap). Optionally for one company. */
+export async function companyStats(supabase: UserClient, orgId: string, companyId?: string): Promise<StatRow[]> {
+  const { data, error } = await supabase.rpc("company_stats", { p_org: orgId, p_today: todayIso(), p_company: companyId ?? null });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as StatRow[];
+}
 
 /** Companies with score, open-finding count and head count, riskiest first. */
 export async function firmOverview(supabase: UserClient, orgId: string) {
-  const [companies, findings, employees] = await Promise.all([
-    supabase.from("companies").select("id, name").eq("org_id", orgId),
-    supabase.from("findings").select("company_id, severity, due_date").eq("org_id", orgId).eq("status", "open"),
-    supabase.from("employees").select("company_id").eq("org_id", orgId).is("archived_at", null),
+  const [companies, stats] = await Promise.all([
+    supabase.from("companies").select("id, name").eq("org_id", orgId).limit(1000),
+    companyStats(supabase, orgId),
   ]);
-  const today = todayIso();
-  const rows: CompanyRow[] = (companies.data ?? []).map((c) => {
-    const open = (findings.data ?? []).filter((f) => f.company_id === c.id) as OpenFinding[];
-    return {
-      id: c.id,
-      name: c.name,
-      score: scoreOf(open, today),
-      open: open.length,
-      staff: (employees.data ?? []).filter((e) => e.company_id === c.id).length,
-    };
-  });
-  rows.sort((a, b) => a.score - b.score || a.name.localeCompare(b.name));
-  return { rows, firm: firmScore(rows.map((r) => r.score)) };
+  return buildOverview(companies.data ?? [], stats);
 }

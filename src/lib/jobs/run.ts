@@ -8,6 +8,7 @@ import { evaluateCompany } from "@/lib/rules/engine";
 import { inspectionReadyScore } from "@/lib/rules/score";
 import type { Finding } from "@/lib/rules/types";
 import { toContract, toEmployee, toLeave, toRuleRow, type ContractRow, type EmployeeRow, type LeaveRow } from "./mappers";
+import { readAll } from "./paging";
 import { planSync, type StoredFinding } from "./sync";
 
 export interface CompanyRef {
@@ -42,27 +43,31 @@ export async function ensureRules(db: SupabaseClient) {
 export async function runRulesForCompany(
   db: SupabaseClient, co: CompanyRef, asOf: string, opts: { sendAlerts: boolean },
 ): Promise<CompanyRunResult> {
-  const [emp, con, lv, fnd] = await Promise.all([
-    db.from("employees").select("id, company_id, birth_date, six_day_week, full_name").eq("company_id", co.id).is("archived_at", null),
-    db.from("contracts").select("*, employees!inner(company_id)").eq("employees.company_id", co.id),
-    db.from("leave_records").select("*, employees!inner(company_id)").eq("employees.company_id", co.id),
-    db.from("findings").select("id, rule_id, rule_version, employee_id, contract_id, severity, due_date, status").eq("company_id", co.id),
+  // Every read is paged: the API caps a single response at 1000 rows and a firm can hold far more.
+  const [empRows, conRows, lvRows, fndRows] = await Promise.all([
+    readAll<EmployeeRow & { full_name: string }>((from, to) =>
+      db.from("employees").select("id, company_id, birth_date, six_day_week, full_name").eq("company_id", co.id).is("archived_at", null).order("id").range(from, to)),
+    readAll<ContractRow>((from, to) =>
+      db.from("contracts").select("*, employees!inner(company_id)").eq("employees.company_id", co.id).order("id").range(from, to)),
+    readAll<LeaveRow>((from, to) =>
+      db.from("leave_records").select("*, employees!inner(company_id)").eq("employees.company_id", co.id).order("id").range(from, to)),
+    readAll<StoredFinding>((from, to) =>
+      db.from("findings").select("id, rule_id, rule_version, employee_id, contract_id, severity, due_date, status").eq("company_id", co.id).order("id").range(from, to)),
   ]);
-  for (const r of [emp, con, lv, fnd]) if (r.error) throw new Error(r.error.message);
 
   const computed = await evaluateCompany(
     RULES,
     {
-      employees: (emp.data as EmployeeRow[]).map(toEmployee),
-      contracts: (con.data as ContractRow[]).map(toContract),
-      leave: (lv.data as LeaveRow[]).map(toLeave),
+      employees: empRows.map(toEmployee),
+      contracts: conRows.map(toContract),
+      leave: lvRows.map(toLeave),
     },
     asOf,
   );
-  const stored = fnd.data as StoredFinding[];
+  const stored = fndRows;
   const plan = planSync(co.org_id, computed, stored);
 
-  const names = new Map((emp.data as (EmployeeRow & { full_name: string })[]).map((e) => [e.id, e.full_name]));
+  const names = new Map(empRows.map((e) => [e.id, e.full_name]));
   const key = (rule: string, employee: string, contract: string | null) => `${rule}|${employee}|${contract ?? ""}`;
   const byKey = new Map(computed.map((f) => [key(f.ruleId, f.employeeId, f.contractId), f]));
   const storedKey = new Map(stored.map((x) => [x.id, key(x.rule_id, x.employee_id, x.contract_id)]));

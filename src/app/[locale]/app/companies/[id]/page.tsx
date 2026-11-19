@@ -3,7 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
 import { AddEmployeeForm, RecheckButton } from "@/components/dashboard/dashboard-forms";
 import { FindingList, fmtDate, type FindingView } from "@/components/dashboard/finding-list";
-import { scoreOf, todayIso, type OpenFinding } from "@/components/dashboard/queries";
+import { statsFor } from "@/components/dashboard/stats";
+import { companyStats, todayIso } from "@/components/dashboard/queries";
 import { Link, redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
 import { latestContract } from "../../dashboard-logic";
@@ -37,7 +38,8 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
     employee_name: (f.employees as unknown as { full_name: string } | null)?.full_name ?? "",
   }));
   const open = findings.filter((f) => f.status === "open");
-  const score = scoreOf(open as OpenFinding[], today);
+  const stats = statsFor(await companyStats(supabase, company.org_id, company.id), company.id);
+  const score = stats.score;
   const employees = employeesRes.data ?? [];
 
   return (
@@ -48,7 +50,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">{company.name}</h1>
           <p className="text-sm text-muted">
-            {company.tax_id ? `${company.tax_id} · ` : ""}{t("employeesCount", { count: employees.length })} · {t("openFindings", { count: open.length })}
+            {company.tax_id ? `${company.tax_id} · ` : ""}{t("employeesCount", { count: stats.staff })} · {t("openFindings", { count: stats.open })}
           </p>
           {canEdit && <div className="mt-2"><RecheckButton locale={locale} companyId={company.id} /></div>}
         </div>
