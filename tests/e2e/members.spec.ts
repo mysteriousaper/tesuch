@@ -181,7 +181,7 @@ test.describe("team, audit and data rights", () => {
     await page.goto("/en/invite/not-a-token");
     await expect(page.getByText("This invitation link is not valid. Ask for a new one.")).toBeVisible();
     await page.goto(`/hy/invite/${"0".repeat(64)}`);
-    await expect(page.getByText("Մուտք գործեք այն էլ. հասցեով, որին ուղարկվել է հրավերը։")).toBeVisible();
+    await expect(page.getByText("Մուտք գործեք այն էլ․ հասցեով, որին ուղարկվել է հրավերը։")).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     expect(await a11yIssues(page)).toEqual([]);
     await shoot(page, "invite-signed-out");

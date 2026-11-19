@@ -63,7 +63,7 @@ export const DPA_CLAUSES: DpaClause[] = [
     title: { en: "Location and subprocessors", hy: "Գտնվելու վայր և ենթամշակողներ" },
     body: {
       en: "Data is stored in an EU region (Ireland). Subprocessors: Supabase (database, authentication), Vercel (hosting), Resend (email), Telegram (messages, only finding summaries without unnecessary personal data). Tesuch informs the Customer before adding a subprocessor.",
-      hy: "Տվյալները պահվում են ԵՄ տարածաշրջանում (Իռլանդիա)։ Ենթամշակողներ՝ Supabase (տվյալների բազա, նույնականացում), Vercel (հոսթինգ), Resend (էլ. փոստ), Telegram (հաղորդագրություններ՝ միայն խախտումների ամփոփումներ՝ առանց ավելորդ անձնական տվյալների)։ Նոր ենթամշակող ներգրավելուց առաջ «Տեսուչը» տեղեկացնում է Պատվիրատուին։",
+      hy: "Տվյալները պահվում են ԵՄ տարածաշրջանում (Իռլանդիա)։ Ենթամշակողներ՝ Supabase (տվյալների բազա, նույնականացում), Vercel (հոսթինգ), Resend (էլ․ փոստ), Telegram (հաղորդագրություններ՝ միայն խախտումների ամփոփումներ՝ առանց ավելորդ անձնական տվյալների)։ Նոր ենթամշակող ներգրավելուց առաջ «Տեսուչը» տեղեկացնում է Պատվիրատուին։",
     },
   },
   {

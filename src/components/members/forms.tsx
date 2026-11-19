@@ -60,12 +60,12 @@ export function InviteForm({ action }: { action: Action }) {
           {t("invite.email")}
           <input name="email" type="email" required maxLength={320} autoComplete="off" className={inputCls} />
         </label>
-        <label className="flex flex-col gap-1 text-sm font-medium">
-          {t("invite.role")}
-          <select name="role" defaultValue="accountant" className={inputCls}>
+        <div className="flex flex-col gap-1 text-sm font-medium">
+          <label htmlFor="invite-role">{t("invite.role")}</label>
+          <select id="invite-role" name="role" defaultValue="accountant" className={inputCls}>
             {ROLES.map((r) => <option key={r} value={r}>{t(`roles.${r}`)}</option>)}
           </select>
-        </label>
+        </div>
         <button type="submit" disabled={pending} className={primaryBtn}>{pending ? "…" : t("invite.send")}</button>
       </form>
       <Status state={state} />

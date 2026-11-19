@@ -5,7 +5,9 @@
       "import": "Import",
       "documents": "Documents",
       "quiz": "Quiz",
-      "settings": "Settings"
+      "settings": "Settings",
+      "members": "Team",
+      "audit": "Audit log"
     },
     "comingSoon": "Coming soon"
   }

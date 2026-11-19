@@ -5,7 +5,9 @@
       "import": "Импорт",
       "documents": "Документы",
       "quiz": "Викторина",
-      "settings": "Настройки"
+      "settings": "Настройки",
+      "members": "Команда",
+      "audit": "Журнал"
     },
     "comingSoon": "Скоро"
   }

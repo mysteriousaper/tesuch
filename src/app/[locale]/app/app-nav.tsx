@@ -9,6 +9,8 @@ const ITEMS = [
   { href: "/app/import", key: "import" },
   { href: "/app/documents", key: "documents" },
   { href: "/app/quiz", key: "quiz" },
+  { href: "/app/members", key: "members" },
+  { href: "/app/audit", key: "audit" },
   { href: "/app/settings", key: "settings" },
 ] as const;
 
