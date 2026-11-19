@@ -2,20 +2,23 @@
 
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { ensureRules, runRulesForCompany } from "@/lib/jobs/run";
 import type { Locale } from "@/lib/notify/i18n";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
+import { currentOrg, ORG_COOKIE, userOrgs } from "@/components/dashboard/queries";
 import { generateDemoCompanies } from "./demo-data";
 
 /** Result shape for forms using useActionState. `error` is a key in dashboard.errors. */
-export type ActionState = { ok: true; count?: number } | { ok: false; error: "generic" | "invalid" | "forbidden" } | null;
+export type ActionState = { ok: true; count?: number; info?: "demoExists" } | { ok: false; error: "generic" | "invalid" | "forbidden" } | null;
 
 const FAIL = (error: "generic" | "invalid" | "forbidden"): ActionState => ({ ok: false, error });
 const today = () => format(new Date(), "yyyy-MM-dd");
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const optDate = z.preprocess((v) => (v === "" || v == null ? null : v), isoDate.nullable());
-const optText = z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? null : v), z.string().trim().max(300).nullable());
+// Missing (field not rendered) and blank both mean "no value".
+const optText = z.preprocess((v) => (v == null || (typeof v === "string" && v.trim() === "") ? null : v), z.string().trim().max(300).nullable());
 const checkbox = z.preprocess((v) => v === "on" || v === "true", z.boolean());
 const uuid = z.string().uuid();
 
@@ -40,12 +43,16 @@ async function editableCompany(supabase: UserClient, userId: string, companyId: 
   return { id: co.id as string, org_id: co.org_id as string, name: co.name as string, locale };
 }
 
-/** The first org the user can edit. */
+/** The org the user is working in, if they may edit it. Never falls back to another org silently. */
 async function editableOrg(supabase: UserClient, userId: string) {
-  const { data } = await supabase
-    .from("memberships").select("org_id, role, created_at").eq("user_id", userId).in("role", ["owner", "accountant"])
-    .order("created_at").limit(1).maybeSingle();
-  return data?.org_id as string | undefined;
+  const org = await currentOrg(supabase, userId);
+  return org && org.role !== "viewer" ? org.id : undefined;
+}
+
+async function rememberOrg(orgId: string) {
+  (await cookies()).set(ORG_COOKIE, orgId, {
+    httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 24 * 365,
+  });
 }
 
 /** Rules run with the service role (findings are system-written) — only after the user's right to edit was checked. */
@@ -58,9 +65,21 @@ async function recheck(co: { id: string; org_id: string; name: string; locale: L
 export async function createOrg(locale: string, form: FormData) {
   const name = z.string().trim().min(1).max(200).parse(form.get("name"));
   const supabase = await supabaseForUser();
-  const { error } = await supabase.rpc("create_org", { p_name: name });
+  const { data, error } = await supabase.rpc("create_org", { p_name: name });
   if (error) throw new Error(error.message);
-  revalidatePath(`/${locale}/app`);
+  await rememberOrg(data as string);
+  revalidatePath(`/${locale}/app`, "layout");
+}
+
+/** Switch the active org. The cookie is only set for an org the user is a member of. */
+export async function switchOrg(locale: string, form: FormData) {
+  const orgId = uuid.safeParse(form.get("org_id"));
+  if (!orgId.success) return;
+  const { supabase, user } = await session();
+  if (!user) return;
+  if (!(await userOrgs(supabase, user.id)).some((o) => o.id === orgId.data)) return;
+  await rememberOrg(orgId.data);
+  revalidatePath(`/${locale}/app`, "layout");
 }
 
 export async function signOut() {
@@ -89,6 +108,9 @@ export async function loadDemoData(locale: string): Promise<ActionState> {
   if (!user) return FAIL("forbidden");
   const orgId = await editableOrg(supabase, user.id);
   if (!orgId) return FAIL("forbidden");
+  // Idempotent: one set of demo companies per firm.
+  const { count } = await supabase.from("companies").select("id", { count: "exact", head: true }).eq("org_id", orgId).like("name", "Դեմո % ՍՊԸ");
+  if (count) return { ok: true, info: "demoExists" };
   const { data: org } = await supabase.from("orgs").select("locale").eq("id", orgId).single();
   const demo = generateDemoCompanies(today(), Date.now());
 
@@ -144,7 +166,7 @@ export async function setFindingStatus(locale: string, companyId: string, findin
   revalidatePath(`/${locale}/app`);
 }
 
-const employeeSchema = z.object({
+const employeeFields = z.object({
   full_name: z.string().trim().min(1).max(200),
   birth_date: optDate,
   six_day_week: checkbox,
@@ -156,9 +178,26 @@ const employeeSchema = z.object({
   hired_by_transfer: checkbox,
   fixed_term_ground: optText,
   src_registered: checkbox,
-}).refine((v) => v.type === "fixed_term" || v.end_date === null, { path: ["end_date"] })
-  .refine((v) => !v.end_date || v.end_date >= v.start_date, { path: ["end_date"] })
-  .refine((v) => !v.probation_end || v.probation_end >= v.start_date, { path: ["probation_end"] });
+});
+
+/** Mirrors the contracts table checks so users get a validation message instead of a database error. */
+function contractRules<T extends z.ZodType<{ type: string; start_date: string; end_date: string | null; probation_end: string | null }>>(schema: T) {
+  return schema
+    .refine((v) => v.type === "fixed_term" || v.end_date === null, { path: ["end_date"] })
+    .refine((v) => !v.end_date || v.end_date >= v.start_date, { path: ["end_date"] })
+    .refine((v) => !v.probation_end || v.probation_end >= v.start_date, { path: ["probation_end"] });
+}
+
+const employeeSchema = contractRules(employeeFields);
+
+const editSchema = contractRules(employeeFields.extend({
+  terminated_on: optDate,
+  termination_ground: optText,
+  termination_initiator: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(["employer", "employee", "mutual"]).nullable()),
+  notice_given_on: optDate,
+  workforce_reduction: checkbox,
+})).refine((v) => !v.terminated_on || v.terminated_on >= v.start_date, { path: ["terminated_on"] })
+  .refine((v) => !v.notice_given_on || !v.terminated_on || v.notice_given_on <= v.terminated_on, { path: ["notice_given_on"] });
 
 export async function addEmployee(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
   const parsed = employeeSchema.safeParse(Object.fromEntries(form));
@@ -218,5 +257,34 @@ export async function renameOrg(locale: string, orgId: string, _prev: ActionStat
   if (error) return FAIL("generic");
   if (!data?.length) return FAIL("forbidden");
   revalidatePath(`/${locale}/app/settings`);
+  return { ok: true };
+}
+
+/** Edit an employee and their contract, then re-run the rules so fixed data closes its findings. */
+export async function updateEmployee(
+  locale: string, companyId: string, employeeId: string, contractId: string, _prev: ActionState, form: FormData,
+): Promise<ActionState> {
+  const parsed = editSchema.safeParse(Object.fromEntries(form));
+  if (!parsed.success || ![companyId, employeeId, contractId].every((id) => uuid.safeParse(id).success)) return FAIL("invalid");
+  const { supabase, user } = await session();
+  if (!user) return FAIL("forbidden");
+  const co = await editableCompany(supabase, user.id, companyId);
+  if (!co) return FAIL("forbidden");
+
+  // Ids are only used as filters: an employee must belong to this company and the contract to this employee.
+  const { full_name, birth_date, six_day_week, ...contract } = parsed.data;
+  const { data: emp, error } = await supabase.from("employees")
+    .update({ full_name, birth_date, six_day_week }).eq("id", employeeId).eq("company_id", co.id).select("id");
+  if (error) return FAIL("generic");
+  if (!emp?.length) return FAIL("forbidden");
+  const { data: con, error: ce } = await supabase.from("contracts").update(contract).eq("id", contractId).eq("employee_id", employeeId).select("id");
+  if (ce) return FAIL("generic");
+  if (!con?.length) return FAIL("forbidden");
+  try {
+    await recheck(co);
+  } catch {
+    // Saved; findings will be refreshed tonight.
+  }
+  revalidatePath(`/${locale}/app/companies/${companyId}`, "layout");
   return { ok: true };
 }

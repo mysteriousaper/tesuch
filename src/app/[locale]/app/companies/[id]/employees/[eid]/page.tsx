@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AddLeaveForm } from "@/components/dashboard/dashboard-forms";
+import { EditEmployeeForm, type EmployeeValues } from "@/components/dashboard/edit-employee-form";
 import { fmtDate } from "@/components/dashboard/finding-list";
 import { todayIso } from "@/components/dashboard/queries";
 import { Timeline, type TimelineEvent } from "@/components/dashboard/timeline";
@@ -12,10 +13,7 @@ export const dynamic = "force-dynamic";
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
-interface ContractRow {
-  type: "indefinite" | "fixed_term"; start_date: string; end_date: string | null; probation_end: string | null;
-  terminated_on: string | null; termination_ground: string | null; notice_given_on: string | null;
-}
+type ContractRow = Omit<EmployeeValues, "full_name" | "birth_date" | "six_day_week"> & { id: string };
 
 export default async function EmployeePage({ params }: { params: Promise<{ locale: string; id: string; eid: string }> }) {
   const { locale, id, eid } = await params;
@@ -27,7 +25,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
 
   const { data: emp } = await supabase
     .from("employees")
-    .select("id, full_name, birth_date, six_day_week, org_id, companies(name), contracts(type, start_date, end_date, probation_end, terminated_on, termination_ground, notice_given_on), leave_records(type, start_date, days)")
+    .select("id, full_name, birth_date, six_day_week, org_id, companies(name), contracts(id, type, start_date, end_date, probation_end, probation_special_case, hired_by_transfer, fixed_term_ground, src_registered, terminated_on, termination_ground, termination_initiator, notice_given_on, workforce_reduction), leave_records(type, start_date, days)")
     .eq("id", eid).eq("company_id", id).maybeSingle();
   if (!emp) notFound();
 
@@ -41,8 +39,11 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
   const today = todayIso();
   const loc = locale as "hy" | "ru" | "en";
   const events: TimelineEvent[] = [];
+  const contracts = (emp.contracts ?? []) as ContractRow[];
+  // The editable contract is the most recent one.
+  const latest = [...contracts].sort((a, b) => b.start_date.localeCompare(a.start_date))[0];
 
-  for (const k of (emp.contracts ?? []) as ContractRow[]) {
+  for (const k of contracts) {
     events.push({ date: k.start_date, label: t("events.contractStart"), tone: "accent", detail: t(k.type === "fixed_term" ? "fields.fixedTerm" : "fields.indefinite") });
     if (k.probation_end) events.push({ date: k.probation_end, label: t("events.probationEnd"), tone: "warn" });
     if (k.end_date) events.push({ date: k.end_date, label: t("events.contractEnd"), tone: "warn" });
@@ -75,6 +76,23 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
         <h2 id="timeline-h" className="mb-2 font-semibold">{t("timeline")}</h2>
         <Timeline events={events} today={today} />
       </section>
+
+      {canEdit && (
+        <section id="edit" className="scroll-mt-4 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="edit-h">
+          <h2 id="edit-h" className="mb-3 font-semibold">{t("editEmployee")}</h2>
+          {latest ? (
+            <EditEmployeeForm
+              locale={locale}
+              companyId={id}
+              employeeId={eid}
+              contractId={latest.id}
+              values={{ full_name: emp.full_name, birth_date: emp.birth_date, six_day_week: emp.six_day_week, ...latest }}
+            />
+          ) : (
+            <p className="text-sm text-muted">{t("noContract")}</p>
+          )}
+        </section>
+      )}
 
       {canEdit && (
         <section className="rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="leave-h">

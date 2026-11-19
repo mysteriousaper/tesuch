@@ -2,7 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
 import { CompanyList } from "@/components/dashboard/company-list";
 import { AddCompanyForm, LoadDemoButton } from "@/components/dashboard/dashboard-forms";
-import { currentOrg, firmOverview } from "@/components/dashboard/queries";
+import { OrgSwitcher } from "@/components/dashboard/org-switcher";
+import { currentOrg, firmOverview, userOrgs } from "@/components/dashboard/queries";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
 import { createOrg } from "./actions";
@@ -32,14 +33,15 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
   }
 
   const t = await getTranslations("dashboard");
-  const { rows, firm } = await firmOverview(supabase, org.id);
+  const [{ rows, firm }, orgs] = await Promise.all([firmOverview(supabase, org.id), userOrgs(supabase, user.id)]);
   const canEdit = org.role !== "viewer";
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-theme-lg border border-line bg-surface p-4">
-          <div>
+          <div className="flex flex-col gap-2">
+            <OrgSwitcher locale={locale} orgs={orgs} current={org.id} />
             <h1 className="text-2xl font-bold">{org.name}</h1>
             <p className="text-sm text-muted">{t("employeesCount", { count: rows.reduce((s, r) => s + r.staff, 0) })} · {t("openFindings", { count: rows.reduce((s, r) => s + r.open, 0) })}</p>
           </div>

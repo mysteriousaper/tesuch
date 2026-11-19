@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RenameOrgForm } from "@/components/dashboard/dashboard-forms";
-import { currentOrg, type Role } from "@/components/dashboard/queries";
+import { OrgSwitcher } from "@/components/dashboard/org-switcher";
+import { currentOrg, userOrgs, type Role } from "@/components/dashboard/queries";
+import { createOrg } from "../actions";
 import { redirect } from "@/i18n/navigation";
 import type { Locale } from "@/lib/notify/i18n";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
@@ -16,7 +18,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
   if (!user) return redirect({ href: "/login", locale });
 
   const t = await getTranslations("dashboard");
-  const org = await currentOrg(supabase, user.id);
+  const [org, orgs] = await Promise.all([currentOrg(supabase, user.id), userOrgs(supabase, user.id)]);
+  const o = await getTranslations("onboarding");
   const { data: link } = await supabase.from("telegram_links").select("chat_id").eq("user_id", user.id).maybeSingle();
 
   // Members are read through RLS (only orgs the user belongs to); emails come from the auth admin API for those ids only.
@@ -40,6 +43,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
       {org && (
         <section className="flex flex-col gap-4 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="org-h">
           <h2 id="org-h" className="text-lg font-semibold">{t("settings.org")}</h2>
+          <OrgSwitcher locale={locale} orgs={orgs} current={org.id} />
           {org.role === "owner" ? (
             <RenameOrgForm locale={locale} orgId={org.id} name={org.name} />
           ) : (
@@ -63,6 +67,17 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
       )}
 
       <NotificationsCard locale={locale as Locale} linked={Boolean(link)} email={user.email ?? null} />
+
+      <details className="rounded-theme-lg border border-line bg-surface">
+        <summary className="cursor-pointer px-4 py-3 font-semibold">{t("org.createAnother")}</summary>
+        <form action={createOrg.bind(null, locale)} className="flex flex-col gap-3 border-t border-line p-4">
+          <label className="flex flex-col gap-1 text-sm font-medium">
+            {o("name")}
+            <input name="name" required maxLength={200} className="rounded-theme border border-line bg-surface px-3 py-2.5 text-base" />
+          </label>
+          <button className="self-start rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{o("create")}</button>
+        </form>
+      </details>
     </div>
   );
 }

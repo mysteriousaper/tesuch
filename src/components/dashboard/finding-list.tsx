@@ -50,6 +50,14 @@ function FindingItem({ f, locale, companyId, today, canEdit }: { f: FindingView;
         <span className="text-xs text-muted">
           <Link href={`/app/companies/${companyId}/employees/${f.employee_id}`} className="underline hover:text-ink">{f.employee_name}</Link>
           {" · "}{c("due", { date: fmtDate(f.due_date) })}
+          {canEdit && f.status === "open" && (
+            <>
+              {" · "}
+              <Link href={`/app/companies/${companyId}/employees/${f.employee_id}#edit`} className="font-medium text-accent underline hover:text-ink">
+                {t("editData")}
+              </Link>
+            </>
+          )}
         </span>
         {canEdit && (
           <div className="flex gap-2">
@@ -81,6 +89,9 @@ export function FindingList({ findings, locale, companyId, today, canEdit }: { f
   const closed = findings.filter((f) => f.status !== "open");
   return (
     <div>
+      {canEdit && open.length > 0 && (
+        <p className="border-b border-line bg-surface-2 px-4 py-2 text-xs text-muted">ⓘ {t("reopenHint")}</p>
+      )}
       {open.length ? (
         <ul className="divide-y divide-line">
           {open.map((f) => <FindingItem key={f.id} f={f} locale={locale} companyId={companyId} today={today} canEdit={canEdit} />)}

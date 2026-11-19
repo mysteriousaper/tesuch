@@ -41,7 +41,8 @@ export function ActionForm({
           {pending ? "…" : submitLabel}
         </button>
         <p role="status" aria-live="polite" className="text-sm">
-          {state?.ok && <span className="text-ok">{success ? success(state.count) : t("saved")}</span>}
+          {state?.ok && state.info && <span className="text-muted">{t(`info.${state.info}`)}</span>}
+          {state?.ok && !state.info && <span className="text-ok">{success ? success(state.count) : t("saved")}</span>}
           {state && !state.ok && <span className="text-danger">{t(`errors.${state.error}`)}</span>}
         </p>
       </div>

@@ -1,22 +1,33 @@
 import "server-only";
 import { format } from "date-fns";
+import { cookies } from "next/headers";
 import { firmScore, inspectionReadyScore } from "@/lib/rules/score";
 import type { EffectiveSeverity } from "@/lib/rules/types";
 import type { supabaseForUser } from "@/lib/supabase/server";
 
-type UserClient = Awaited<ReturnType<typeof supabaseForUser>>;
-export type Role = "owner" | "accountant" | "viewer";
+import { pickOrg, type OrgInfo, type Role } from "./pick-org";
 
-export interface OrgInfo { id: string; name: string; locale: string; role: Role }
+export type { OrgInfo, Role };
+type UserClient = Awaited<ReturnType<typeof supabaseForUser>>;
 
 export const todayIso = () => format(new Date(), "yyyy-MM-dd");
 
-/** The user's first org (by membership age) and their role in it. All reads go through RLS. */
+/** Cookie holding the org the user last picked. Only a hint: it is always checked against memberships. */
+export const ORG_COOKIE = "tesuch_org";
+
+/** Every org the user belongs to, oldest membership first. Read through RLS. */
+export async function userOrgs(supabase: UserClient, userId: string): Promise<OrgInfo[]> {
+  const { data } = await supabase.from("memberships").select("role, created_at, orgs(id, name, locale)").eq("user_id", userId).order("created_at");
+  return (data ?? []).flatMap((m) => {
+    const org = m.orgs as unknown as { id: string; name: string; locale: string } | null;
+    return org ? [{ ...org, role: m.role as Role }] : [];
+  });
+}
+
+/** The org the user is working in (cookie choice, validated against memberships) and their role in it. */
 export async function currentOrg(supabase: UserClient, userId: string): Promise<OrgInfo | null> {
-  const { data } = await supabase
-    .from("memberships").select("role, created_at, orgs(id, name, locale)").eq("user_id", userId).order("created_at").limit(1).maybeSingle();
-  const org = data?.orgs as unknown as { id: string; name: string; locale: string } | null;
-  return data && org ? { ...org, role: data.role as Role } : null;
+  const store = await cookies();
+  return pickOrg(await userOrgs(supabase, userId), store.get(ORG_COOKIE)?.value);
 }
 
 export interface OpenFinding { severity: EffectiveSeverity; due_date: string }

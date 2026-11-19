@@ -74,6 +74,22 @@
     "leaveType": "Type",
     "leaveStart": "Start",
     "leaveDays": "Number of days",
+    "info": { "demoExists": "Demo data is already loaded in this firm." },
+    "org": { "label": "Firm", "switch": "Switch", "createAnother": "Create another firm" },
+    "reopenHint": "If the data still breaks the rule, an issue marked fixed reopens at the next check. Correct the employee or contract data and the issue closes by itself.",
+    "editData": "Fix the data",
+    "editEmployee": "Employee and contract details",
+    "noContract": "No contract.",
+    "termination": "Termination",
+    "fields2": {
+      "terminatedOn": "Termination date",
+      "terminationGround": "Termination ground",
+      "terminationInitiator": "Initiated by",
+      "noticeGivenOn": "Notice date",
+      "workforceReduction": "Workforce reduction",
+      "none": "—",
+      "initiators": { "employer": "Employer", "employee": "Employee", "mutual": "Mutual agreement" }
+    },
     "settings": {
       "title": "Settings",
       "org": "Firm",
