@@ -169,7 +169,7 @@ function Result({
         </details>
       )}
 
-      <LeadForm score={score} answers={answers} />
+      <LeadForm answers={answers} />
 
       <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-xl">ⓘ {t("result.disclaimer")}</p>
@@ -181,7 +181,7 @@ function Result({
   );
 }
 
-function LeadForm({ score, answers }: { score: number; answers: Record<string, Answer> }) {
+function LeadForm({ answers }: { answers: Record<string, Answer> }) {
   const t = useTranslations("check.lead");
   const locale = useLocale() as "hy" | "ru" | "en";
   const [result, setResult] = useState<LeadResult | null>(null);
@@ -208,7 +208,6 @@ function LeadForm({ score, answers }: { score: number; answers: Record<string, A
               await submitLead({
                 email: String(f.get("email") ?? ""),
                 locale,
-                score,
                 answers,
                 companySize: (f.get("size") as never) || null,
                 role: (f.get("role") as never) || null,
