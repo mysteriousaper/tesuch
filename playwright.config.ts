@@ -36,7 +36,8 @@ export default defineConfig({
         command: `pnpm build && pnpm start -p ${PORT}`,
         url: `${BASE_URL}/hy`,
         timeout: 300_000,
-        reuseExistingServer: !process.env.CI,
+        // Never attach to a stale server from another worktree; pick a unique E2E_PORT per worktree.
+        reuseExistingServer: false,
         // Node's fetch ignores HTTPS_PROXY unless asked; harmless where there is no proxy.
         env: { NODE_USE_ENV_PROXY: "1" },
       },
