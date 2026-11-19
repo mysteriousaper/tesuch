@@ -3,6 +3,8 @@ import { loadEnv } from "./tests/e2e/helpers/env";
 
 loadEnv();
 
+// One id per run, inherited by workers: test users are namespaced so concurrent runs never clash.
+process.env.E2E_RUN_ID ??= Date.now().toString(36);
 const PORT = Number(process.env.E2E_PORT ?? 3105);
 const BASE_URL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
 // In sandboxes with an HTTPS egress proxy, route the browser through it so Supabase is reachable.

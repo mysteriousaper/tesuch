@@ -13,8 +13,13 @@ export function anon(): SupabaseClient {
   return createClient(requireEnv("NEXT_PUBLIC_SUPABASE_URL"), requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"), opts);
 }
 
-/** All throwaway test users share this prefix so teardown can find leftovers from crashed runs. */
+/** All throwaway test users share this prefix so leftovers from crashed runs can be found. */
 export const TEST_EMAIL_PREFIX = "qa-e-";
+/**
+ * Per-run id (set once in playwright.config.ts and inherited by workers), so parallel runs from
+ * different worktrees never delete each other's users.
+ */
+export const RUN_PREFIX = `${TEST_EMAIL_PREFIX}${process.env.E2E_RUN_ID ?? "local"}-`;
 
 export interface TestUser {
   id: string;
@@ -22,7 +27,7 @@ export interface TestUser {
 }
 
 export async function createTestUser(label = "u"): Promise<TestUser> {
-  const email = `${TEST_EMAIL_PREFIX}${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
+  const email = `${RUN_PREFIX}${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
   const { data, error } = await admin().auth.admin.createUser({ email, email_confirm: true });
   if (error || !data.user) throw new Error(`createUser failed: ${error?.message}`);
   return { id: data.user.id, email };
@@ -58,14 +63,23 @@ export async function deleteTestUsers(ids: string[]): Promise<void> {
   for (const id of ids) await db.auth.admin.deleteUser(id);
 }
 
-/** Removes every user with the test prefix, including leftovers from interrupted runs. */
-export async function deleteAllTestUsers(): Promise<number> {
+/**
+ * Removes this run's users, plus leftovers from crashed runs older than `staleMinutes`.
+ * Never touches another run's recent users, so concurrent suites are safe.
+ */
+export async function deleteAllTestUsers(staleMinutes = 120): Promise<number> {
+  const cutoff = Date.now() - staleMinutes * 60_000;
   const db = admin();
   const ids: string[] = [];
   for (let page = 1; page < 50; page++) {
     const { data, error } = await db.auth.admin.listUsers({ page, perPage: 200 });
     if (error) throw new Error(error.message);
-    for (const u of data.users) if (u.email?.startsWith(TEST_EMAIL_PREFIX)) ids.push(u.id);
+    for (const u of data.users) {
+      const email = u.email ?? "";
+      const mine = email.startsWith(RUN_PREFIX);
+      const stale = email.startsWith(TEST_EMAIL_PREFIX) && new Date(u.created_at).getTime() < cutoff;
+      if (mine || stale) ids.push(u.id);
+    }
     if (data.users.length < 200) break;
   }
   await deleteTestUsers(ids);
