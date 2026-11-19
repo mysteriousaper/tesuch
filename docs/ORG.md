@@ -24,3 +24,13 @@ Rules for every department:
 | Localization | `messages/*/{common,home,themes,auth,onboarding,notifications,app,landing,check,quiz}.json`, `docs/guide/**` | none | 3203 |
 | Messaging | `src/lib/notify/telegram-bot.ts`, `src/lib/notify/commands*.ts`, `src/app/api/telegram/**`, `tests/e2e/telegram.spec.ts` | none | 3204 |
 | Platform | `src/app/[locale]/{error,not-found,loading}.tsx`, `src/app/global-error.tsx`, `src/app/api/health/**`, `messages/*/errors.json`, `.github/workflows/**`, `README.md`, `docs/RUNBOOK.md` | none | 3205 |
+
+## Model policy (cost)
+| Role | Model |
+|---|---|
+| CEO, judge, security reviews, Engineering and Legal managers | top model (Opus) |
+| Messaging, Platform, Localization managers (future dispatches) | Sonnet |
+| Workers: implementation and tests of a specified piece; Armenian/Russian language review | Sonnet |
+| Workers: mechanical work (docs formatting, i18n copying, screenshot checks, renames) | Haiku |
+
+Rule of thumb: no worker for anything under ~5 edits; managers do small pieces themselves.
