@@ -1,109 +1,130 @@
 @import "tailwindcss";
 
-/* Base tokens = theme 1 (official, light). Three themes, each light + dark.
-   Mirrors design/tokens.json. Severity colours are semantic and never the only signal (always paired with a label). */
+/* ===== Theme tokens =====
+   Source of truth: design/tokens.json (3 themes, each light + dark). Keep in sync by hand;
+   src/components/theme/tokens.test.ts fails on any drift.
+   Mode: colours use light-dark(), resolved by the element's color-scheme. By default it follows the
+   OS (prefers-color-scheme); data-mode="light" | "dark" on <html> (or any element) forces one.
+   Severity colours are semantic and never the only signal (always paired with a label). */
+:root {
+  color-scheme: light dark;
+}
+[data-mode="light"] {
+  color-scheme: light;
+}
+[data-mode="dark"] {
+  color-scheme: dark;
+}
+
 :root,
 [data-theme="official"] {
-  --bg: #f6f4ef;
-  --surface: #ffffff;
-  --surface-2: #eeebe3;
-  --ink: #14213d;
-  --muted: #535c6e;
-  --line: #dad5c8;
-  --accent: #1f3a68;
-  --accent-ink: #ffffff;
-  --highlight: #1f3a68;
-  --ok: #276b43;
-  --warn: #8f5d0e;
-  --danger: #b3261e;
-  --advisory: #4b3fb0;
+  --bg: light-dark(#f6f4ef, #0e1626);
+  --surface: light-dark(#ffffff, #152036);
+  --surface-2: light-dark(#eeebe3, #1c2942);
+  --ink: light-dark(#14213d, #e8ecf4);
+  --muted: light-dark(#535c6e, #a3aec2);
+  --line: light-dark(#dad5c8, #2a3854);
+  --accent: light-dark(#1f3a68, #8fb0e8);
+  --accent-ink: light-dark(#ffffff, #0e1626);
+  --highlight: light-dark(#1f3a68, #8fb0e8);
+  --ok: light-dark(#276b43, #5cc08a);
+  --warn: light-dark(#8f5d0e, #e2b04a);
+  --danger: light-dark(#b3261e, #f2766b);
+  --advisory: light-dark(#4b3fb0, #a99cf0);
   --radius: 6px;
   --radius-lg: 10px;
   --heading-tracking: -0.01em;
 }
-[data-theme="official"][data-mode="dark"] {
-  --bg: #0e1626;
-  --surface: #152036;
-  --surface-2: #1c2942;
-  --ink: #e8ecf4;
-  --muted: #a3aec2;
-  --line: #2a3854;
-  --accent: #8fb0e8;
-  --accent-ink: #0e1626;
-  --highlight: #8fb0e8;
-  --ok: #5cc08a;
-  --warn: #e2b04a;
-  --danger: #f2766b;
-  --advisory: #a99cf0;
-}
 
 [data-theme="fintech"] {
-  --bg: #f4f5f7;
-  --surface: #ffffff;
-  --surface-2: #ebedf1;
-  --ink: #0b0d12;
-  --muted: #555c69;
-  --line: #e1e4ea;
-  --accent: #0b0d12;
-  --accent-ink: #ffffff;
-  --highlight: #5a8f00;
-  --ok: #0f7f40;
-  --warn: #9a6a00;
-  --danger: #cf2f35;
-  --advisory: #3451c4;
+  --bg: light-dark(#f4f5f7, #07080b);
+  --surface: light-dark(#ffffff, #111319);
+  --surface-2: light-dark(#ebedf1, #181b23);
+  --ink: light-dark(#0b0d12, #f2f4f8);
+  --muted: light-dark(#555c69, #959cab);
+  --line: light-dark(#e1e4ea, #262a36);
+  --accent: light-dark(#0b0d12, #c6f432);
+  --accent-ink: light-dark(#ffffff, #07080b);
+  --highlight: light-dark(#5a8f00, #c6f432);
+  --ok: light-dark(#0f7f40, #3dd68c);
+  --warn: light-dark(#9a6a00, #ffc53d);
+  --danger: light-dark(#cf2f35, #ff6369);
+  --advisory: light-dark(#3451c4, #8da4ef);
   --radius: 12px;
   --radius-lg: 20px;
   --heading-tracking: -0.03em;
 }
-[data-theme="fintech"][data-mode="dark"] {
-  --bg: #07080b;
-  --surface: #111319;
-  --surface-2: #181b23;
-  --ink: #f2f4f8;
-  --muted: #959cab;
-  --line: #262a36;
-  --accent: #c6f432;
-  --accent-ink: #07080b;
-  --highlight: #c6f432;
-  --ok: #3dd68c;
-  --warn: #ffc53d;
-  --danger: #ff6369;
-  --advisory: #8da4ef;
-}
 
 [data-theme="warm"] {
-  --bg: #fbf3ea;
-  --surface: #fffdf9;
-  --surface-2: #f5e6d6;
-  --ink: #3b1f17;
-  --muted: #74564b;
-  --line: #ebd6c3;
-  --accent: #b44f18;
-  --accent-ink: #ffffff;
-  --highlight: #b44f18;
-  --ok: #3f6d2e;
-  --warn: #8a5d00;
-  --danger: #a81f37;
-  --advisory: #6a4d9a;
+  --bg: light-dark(#fbf3ea, #1e1411);
+  --surface: light-dark(#fffdf9, #2a1c17);
+  --surface-2: light-dark(#f5e6d6, #35241e);
+  --ink: light-dark(#3b1f17, #f7e9dd);
+  --muted: light-dark(#74564b, #c9ad9d);
+  --line: light-dark(#ebd6c3, #4a332a);
+  --accent: light-dark(#b44f18, #f29a5b);
+  --accent-ink: light-dark(#ffffff, #1e1411);
+  --highlight: light-dark(#b44f18, #f29a5b);
+  --ok: light-dark(#3f6d2e, #8fc27a);
+  --warn: light-dark(#8a5d00, #f0b847);
+  --danger: light-dark(#a81f37, #f06a7e);
+  --advisory: light-dark(#6a4d9a, #b79be0);
   --radius: 16px;
   --radius-lg: 24px;
   --heading-tracking: -0.015em;
 }
-[data-theme="warm"][data-mode="dark"] {
-  --bg: #1e1411;
-  --surface: #2a1c17;
-  --surface-2: #35241e;
-  --ink: #f7e9dd;
-  --muted: #c9ad9d;
-  --line: #4a332a;
-  --accent: #f29a5b;
-  --accent-ink: #1e1411;
-  --highlight: #f29a5b;
-  --ok: #8fc27a;
-  --warn: #f0b847;
-  --danger: #f06a7e;
-  --advisory: #b79be0;
+
+/* Browsers without light-dark() (e.g. Safari < 17.5) get the light palette. */
+@supports not (color: light-dark(white, black)) {
+  :root,
+  [data-theme="official"] {
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --surface-2: #eeebe3;
+    --ink: #14213d;
+    --muted: #535c6e;
+    --line: #dad5c8;
+    --accent: #1f3a68;
+    --accent-ink: #ffffff;
+    --highlight: #1f3a68;
+    --ok: #276b43;
+    --warn: #8f5d0e;
+    --danger: #b3261e;
+    --advisory: #4b3fb0;
+  }
+  [data-theme="fintech"] {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface-2: #ebedf1;
+    --ink: #0b0d12;
+    --muted: #555c69;
+    --line: #e1e4ea;
+    --accent: #0b0d12;
+    --accent-ink: #ffffff;
+    --highlight: #5a8f00;
+    --ok: #0f7f40;
+    --warn: #9a6a00;
+    --danger: #cf2f35;
+    --advisory: #3451c4;
+  }
+  [data-theme="warm"] {
+    --bg: #fbf3ea;
+    --surface: #fffdf9;
+    --surface-2: #f5e6d6;
+    --ink: #3b1f17;
+    --muted: #74564b;
+    --line: #ebd6c3;
+    --accent: #b44f18;
+    --accent-ink: #ffffff;
+    --highlight: #b44f18;
+    --ok: #3f6d2e;
+    --warn: #8a5d00;
+    --danger: #a81f37;
+    --advisory: #6a4d9a;
+  }
 }
+
+/* ===== End theme tokens ===== */
 
 @theme inline {
   --color-bg: var(--bg);

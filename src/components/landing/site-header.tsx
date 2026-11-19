@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Link } from "@/i18n/navigation";
 import { LogoMark } from "./icons";
 
@@ -26,6 +27,10 @@ export async function SiteHeader({ sections = false }: { sections?: boolean }) {
           </nav>
         )}
         <div className="flex items-center gap-2">
+          {/* On small phones the mode + language switches live in the footer, so the CTA always fits. */}
+          <div className="hidden sm:block">
+            <ModeToggle />
+          </div>
           <div className="hidden sm:block">
             <LocaleSwitcher />
           </div>

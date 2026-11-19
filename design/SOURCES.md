@@ -16,3 +16,12 @@ Every third-party dependency, font, icon or asset is listed here. No paid servic
 | read-excel-file | Excel import | MIT |
 | tailwindcss | Styling | MIT |
 | vitest, tsx, eslint, typescript | Dev tooling | MIT / Apache-2.0 |
+
+## Design tokens and assets
+
+| Item | Source | Licence / notes |
+|---|---|---|
+| Theme tokens (3 themes × light/dark) | `design/tokens.json`, mirrored in `src/app/globals.css` | Own work. Drift is caught by `src/components/theme/tokens.test.ts`. |
+| Logo mark, UI icons, mode-toggle icons | Hand-drawn inline SVG (`src/components/landing/icons.tsx`, `src/components/theme/mode-toggle.tsx`) | Own work |
+| Open Graph image (`/[locale]/opengraph-image`) | Generated at request time with `next/og` from text + an SVG gauge | Own work; fonts below. No people, no photos. |
+| Noto Sans / Noto Sans Armenian `.woff` in `public/fonts/` | @fontsource packages (Google Noto) | OFL-1.1, licence files alongside |

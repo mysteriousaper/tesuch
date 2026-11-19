@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ModeToggle } from "@/components/theme/mode-toggle";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
 import { signOut } from "./actions";
@@ -23,6 +24,7 @@ export default async function AppLayout({ children, params }: { children: React.
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <span className="text-lg font-bold">{c("appName")}</span>
         <div className="flex items-center gap-3">
+          <ModeToggle />
           <LocaleSwitcher />
           <form action={async () => { "use server"; await signOut(); redirect({ href: "/login", locale }); }}>
             <button className="text-sm text-muted hover:text-ink">{a("signOut")}</button>

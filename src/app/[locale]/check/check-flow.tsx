@@ -21,8 +21,13 @@ export function CheckFlow({ questions }: { questions: FlowQuestion[] }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const done = step >= questions.length;
 
-  // Move focus to the new question / result heading so screen readers announce it.
+  // Move focus to the new question / result heading so screen readers announce it — but not on first load.
+  const moved = useRef(false);
   useEffect(() => {
+    if (!moved.current) {
+      moved.current = true;
+      return;
+    }
     headingRef.current?.focus({ preventScroll: true });
   }, [step]);
 

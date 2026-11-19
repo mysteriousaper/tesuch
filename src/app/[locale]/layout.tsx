@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { DEFAULT_THEME, MODE_SCRIPT } from "@/components/theme/config";
 import { routing } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -31,7 +32,13 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   return (
-    <html lang={locale}>
+    // data-mode is set before paint by MODE_SCRIPT from the user's cookie (absent = follow the OS), so the
+    // attribute can differ from the server HTML; that is expected, hence suppressHydrationWarning.
+    // Not read via cookies() here on purpose: that would make every page dynamic and lose static rendering.
+    <html lang={locale} data-theme={DEFAULT_THEME} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: MODE_SCRIPT }} />
+      </head>
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>

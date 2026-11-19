@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Link } from "@/i18n/navigation";
 import { LogoMark } from "./icons";
 
@@ -18,7 +19,10 @@ export async function SiteFooter() {
           <p className="text-xs text-muted">© {new Date().getFullYear()} Tesuch · {t("footer.made")}</p>
         </div>
         <div className="flex flex-col items-start gap-3 text-sm md:items-end">
-          <LocaleSwitcher />
+          <div className="flex flex-wrap items-center gap-2">
+            <ModeToggle />
+            <LocaleSwitcher />
+          </div>
           <Link href="/check" className="text-muted hover:text-ink">{t("nav.check")}</Link>
           <Link href="/login" className="text-muted hover:text-ink">{t("nav.login")}</Link>
           <a href="https://www.arlis.am/" rel="noopener noreferrer" target="_blank" className="text-muted hover:text-ink">arlis.am ↗</a>
