@@ -1,0 +1,43 @@
+HELD   B reads orgs of A  :: 1 rows visible, 0 from A
+HELD   B reads companies of A  :: 1 rows visible, 0 from A
+HELD   B reads employees of A  :: 0 rows visible, 0 from A
+HELD   B reads memberships of A  :: 1 rows visible, 0 from A
+HELD   B reads invitations of A  :: 0 rows visible, 0 from A
+HELD   B reads audit_log of A  :: 2 rows visible, 0 from A
+HELD   B reads findings of A  :: 0 rows visible, 0 from A
+HELD   B reads contracts of A  :: 0 rows visible, 0 from A
+HELD   B reads consent_records of A  :: 2 rows visible, 0 from A
+HELD   B reads telegram_links of A  :: 0 rows visible, 0 from A
+HELD   B reads telegram_link_tokens of A  :: 0 rows visible, 0 from A
+HELD   B reads leads of A  :: permission denied for table leads
+HELD   B reads quiz_attempts of A  :: 0 rows visible, 0 from A
+HELD   B reads alerts_log of A  :: 0 rows visible, 0 from A
+HELD   B inserts employee into A's company (forged company_id)  :: insert or update on table "employees" violates foreign key constraint "employees_company_id_org_id_fkey"
+HELD   B updates A's employee  :: 0 rows
+HELD   B inserts itself as owner of A  :: new row violates row-level security policy for table "memberships"
+HELD   B invites itself into A  :: new row violates row-level security policy for table "invitations"
+HELD   B renames A  :: 0 rows
+HELD   B moves A's company  :: 0 rows
+HELD   viewer inserts company  :: new row violates row-level security policy for table "companies"
+HELD   viewer self-promotes to owner  :: 0 rows 
+HELD   accountant self-promotes to owner  :: 0 rows 
+HELD   accountant invites an owner  :: new row violates row-level security policy for table "invitations"
+HELD   accountant reads invitation tokens  :: 0 rows
+HELD   accountant reads audit log  :: 0 rows
+HELD   viewer deletes employee  :: 0 rows
+HELD   sole owner demotes self  :: an org must keep at least one owner
+HELD   sole owner removes self  :: an org must keep at least one owner
+HELD   sole owner moves own membership row to another org  :: an org must keep at least one owner
+BROKE  owner force-adds a user who never accepted an invitation  :: 1 rows inserted
+   outsider now sees orgs: [{"id":"9075f87f-11aa-4357-b6de-e822c3fbd016","name":"Breaker A"}]
+HELD   invitation_preview with a guessed token  :: []
+HELD   accept_invitation SQLi-style token  :: invitation not found
+HELD   anon create_org  :: HTTP 401
+HELD   anon create_telegram_link_token  :: HTTP 401
+HELD   anon submit_lead (S-1 fix)  :: HTTP 401
+HELD   authenticated submit_lead  :: permission denied for function submit_lead
+HELD   insert consent for another user  :: new row violates row-level security policy for table "consent_records"
+HELD   rewrite own consent record  :: 0 rows
+HELD   user links an arbitrary telegram chat directly  :: new row violates row-level security policy for table "telegram_links"
+HELD   user lists link tokens  :: 0 rows
+cleanup: 3 orgs, 5 users deleted

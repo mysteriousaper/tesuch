@@ -1,0 +1,27 @@
+HELD   PDF /api/pdf/probation: other tenant  :: owner 200 application/pdf, B 404, anon 401
+HELD   PDF /api/pdf/fixed-term-end: other tenant  :: owner 200 application/pdf, B 404, anon 401
+HELD   PDF /api/pdf/dismissal: other tenant  :: owner 200 application/pdf, B 404, anon 401
+HELD   PDF /api/pdf/checklist: other tenant  :: owner 200 application/pdf, B 404, anon 401
+HELD   employee export by other tenant  :: HTTP 404
+HELD   org export by viewer  :: HTTP 403
+HELD   org export by B with org cookie forged to A  :: HTTP 200, contains A data: false
+HELD   dashboard with org cookie forged to A  :: HTTP 200, shows "Breaker A": false
+HELD   nightly without secret  :: HTTP 401
+HELD   nightly wrong secret  :: HTTP 401
+HELD   telegram webhook without secret  :: HTTP 401
+HELD   health leaks nothing sensitive  :: HTTP 200
+HELD   callback next="//evil.com"  :: http://localhost:3303/hy/login?error=1
+HELD   callback next="/hy//evil.com"  :: http://localhost:3303/hy/login?error=1
+HELD   callback next="https://evil.com"  :: http://localhost:3303/hy/login?error=1
+HELD   callback next="/\\evil.com"  :: http://localhost:3303/hy/login?error=1
+HELD   callback next="/hy/app%2F..%2F..%2F%2Fevil.com"  :: http://localhost:3303/hy/login?error=1
+HELD   callback next="/en/app\n/x"  :: http://localhost:3303/hy/login?error=1
+HELD   callback next="/hy/../../evil"  :: http://localhost:3303/hy/login?error=1
+BROKE  Content-Security-Policy header on HTML  :: missing
+BROKE  Strict-Transport-Security header  :: missing (Vercel adds it on *.vercel.app; custom domains too)
+BROKE  owner A force-adds victim as owner, backdated  :: inserted
+BROKE  victim's default org after forced add  :: victim dashboard lists attacker company Co A: true
+   victim insert into default org: ok | attacker reads it: [{"name":"Victim client Ltd"}]
+BROKE  erased employee's name/birth date gone from audit_log  :: deleted 1 employee; audit old_row still has full_name+birth_date: true
+   audit rows still containing the name: 2 employees
+cleanup: 3 orgs, 4 users deleted
