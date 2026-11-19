@@ -6,6 +6,7 @@ import { FindingList, fmtDate, type FindingView } from "@/components/dashboard/f
 import { scoreOf, todayIso, type OpenFinding } from "@/components/dashboard/queries";
 import { Link, redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
+import { latestContract } from "../../dashboard-logic";
 
 export const dynamic = "force-dynamic";
 
@@ -66,7 +67,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
             {employees.length ? (
               <ul className="divide-y divide-line">
                 {employees.map((e) => {
-                  const k = (e.contracts as unknown as { type: string; start_date: string; end_date: string | null; terminated_on: string | null }[])[0];
+                  const k = latestContract(e.contracts as unknown as { type: string; start_date: string; end_date: string | null; terminated_on: string | null }[]);
                   const n = open.filter((f) => f.employee_id === e.id).length;
                   return (
                     <li key={e.id}>

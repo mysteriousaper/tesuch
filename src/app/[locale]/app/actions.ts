@@ -4,23 +4,20 @@ import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { currentOrg, ORG_COOKIE, userOrgs } from "@/components/dashboard/queries";
 import { ensureRules, runRulesForCompany } from "@/lib/jobs/run";
 import type { Locale } from "@/lib/notify/i18n";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
-import { currentOrg, ORG_COOKIE, userOrgs } from "@/components/dashboard/queries";
+import {
+  canEditRole, companySchema, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  leaveSchema, splitEmployee, uuid, type ActionState,
+} from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
 
-/** Result shape for forms using useActionState. `error` is a key in dashboard.errors. */
-export type ActionState = { ok: true; count?: number; info?: "demoExists" } | { ok: false; error: "generic" | "invalid" | "forbidden" } | null;
+// Thin server actions: validation, rollback and permission rules live in ./dashboard-logic (unit-tested).
+export type { ActionState };
 
-const FAIL = (error: "generic" | "invalid" | "forbidden"): ActionState => ({ ok: false, error });
 const today = () => format(new Date(), "yyyy-MM-dd");
-const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-const optDate = z.preprocess((v) => (v === "" || v == null ? null : v), isoDate.nullable());
-// Missing (field not rendered) and blank both mean "no value".
-const optText = z.preprocess((v) => (v == null || (typeof v === "string" && v.trim() === "") ? null : v), z.string().trim().max(300).nullable());
-const checkbox = z.preprocess((v) => v === "on" || v === "true", z.boolean());
-const uuid = z.string().uuid();
 
 async function session() {
   const supabase = await supabaseForUser();
@@ -32,7 +29,7 @@ type UserClient = Awaited<ReturnType<typeof supabaseForUser>>;
 
 async function canEdit(supabase: UserClient, userId: string, orgId: string): Promise<boolean> {
   const { data } = await supabase.from("memberships").select("role").eq("user_id", userId).eq("org_id", orgId).maybeSingle();
-  return data?.role === "owner" || data?.role === "accountant";
+  return canEditRole(data?.role);
 }
 
 /** The company as the user sees it (RLS), plus whether they may edit it. org_id always comes from here, never from the client. */
@@ -46,7 +43,7 @@ async function editableCompany(supabase: UserClient, userId: string, companyId: 
 /** The org the user is working in, if they may edit it. Never falls back to another org silently. */
 async function editableOrg(supabase: UserClient, userId: string) {
   const org = await currentOrg(supabase, userId);
-  return org && org.role !== "viewer" ? org.id : undefined;
+  return org && canEditRole(org.role) ? { id: org.id, locale: org.locale as Locale } : undefined;
 }
 
 async function rememberOrg(orgId: string) {
@@ -60,6 +57,21 @@ async function recheck(co: { id: string; org_id: string; name: string; locale: L
   const db = supabaseService();
   await ensureRules(db);
   return runRulesForCompany(db, co, today(), { sendAlerts: false });
+}
+
+/** Re-run rules after a data change. The change is already saved; if this fails the nightly run catches up. */
+async function recheckQuietly(co: Parameters<typeof recheck>[0]) {
+  try {
+    await recheck(co);
+  } catch {
+    // Saved; findings will be refreshed tonight.
+  }
+}
+
+/** Throws the Supabase error so multi-step writers can roll back. */
+function must(r: { data: unknown; error: unknown }): { id: string } {
+  if (r.error || r.data == null) throw r.error ?? new Error("no data");
+  return r.data as { id: string };
 }
 
 export async function createOrg(locale: string, form: FormData) {
@@ -88,16 +100,13 @@ export async function signOut() {
 }
 
 export async function addCompany(locale: string, _prev: ActionState, form: FormData): Promise<ActionState> {
-  const parsed = z.object({
-    name: z.string().trim().min(1).max(200),
-    tax_id: z.preprocess((v) => (v === "" ? null : v), z.string().regex(/^\d{8}$/).nullable()),
-  }).safeParse({ name: form.get("name"), tax_id: form.get("tax_id") ?? "" });
+  const parsed = companySchema.safeParse({ name: form.get("name"), tax_id: form.get("tax_id") });
   if (!parsed.success) return FAIL("invalid");
   const { supabase, user } = await session();
   if (!user) return FAIL("forbidden");
-  const orgId = await editableOrg(supabase, user.id);
-  if (!orgId) return FAIL("forbidden");
-  const { error } = await supabase.from("companies").insert({ org_id: orgId, ...parsed.data });
+  const org = await editableOrg(supabase, user.id);
+  if (!org) return FAIL("forbidden");
+  const { error } = await supabase.from("companies").insert({ org_id: org.id, ...parsed.data });
   if (error) return FAIL("generic");
   revalidatePath(`/${locale}/app`);
   return { ok: true };
@@ -106,35 +115,35 @@ export async function addCompany(locale: string, _prev: ActionState, form: FormD
 export async function loadDemoData(locale: string): Promise<ActionState> {
   const { supabase, user } = await session();
   if (!user) return FAIL("forbidden");
-  const orgId = await editableOrg(supabase, user.id);
-  if (!orgId) return FAIL("forbidden");
-  // Idempotent: one set of demo companies per firm.
-  const { count } = await supabase.from("companies").select("id", { count: "exact", head: true }).eq("org_id", orgId).like("name", "Դեմո % ՍՊԸ");
+  const org = await editableOrg(supabase, user.id);
+  if (!org) return FAIL("forbidden");
+  // One set of demo companies per firm. insertDemo is all-or-nothing, so presence means a complete set.
+  const { count } = await supabase.from("companies").select("id", { count: "exact", head: true }).eq("org_id", org.id).like("name", "Դեմո % ՍՊԸ");
   if (count) return { ok: true, info: "demoExists" };
-  const { data: org } = await supabase.from("orgs").select("locale").eq("id", orgId).single();
-  const demo = generateDemoCompanies(today(), Date.now());
 
-  try {
-    for (const c of demo) {
-      // Inserts go through the user's client, so RLS decides what is allowed.
-      const { data: co, error } = await supabase.from("companies").insert({ org_id: orgId, name: c.name }).select("id").single();
+  const demo = generateDemoCompanies(today(), Date.now());
+  // Writes go through the user's client, so RLS decides what is allowed.
+  const result = await insertDemo({
+    insertCompany: async (name) => must(await supabase.from("companies").insert({ org_id: org.id, name }).select("id").single()).id,
+    insertEmployee: async (companyId, e) => must(await supabase.from("employees")
+      .insert({ org_id: org.id, company_id: companyId, full_name: e.fullName, birth_date: e.birthDate, six_day_week: e.sixDayWeek })
+      .select("id").single()).id,
+    insertContract: async (employeeId, c) => {
+      const { error } = await supabase.from("contracts").insert({ org_id: org.id, employee_id: employeeId, ...c });
       if (error) throw error;
-      for (const e of c.employees) {
-        const { data: emp, error: ee } = await supabase.from("employees")
-          .insert({ org_id: orgId, company_id: co.id, full_name: e.fullName, birth_date: e.birthDate, six_day_week: e.sixDayWeek })
-          .select("id").single();
-        if (ee) throw ee;
-        const { error: ce } = await supabase.from("contracts").insert({ org_id: orgId, employee_id: emp.id, ...e.contract });
-        if (ce) throw ce;
-        if (e.leave.length) {
-          const { error: le } = await supabase.from("leave_records").insert(e.leave.map((l) => ({ org_id: orgId, employee_id: emp.id, ...l })));
-          if (le) throw le;
-        }
-      }
-      await recheck({ id: co.id, org_id: orgId, name: c.name, locale: (org?.locale ?? "hy") as Locale });
-    }
-  } catch {
-    return FAIL("generic");
+    },
+    insertLeave: async (employeeId, leave) => {
+      const { error } = await supabase.from("leave_records").insert(leave.map((l) => ({ org_id: org.id, employee_id: employeeId, ...l })));
+      if (error) throw error;
+    },
+    deleteCompanies: async (ids) => {
+      await supabase.from("companies").delete().in("id", ids);
+    },
+  }, demo);
+  if (!result.ok) return FAIL("generic");
+
+  for (const [i, id] of result.companyIds.entries()) {
+    await recheckQuietly({ id, org_id: org.id, name: demo[i].name, locale: org.locale });
   }
   revalidatePath(`/${locale}/app`);
   return { ok: true };
@@ -156,48 +165,22 @@ export async function recheckCompany(locale: string, companyId: string): Promise
   }
 }
 
-export async function setFindingStatus(locale: string, companyId: string, findingId: string, status: "open" | "fixed" | "dismissed") {
-  if (!uuid.safeParse(findingId).success || !["open", "fixed", "dismissed"].includes(status)) return;
+/** Fix / dismiss / reopen. RLS (can_edit) and the findings trigger (status-only) enforce the rest; 0 rows = refused. */
+export async function setFindingStatus(
+  locale: string, companyId: string, findingId: string, status: "open" | "fixed" | "dismissed",
+): Promise<ActionState> {
+  const parsed = findingStatusSchema.safeParse({ companyId, findingId, status });
+  if (!parsed.success) return FAIL("invalid");
   const { supabase, user } = await session();
-  if (!user) return;
-  // RLS (can_edit) and the findings trigger (status-only) enforce the rest.
-  await supabase.from("findings").update({ status }).eq("id", findingId).eq("company_id", companyId);
+  if (!user) return FAIL("forbidden");
+  const { data, error } = await supabase.from("findings").update({ status: parsed.data.status })
+    .eq("id", parsed.data.findingId).eq("company_id", parsed.data.companyId).select("id");
+  if (error) return FAIL("generic");
+  if (!data?.length) return FAIL("forbidden");
   revalidatePath(`/${locale}/app/companies/${companyId}`);
   revalidatePath(`/${locale}/app`);
+  return { ok: true };
 }
-
-const employeeFields = z.object({
-  full_name: z.string().trim().min(1).max(200),
-  birth_date: optDate,
-  six_day_week: checkbox,
-  type: z.enum(["indefinite", "fixed_term"]),
-  start_date: isoDate,
-  end_date: optDate,
-  probation_end: optDate,
-  probation_special_case: checkbox,
-  hired_by_transfer: checkbox,
-  fixed_term_ground: optText,
-  src_registered: checkbox,
-});
-
-/** Mirrors the contracts table checks so users get a validation message instead of a database error. */
-function contractRules<T extends z.ZodType<{ type: string; start_date: string; end_date: string | null; probation_end: string | null }>>(schema: T) {
-  return schema
-    .refine((v) => v.type === "fixed_term" || v.end_date === null, { path: ["end_date"] })
-    .refine((v) => !v.end_date || v.end_date >= v.start_date, { path: ["end_date"] })
-    .refine((v) => !v.probation_end || v.probation_end >= v.start_date, { path: ["probation_end"] });
-}
-
-const employeeSchema = contractRules(employeeFields);
-
-const editSchema = contractRules(employeeFields.extend({
-  terminated_on: optDate,
-  termination_ground: optText,
-  termination_initiator: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(["employer", "employee", "mutual"]).nullable()),
-  notice_given_on: optDate,
-  workforce_reduction: checkbox,
-})).refine((v) => !v.terminated_on || v.terminated_on >= v.start_date, { path: ["terminated_on"] })
-  .refine((v) => !v.notice_given_on || !v.terminated_on || v.notice_given_on <= v.terminated_on, { path: ["notice_given_on"] });
 
 export async function addEmployee(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
   const parsed = employeeSchema.safeParse(Object.fromEntries(form));
@@ -206,26 +189,24 @@ export async function addEmployee(locale: string, companyId: string, _prev: Acti
   if (!user) return FAIL("forbidden");
   const co = await editableCompany(supabase, user.id, companyId);
   if (!co) return FAIL("forbidden");
-  const { full_name, birth_date, six_day_week, ...contract } = parsed.data;
-  const { data: emp, error } = await supabase.from("employees")
-    .insert({ org_id: co.org_id, company_id: co.id, full_name, birth_date, six_day_week }).select("id").single();
-  if (error) return FAIL("generic");
-  const { error: ce } = await supabase.from("contracts").insert({ org_id: co.org_id, employee_id: emp.id, ...contract });
-  if (ce) return FAIL("generic");
-  try {
-    await recheck(co);
-  } catch {
-    // Saved; findings will be refreshed tonight.
-  }
+
+  const { employee, contract } = splitEmployee(parsed.data);
+  const result = await insertEmployeeWithContract({
+    insertEmployee: async (row) => must(await supabase.from("employees").insert({ org_id: co.org_id, company_id: co.id, ...row }).select("id").single()).id,
+    insertContract: async (employeeId, row) => {
+      const { error } = await supabase.from("contracts").insert({ org_id: co.org_id, employee_id: employeeId, ...row });
+      if (error) throw error;
+    },
+    deleteEmployee: async (employeeId) => {
+      await supabase.from("employees").delete().eq("id", employeeId).eq("company_id", co.id);
+    },
+  }, employee, contract);
+  if (!result.ok) return FAIL("generic");
+
+  await recheckQuietly(co);
   revalidatePath(`/${locale}/app/companies/${companyId}`);
   return { ok: true };
 }
-
-const leaveSchema = z.object({
-  type: z.enum(["annual", "maternity", "cash_compensation", "other"]),
-  start_date: isoDate,
-  days: z.coerce.number().int().min(1).max(400),
-});
 
 export async function addLeave(locale: string, companyId: string, employeeId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
   const parsed = leaveSchema.safeParse(Object.fromEntries(form));
@@ -238,11 +219,7 @@ export async function addLeave(locale: string, companyId: string, employeeId: st
   if (!emp) return FAIL("forbidden");
   const { error } = await supabase.from("leave_records").insert({ org_id: co.org_id, employee_id: emp.id, ...parsed.data });
   if (error) return FAIL("generic");
-  try {
-    await recheck(co);
-  } catch {
-    // Saved; findings will be refreshed tonight.
-  }
+  await recheckQuietly(co);
   revalidatePath(`/${locale}/app/companies/${companyId}/employees/${employeeId}`);
   return { ok: true };
 }
@@ -272,19 +249,14 @@ export async function updateEmployee(
   if (!co) return FAIL("forbidden");
 
   // Ids are only used as filters: an employee must belong to this company and the contract to this employee.
-  const { full_name, birth_date, six_day_week, ...contract } = parsed.data;
-  const { data: emp, error } = await supabase.from("employees")
-    .update({ full_name, birth_date, six_day_week }).eq("id", employeeId).eq("company_id", co.id).select("id");
+  const { employee, contract } = splitEmployee(parsed.data);
+  const { data: emp, error } = await supabase.from("employees").update(employee).eq("id", employeeId).eq("company_id", co.id).select("id");
   if (error) return FAIL("generic");
   if (!emp?.length) return FAIL("forbidden");
   const { data: con, error: ce } = await supabase.from("contracts").update(contract).eq("id", contractId).eq("employee_id", employeeId).select("id");
   if (ce) return FAIL("generic");
   if (!con?.length) return FAIL("forbidden");
-  try {
-    await recheck(co);
-  } catch {
-    // Saved; findings will be refreshed tonight.
-  }
+  await recheckQuietly(co);
   revalidatePath(`/${locale}/app/companies/${companyId}`, "layout");
   return { ok: true };
 }

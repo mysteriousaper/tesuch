@@ -8,6 +8,7 @@ import { Timeline, type TimelineEvent } from "@/components/dashboard/timeline";
 import { Link, redirect } from "@/i18n/navigation";
 import { RULES } from "@/lib/rules/catalog";
 import { supabaseForUser } from "@/lib/supabase/server";
+import { latestContract } from "../../../../dashboard-logic";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
   const events: TimelineEvent[] = [];
   const contracts = (emp.contracts ?? []) as ContractRow[];
   // The editable contract is the most recent one.
-  const latest = [...contracts].sort((a, b) => b.start_date.localeCompare(a.start_date))[0];
+  const latest = latestContract(contracts);
 
   for (const k of contracts) {
     events.push({ date: k.start_date, label: t("events.contractStart"), tone: "accent", detail: t(k.type === "fixed_term" ? "fields.fixedTerm" : "fields.indefinite") });

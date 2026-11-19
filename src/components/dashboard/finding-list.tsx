@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import { useTranslations } from "next-intl";
-import { setFindingStatus } from "@/app/[locale]/app/actions";
+import { FindingActions } from "./finding-actions";
 import { Link } from "@/i18n/navigation";
 import { RULES } from "@/lib/rules/catalog";
 import type { EffectiveSeverity } from "@/lib/rules/types";
@@ -30,7 +30,6 @@ function FindingItem({ f, locale, companyId, today, canEdit }: { f: FindingView;
   const rule = RULES.find((r) => r.id === f.rule_id);
   const title = rule ? rule.title[locale as "hy" | "ru" | "en"] : f.rule_id;
   const overdue = f.status === "open" && f.due_date < today;
-  const action = (status: FindingView["status"]) => setFindingStatus.bind(null, locale, companyId, f.id, status);
 
   return (
     <li className="flex flex-col gap-2 px-4 py-3">
@@ -59,24 +58,7 @@ function FindingItem({ f, locale, companyId, today, canEdit }: { f: FindingView;
             </>
           )}
         </span>
-        {canEdit && (
-          <div className="flex gap-2">
-            {f.status === "open" ? (
-              <>
-                <form action={action("fixed")}>
-                  <button className="whitespace-nowrap rounded-theme bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink">{t("markFixed")}</button>
-                </form>
-                <form action={action("dismissed")}>
-                  <button className="whitespace-nowrap rounded-theme border border-line px-3 py-1.5 text-xs font-medium hover:bg-surface-2">{t("dismiss")}</button>
-                </form>
-              </>
-            ) : (
-              <form action={action("open")}>
-                <button className="whitespace-nowrap rounded-theme border border-line px-3 py-1.5 text-xs font-medium hover:bg-surface-2">{t("reopen")}</button>
-              </form>
-            )}
-          </div>
-        )}
+        {canEdit && <FindingActions locale={locale} companyId={companyId} findingId={f.id} status={f.status} />}
       </div>
     </li>
   );

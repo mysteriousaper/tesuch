@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef } from "react";
-import type { ActionState } from "@/app/[locale]/app/actions";
+import type { ActionState } from "@/app/[locale]/app/dashboard-logic";
 
 export const inputCls = "w-full rounded-theme border border-line bg-surface px-3 py-2.5 text-base text-ink";
 export const labelCls = "flex flex-col gap-1 text-sm font-medium";
