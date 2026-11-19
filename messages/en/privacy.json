@@ -1,0 +1,133 @@
+{
+  "privacy": {
+    "meta": {
+      "title": "Privacy notice — Tesuch (draft)",
+      "description": "Which personal data Tesuch stores, why, where (EU, Ireland), for how long, which service providers process it, and how to access, correct, export or delete it. Draft under lawyer review."
+    },
+    "title": "Privacy notice",
+    "intro": "Tesuch stores as little personal data as the service needs. This notice explains what we keep, why, where and for how long, and how you can exercise your rights.",
+    "sections": [
+      {
+        "id": "who",
+        "title": "Who we are",
+        "paragraphs": [
+          "Tesuch (Տեսուչ) is operated by [Tesuch legal entity, registration number and address — to be added]. For any question about personal data, write to [contact email — to be added]."
+        ]
+      },
+      {
+        "id": "roles",
+        "title": "Our two roles",
+        "items": [
+          "Data of people who sign in to Tesuch (account data): we decide how it is processed and are responsible for it.",
+          "Employee data that employers and accounting firms upload: the customer decides why it is processed, and Tesuch processes it on the customer’s behalf under a Data Processing Agreement."
+        ],
+        "after": ["How these roles map onto the terms of the Law of the Republic of Armenia on Personal Data Protection is being confirmed by our lawyer."]
+      },
+      {
+        "id": "data",
+        "title": "What data we store",
+        "items": [
+          "Your account: email address, the organisations you belong to and your role in each, your language preference.",
+          "If you connect Telegram: your Telegram chat ID, so we can send you alerts.",
+          "Employee data your organisation imports: first and last name, date of birth (only to identify employees under 18), contract type, start and end dates, probation end, leave dates and length, termination date and ground.",
+          "Company data: company name and, optionally, its tax ID (ՀՎՀՀ).",
+          "Records of activity in the service: an audit log of changes, the results of rule checks and the alerts we have sent.",
+          "Which version of the Terms and of this notice you accepted, and when.",
+          "If you take the free check without an account: the email address you give us, your answers and score, and optionally the company size and your role."
+        ],
+        "after": ["We do not ask for or store salaries, passport or ID document data, home addresses or employees’ phone numbers. Please do not enter such data in free-text fields."]
+      },
+      {
+        "id": "purposes",
+        "title": "Why we use it",
+        "items": [
+          "To provide the service: calculate deadlines, show findings and the readiness score, prepare documents.",
+          "To send alerts and the weekly digest by email and, if you connect it, Telegram.",
+          "To sign you in and keep the service secure (audit log, abuse prevention).",
+          "To reply to free-check requests."
+        ],
+        "after": ["We do not sell data, use it for advertising or use it to train AI models."]
+      },
+      {
+        "id": "basis",
+        "title": "Legal basis",
+        "paragraphs": [
+          "Our lawyer will confirm the legal basis for each kind of data under the Law of the Republic of Armenia on Personal Data Protection. Working assumption: for account data, your consent and our agreement with you; for employee data, the employer’s obligations under the Labour Code, with the employer informing its employees."
+        ]
+      },
+      {
+        "id": "location",
+        "title": "Where data is stored",
+        "paragraphs": [
+          "The database runs in a Supabase data centre in Ireland (European Union). Data is encrypted in transit and at rest. Some of the service providers below may process limited data elsewhere; whether that is a cross-border transfer needing extra steps is a question our lawyer is answering."
+        ]
+      },
+      {
+        "id": "processors",
+        "title": "Service providers",
+        "paragraphs": ["We use these providers to run Tesuch. Each receives only what it needs for its task:"],
+        "items": [
+          "Supabase: database and sign-in (EU, Ireland).",
+          "Vercel: hosting of the web application.",
+          "Resend: sending email (sign-in codes, alerts, digests).",
+          "Telegram: delivering alerts to users who connect it. Messages contain short summaries of findings, not full employee records."
+        ],
+        "after": ["We will inform customers before adding a new provider that processes employee data."]
+      },
+      {
+        "id": "retention",
+        "title": "How long we keep data",
+        "items": [
+          "Account data: while your account is open; deleted within [30] days after it is closed.",
+          "Employee data: until your organisation deletes it, or within [30] days after our agreement ends, unless the law requires us to keep it.",
+          "Audit log and alert history: [N months — to be set].",
+          "Free-check answers: [12 months], or earlier on request.",
+          "Consent records: as long as the account exists.",
+          "Backups: overwritten within [N] days."
+        ],
+        "after": ["Periods in square brackets are placeholders that will be fixed after legal review."]
+      },
+      {
+        "id": "rights",
+        "title": "Your rights",
+        "paragraphs": ["You can ask us at any time to:"],
+        "items": [
+          "Access: get a copy of the data we hold about you.",
+          "Correction: fix data that is wrong or incomplete.",
+          "Deletion: delete your data, unless the law requires us to keep it.",
+          "Export: receive your organisation’s data in a machine-readable format (CSV).",
+          "Withdraw consent: this closes your account."
+        ],
+        "after": [
+          "Write to [contact email — to be added]. We reply within [N] working days. Employees whose data was uploaded by their employer should first contact the employer; we help the employer answer.",
+          "You can also complain to the Personal Data Protection Agency of the Republic of Armenia."
+        ]
+      },
+      {
+        "id": "security",
+        "title": "Security",
+        "items": [
+          "Each customer’s data is isolated in the database, and this isolation is tested automatically.",
+          "Access depends on the role in the organisation; every change is written to an audit log.",
+          "Sign-in uses one-time email codes, so there are no passwords to leak.",
+          "Our staff access data only when needed and are bound by confidentiality."
+        ]
+      },
+      {
+        "id": "cookies",
+        "title": "Cookies",
+        "paragraphs": ["We use only necessary cookies: to keep you signed in, to remember the organisation you are working in, and to remember light or dark mode if you choose one. We use no advertising or analytics cookies."]
+      },
+      {
+        "id": "changes",
+        "title": "Changes to this notice",
+        "paragraphs": ["Each version has a version number and a date. If we change this notice materially, we will ask you to accept the new version the next time you sign in."]
+      },
+      {
+        "id": "contact",
+        "title": "Contact",
+        "paragraphs": ["[Tesuch legal entity], [address], [contact email — to be added before launch]."]
+      }
+    ]
+  }
+}
