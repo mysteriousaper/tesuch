@@ -1,0 +1,150 @@
+{
+  "legal": {
+    "banner": {
+      "title": "Draft — under lawyer review",
+      "body": "This text has not yet been reviewed by a licensed Armenian lawyer. It describes how Tesuch works today, but the wording, the periods in [square brackets] and the legal references may change before launch."
+    },
+    "updated": "Version {version} · last updated {date}",
+    "toc": "Contents",
+    "relatedLabel": "Related documents",
+    "related": {
+      "privacy": "Privacy notice",
+      "terms": "Terms of Service",
+      "dpa": "Data Processing Agreement (template)"
+    },
+    "terms": {
+      "meta": {
+        "title": "Terms of Service — Tesuch (draft)",
+        "description": "The rules for using Tesuch, the labour-inspection readiness service for employers and accounting firms in Armenia. Draft under lawyer review."
+      },
+      "title": "Terms of Service",
+      "intro": "These terms set out how you may use Tesuch and what we and you are each responsible for. Please read them together with the Privacy notice.",
+      "sections": [
+        {
+          "id": "about",
+          "title": "About Tesuch",
+          "paragraphs": [
+            "Tesuch (Տեսուչ) is an online service that helps employers and accounting firms in Armenia keep track of labour-law deadlines: probation periods, fixed-term contracts, notice periods and leave. It calculates deadlines, shows findings and a readiness score, sends alerts and prepares document templates.",
+            "The service is provided by [Tesuch legal entity, registration number and address — to be added]. By creating an account and accepting these terms, you accept them for yourself and for the organisation you represent."
+          ]
+        },
+        {
+          "id": "not-advice",
+          "title": "Not legal advice",
+          "paragraphs": [
+            "Tesuch is an information tool, not legal advice. Rules marked “Advisory” have not yet been verified by a lawyer. Before making a decision, consult a lawyer and check the current text of the law on arlis.am.",
+            "Nightly checks can be delayed or miss a case if the data is incomplete. You remain responsible for decisions about your employees and for meeting legal deadlines."
+          ]
+        },
+        {
+          "id": "accounts",
+          "title": "Accounts and access",
+          "items": [
+            "You sign in with a one-time code sent to your email address. Keep access to that mailbox secure.",
+            "The owner of an organisation decides who may access its data and with which role (owner, accountant or viewer).",
+            "Tell us at once if you think someone has accessed your account without permission."
+          ]
+        },
+        {
+          "id": "customer-duties",
+          "title": "Your responsibilities for employee data",
+          "paragraphs": ["When you upload data about employees, you (the employer or the accounting firm acting for it) decide why that data is processed. You agree to:"],
+          "items": [
+            "have a lawful basis for sharing the data with Tesuch and inform employees about it (we can give you a notice template);",
+            "upload only the data the service needs, and keep it accurate;",
+            "not upload salaries, passport or ID document data, home addresses, phone numbers, health data or other data the service does not ask for."
+          ]
+        },
+        {
+          "id": "personal-data",
+          "title": "Personal data",
+          "paragraphs": [
+            "The Privacy notice explains which data we store, where, for how long and what rights people have. For employee data that customers upload, Tesuch acts on the customer’s behalf under a Data Processing Agreement; firm owners can print the template, fill it in and sign it with us."
+          ]
+        },
+        {
+          "id": "acceptable-use",
+          "title": "Acceptable use",
+          "items": [
+            "Do not use Tesuch for anything unlawful.",
+            "Do not try to access other customers’ data or to get around the service’s security.",
+            "Do not overload the service, scrape it automatically or resell it without our written agreement."
+          ]
+        },
+        {
+          "id": "availability",
+          "title": "Availability and changes to the service",
+          "paragraphs": [
+            "We work to keep Tesuch available at all times but cannot guarantee uninterrupted operation. We may improve, change or remove features; we will tell you in advance about changes that significantly affect you."
+          ]
+        },
+        {
+          "id": "fees",
+          "title": "Fees",
+          "paragraphs": ["Fees, if any, are agreed separately in writing. [Pilot terms — to be added.]"]
+        },
+        {
+          "id": "liability",
+          "title": "Liability",
+          "paragraphs": [
+            "[Limitation of liability — to be drafted by the lawyer.] To the extent permitted by law, Tesuch is not liable for fines or other consequences of decisions made on the basis of advisory findings or of incomplete or inaccurate data."
+          ]
+        },
+        {
+          "id": "ending",
+          "title": "Ending the agreement",
+          "items": [
+            "You can close your account at any time. Export your organisation’s data first if you need it.",
+            "We may suspend an account that seriously breaks these terms, after warning you where possible.",
+            "After an account is closed, data is deleted as described in the Privacy notice."
+          ]
+        },
+        {
+          "id": "changes",
+          "title": "Changes to these terms",
+          "paragraphs": [
+            "Each version of these terms has a version number and a date. If we change them materially, we will ask you to accept the new version the next time you sign in."
+          ]
+        },
+        {
+          "id": "law",
+          "title": "Governing law",
+          "paragraphs": ["These terms are governed by the law of the Republic of Armenia. Disputes are resolved by [competent court — to be confirmed by the lawyer]."]
+        },
+        {
+          "id": "contact",
+          "title": "Contact",
+          "paragraphs": ["[Tesuch legal entity], [address], [contact email — to be added before launch]."]
+        }
+      ]
+    },
+    "dpa": {
+      "meta": {
+        "title": "Data Processing Agreement (template) — Tesuch (draft)",
+        "description": "Bilingual (Armenian and English) template of the agreement on processing employee personal data, for employers and accounting firms using Tesuch. Draft under lawyer review."
+      },
+      "intro": "For customers who upload employee data: employers and accounting firms. The agreement is in Armenian and English, side by side. [Which language prevails in case of a discrepancy — to be confirmed by the lawyer.]",
+      "howTo": "Print it or choose “Save as PDF” in the print dialog, fill in the placeholders in [square brackets] and sign it with Tesuch.",
+      "print": "Print or save as PDF",
+      "clausesLabel": "Clauses of the agreement",
+      "blank": "Blank line to fill in"
+    },
+    "consent": {
+      "title": "Before you continue",
+      "intro": "Please read and accept the Terms of Service and the Privacy notice. Both are drafts and may change after legal review; if they do, we will ask you again.",
+      "points": [
+        "We store only what the service needs: names, dates of birth, contract and leave dates.",
+        "Data is kept in a data centre in Ireland (European Union).",
+        "You can ask at any time to access, correct, export or delete your data."
+      ],
+      "readTerms": "Read the Terms of Service",
+      "readPrivacy": "Read the Privacy notice",
+      "checkbox": "I have read and accept the Terms of Service and the Privacy notice.",
+      "submit": "Accept and continue",
+      "saving": "Saving…",
+      "errorUnchecked": "Tick the box to continue.",
+      "error": "We could not save your answer. Please try again.",
+      "decline": "Not now"
+    }
+  }
+}

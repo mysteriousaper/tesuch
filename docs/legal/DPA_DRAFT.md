@@ -1,5 +1,7 @@
 # Data Processing Agreement (template)
 
+> Published as a print-friendly page at `/[locale]/terms/dpa` from `src/components/legal/dpa-content.ts`: keep both in sync. Open questions: `LAWYER_CHECKLIST.md`.
+
 > ⚠️ **DRAFT — requires lawyer review.** Prepared against the Law of the Republic of Armenia on Personal Data Protection. No article numbers are cited on purpose. The lawyer must align the role names with the law's definitions and confirm whether notification to the Personal Data Protection Agency is required.
 
 **Parties:** **[Customer]** (employer or accounting firm acting for employers), the "Customer", which determines the purposes of processing; and **[Tesuch legal entity]**, "Tesuch", which processes data on the Customer's behalf.
