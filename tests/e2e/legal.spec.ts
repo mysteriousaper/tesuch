@@ -84,7 +84,7 @@ test.describe("consent gate", () => {
   let tableExists = false;
 
   test.beforeAll(async () => {
-    user = await createTestUser("legal");
+    user = await createTestUser("legal", { consent: false });
     const { error } = await admin().from("consent_records").select("id").limit(1);
     tableExists = !error;
   });
@@ -98,7 +98,7 @@ test.describe("consent gate", () => {
 
   test("records terms + privacy consent exactly once, then lets the user through", async ({ page }) => {
     const errors = trackErrors(page);
-    await signInViaUi(page, user, "en");
+    await signInViaUi(page, user, "en", tableExists ? "consent" : "app");
     await page.goto("/en/consent");
 
     if (!tableExists) {
@@ -114,7 +114,7 @@ test.describe("consent gate", () => {
 
     // Not pre-ticked: submitting without the box shows an error and records nothing.
     await page.getByRole("button", { name: "Accept and continue" }).click();
-    await expect(page.getByRole("alert")).toContainText("Tick the box");
+    await expect(page.locator("#consent-error")).toContainText("Tick the box");
     expect(await rows()).toHaveLength(0);
 
     await page.getByLabel("I have read and accept").check();

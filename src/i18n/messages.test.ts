@@ -108,7 +108,7 @@ const PLURALISH = new Set(["plural", "selectordinal"]);
 const placeholderNames = (msg: string) => [...new Set(parseIcu(msg).args.map((a) => a.name))].sort();
 
 // Latin words allowed inside Armenian strings: product, file and brand names, domains.
-const HY_LATIN_ALLOWED = new Set(["Telegram", "Excel", "CSV", "PDF", "Tesuch", "ArmSoft", "Supabase", "csv", "xlsx", "email", "arlis", "am", "ID"]);
+const HY_LATIN_ALLOWED = new Set(["Telegram", "Excel", "CSV", "PDF", "Tesuch", "ArmSoft", "Supabase", "csv", "xlsx", "email", "arlis", "am", "ID", "Vercel", "Resend", "N"]); // N = lawyer placeholder in [N]
 
 function hyProblems(value: string): string[] {
   const { text } = parseIcu(value);
@@ -172,7 +172,8 @@ describe("messages", () => {
       });
 
       it("Armenian strings use Armenian script and punctuation", () => {
-        const bad = Object.entries(flat.hy).flatMap(([k, v]) => hyProblems(v).map((p) => `${k}: ${p} — ${v}`));
+        // Keys ending in ".id" are URL anchors (technical identifiers), not text.
+        const bad = Object.entries(flat.hy).filter(([k]) => !/\.id$/.test(k)).flatMap(([k, v]) => hyProblems(v).map((p) => `${k}: ${p} — ${v}`));
         expect(bad).toEqual([]);
       });
     });

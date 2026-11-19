@@ -1,3 +1,4 @@
+import { GATE_DOCUMENTS, LEGAL_VERSIONS } from "../../../src/components/legal/versions";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { requireEnv } from "./env";
 
@@ -26,10 +27,19 @@ export interface TestUser {
   email: string;
 }
 
-export async function createTestUser(label = "u"): Promise<TestUser> {
+/**
+ * Creates a throwaway user. By default the user has already accepted the current terms + privacy,
+ * so specs land in /app instead of the consent gate; pass { consent: false } to test the gate itself.
+ */
+export async function createTestUser(label = "u", opts: { consent?: boolean } = {}): Promise<TestUser> {
   const email = `${RUN_PREFIX}${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
   const { data, error } = await admin().auth.admin.createUser({ email, email_confirm: true });
   if (error || !data.user) throw new Error(`createUser failed: ${error?.message}`);
+  if (opts.consent !== false) {
+    const rows = GATE_DOCUMENTS.map((document) => ({ user_id: data.user!.id, document, version: LEGAL_VERSIONS[document] }));
+    const { error: cErr } = await admin().from("consent_records").insert(rows);
+    if (cErr) throw new Error(`consent insert failed: ${cErr.message}`);
+  }
   return { id: data.user.id, email };
 }
 

@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { hasCurrentConsent } from "@/components/legal/consent";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
@@ -16,6 +17,8 @@ export default async function AppLayout({ children, params }: { children: React.
   const supabase = await supabaseForUser();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect({ href: "/login", locale });
+  // Legal gate: current terms + privacy must be accepted (page lives outside /app, so no loop).
+  if (!(await hasCurrentConsent(supabase, user.id))) return redirect({ href: "/consent", locale });
 
   const c = await getTranslations("common");
   const a = await getTranslations("auth");
