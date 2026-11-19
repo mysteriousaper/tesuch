@@ -104,7 +104,7 @@ test.describe("dashboard (lane A)", () => {
     const errors = trackErrors(page);
     await signInViaUi(page, user, "en");
     await page.locator("main ul li a").first().click();
-    const employeeLink = page.locator("section[aria-labelledby=findings-h] li").first().locator('a[href*="/employees/"]');
+    const employeeLink = page.locator("section[aria-labelledby=findings-h] li").first().locator('a[href*="/employees/"]').first();
     const name = (await employeeLink.textContent())!.trim();
     await employeeLink.click();
 
