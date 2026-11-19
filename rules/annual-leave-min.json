@@ -9,5 +9,5 @@
     { "fact": "annualLeaveShortfallDays", "params": { "fiveDayWeek": 20, "sixDayWeek": 24 }, "operator": "greaterThan", "value": 0 }
   ] },
   "due": { "date": "asOf", "offsetDays": 30 },
-  "edge_cases": ["Skipped for employees with no leave records at all (leave data not provided).", "Only fires after a full working year of service.", "Carry-over and deferral rules not modelled yet.", "Counts recorded working days, not calendar days."]
+  "edge_cases": ["Skipped only when the company has no leave records at all (leave data not provided); once any leave exists, employees with none are checked (0 days taken). A skipped rule never auto-resolves an open finding.", "Only fires after a full working year of service.", "Carry-over and deferral rules not modelled yet.", "Counts recorded working days, not calendar days."]
 }

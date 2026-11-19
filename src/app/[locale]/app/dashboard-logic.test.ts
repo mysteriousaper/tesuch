@@ -44,6 +44,12 @@ describe("employeeSchema", () => {
     const v = employeeSchema.parse(form({ type: "fixed_term", end_date: "2026-12-31", fixed_term_ground: "  Սեզոնային  ", six_day_week: "on", src_registered: "yes" }));
     expect(v).toMatchObject({ fixed_term_ground: "Սեզոնային", six_day_week: true, src_registered: true });
   });
+  it("maps a blank fixed-term ground to none stated (empty string), but indefinite stays null", () => {
+    expect(employeeSchema.parse(form({ type: "fixed_term", end_date: "2026-12-31", fixed_term_ground: "  " })).fixed_term_ground).toBe("");
+    expect(employeeSchema.parse(form({ type: "fixed_term", end_date: "2026-12-31" })).fixed_term_ground).toBe("");
+    expect(editSchema.parse(form({ type: "fixed_term", end_date: "2026-12-31", fixed_term_ground: "" })).fixed_term_ground).toBe("");
+    expect(employeeSchema.parse(form({ fixed_term_ground: "" })).fixed_term_ground).toBeNull();
+  });
   it("reads SRC status as tri-state: blank is unknown, never false", () => {
     expect(employeeSchema.parse(form({ src_registered: "" })).src_registered).toBeNull();
     expect(employeeSchema.parse(form({ src_registered: "no" })).src_registered).toBe(false);

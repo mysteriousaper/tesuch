@@ -47,15 +47,46 @@ export function primaryContract(contracts: Contract[], asOf: IsoDate): Contract 
   return byStartDesc.find((c) => isActive(c, asOf)) ?? byStartDesc[0];
 }
 
+/** Guard facts that mean "input unknown": a rule failing only on one of these is skipped, not satisfied. */
+const UNKNOWN_GUARDS = new Set(["fixedTermGroundKnown", "srcRegisteredKnown", "hasLeaveRecords"]);
+
+export interface Evaluation {
+  findings: Finding[];
+  /** Keys `rule|employee|contract` of rules that did not fire because an input was unknown; sync must not auto-resolve them. */
+  skipped: string[];
+}
+
+export const findingKey = (ruleId: string, employeeId: string, contractId: string | null) => `${ruleId}|${employeeId}|${contractId ?? ""}`;
+
+function guardFacts(rule: RuleDefinition): string[] {
+  const all = (rule.conditions as { all?: { fact?: string }[] }).all ?? [];
+  return all.map((c) => c.fact ?? "").filter((f) => UNKNOWN_GUARDS.has(f));
+}
+
 /** Deterministic: same rules + data + asOf always produce the same findings. */
 export async function evaluateCompany(rules: RuleDefinition[], data: CompanyData, asOf: IsoDate): Promise<Finding[]> {
-  const byId = new Map(rules.map((r) => [r.id, r]));
-  const contractEngine = buildEngine(rules.filter((r) => r.scope === "contract"));
-  const employeeEngine = buildEngine(rules.filter((r) => r.scope === "employee"));
-  const findings: Finding[] = [];
+  return (await evaluateCompanyDetailed(rules, data, asOf)).findings;
+}
 
-  const run = async (engine: Engine, ctx: RuleContext, contractId: string | null) => {
-    const { events } = await engine.run({ ctx, ...baseFacts(ctx) });
+export async function evaluateCompanyDetailed(rules: RuleDefinition[], data: CompanyData, asOf: IsoDate): Promise<Evaluation> {
+  const byId = new Map(rules.map((r) => [r.id, r]));
+  const contractRulesList = rules.filter((r) => r.scope === "contract");
+  const employeeRulesList = rules.filter((r) => r.scope === "employee");
+  const contractEngine = buildEngine(contractRulesList);
+  const employeeEngine = buildEngine(employeeRulesList);
+  const findings: Finding[] = [];
+  const skipped = new Set<string>();
+  const companyHasLeave = data.leave.length > 0;
+
+  const run = async (engine: Engine, scopeRules: RuleDefinition[], ctx: RuleContext, contractId: string | null) => {
+    const facts = baseFacts(ctx);
+    const { events } = await engine.run({ ctx, ...facts });
+    const fired = new Set(events.map((ev) => ev.type));
+    for (const rule of scopeRules) {
+      if (!fired.has(rule.id) && guardFacts(rule).some((g) => facts[g] === false)) {
+        skipped.add(findingKey(rule.id, ctx.employee.id, contractId));
+      }
+    }
     for (const ev of events) {
       const rule = byId.get(ev.type)!;
       const due = dueDate(rule, ctx);
@@ -79,13 +110,14 @@ export async function evaluateCompany(rules: RuleDefinition[], data: CompanyData
     const contracts = data.contracts.filter((c) => c.employeeId === employee.id);
     const leave = data.leave.filter((l) => l.employeeId === employee.id);
     for (const contract of contracts) {
-      await run(contractEngine, { asOf, employee, contract, contracts, leave }, contract.id);
+      await run(contractEngine, contractRulesList, { asOf, employee, contract, contracts, leave, companyHasLeave }, contract.id);
     }
     const primary = primaryContract(contracts, asOf);
-    if (primary) await run(employeeEngine, { asOf, employee, contract: primary, contracts, leave }, null);
+    if (primary) await run(employeeEngine, employeeRulesList, { asOf, employee, contract: primary, contracts, leave, companyHasLeave }, null);
   }
 
-  return findings.sort(
+  findings.sort(
     (a, b) => a.employeeId.localeCompare(b.employeeId) || a.ruleId.localeCompare(b.ruleId) || (a.contractId ?? "").localeCompare(b.contractId ?? ""),
   );
+  return { findings, skipped: [...skipped].sort() };
 }

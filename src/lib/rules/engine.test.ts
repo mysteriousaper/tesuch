@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { parseRules, RULES } from "./catalog";
-import { evaluateCompany } from "./engine";
+import { evaluateCompany, evaluateCompanyDetailed } from "./engine";
+import { planSync } from "../jobs/sync";
 import { probationOverrunDays } from "./facts";
 import { firmScore, inspectionReadyScore } from "./score";
 import type { Contract, Employee, LeaveRecord } from "./types";
@@ -241,5 +242,41 @@ describe("determinism and score", () => {
   it("firm score is the mean of companies", () => {
     expect(firmScore([100, 50, 75])).toBe(75);
     expect(firmScore([])).toBeNull();
+  });
+});
+
+describe("unknown input is skipped, never resolved", () => {
+  const fixedTerm = { type: "fixed_term" as const, endDate: "2026-12-31" };
+  const storedOpen = (ruleId: string, contractId: string | null) => ({
+    id: "f1", rule_id: ruleId, rule_version: 2, employee_id: "e1", contract_id: contractId,
+    severity: "advisory" as const, due_date: "2026-02-01", status: "open" as const,
+  });
+
+  it("blank manual ground (empty string) fires; unknown ground (null) is reported skipped", async () => {
+    const blank = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con({ ...fixedTerm, fixedTermGround: "" })], leave: [] }, "2026-02-01");
+    expect(blank.findings.map((f) => f.ruleId)).toContain("fixed-term-ground");
+    expect(blank.skipped).not.toContain("fixed-term-ground|e1|c1");
+    const unknown = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con({ ...fixedTerm, fixedTermGround: null })], leave: [] }, "2026-02-01");
+    expect(unknown.findings.map((f) => f.ruleId)).not.toContain("fixed-term-ground");
+    expect(unknown.skipped).toContain("fixed-term-ground|e1|c1");
+  });
+  it("an open finding survives sync when its input became unknown, but resolves when the ground is given", async () => {
+    const open = storedOpen("fixed-term-ground", "c1");
+    const unknown = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con({ ...fixedTerm, fixedTermGround: null })], leave: [] }, "2026-02-01");
+    expect(planSync("org", unknown.findings, [open], unknown.skipped).autoResolve).toEqual([]);
+    const fixed = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con({ ...fixedTerm, fixedTermGround: "seasonal" })], leave: [] }, "2026-02-01");
+    expect(planSync("org", fixed.findings, [open], fixed.skipped).autoResolve).toEqual(["f1"]);
+  });
+  it("leave is company-level: no leave anywhere skips, any leave checks employees with none", async () => {
+    const c = (id: string, employeeId: string) => con({ id, employeeId, startDate: "2025-01-15" });
+    const base = { employees: [emp(), emp({ id: "e2" })], contracts: [c("c1", "e1"), c("c2", "e2")] };
+    const none = await evaluateCompanyDetailed(RULES, { ...base, leave: [] }, "2026-02-01");
+    expect(none.findings.map((f) => f.ruleId)).not.toContain("annual-leave-min");
+    expect(none.skipped).toEqual(expect.arrayContaining(["annual-leave-min|e1|", "annual-leave-min|e2|"]));
+    expect(planSync("org", none.findings, [storedOpen("annual-leave-min", null)], none.skipped).autoResolve).toEqual([]);
+    const some = await evaluateCompanyDetailed(RULES, { ...base, leave: [leave({ employeeId: "e1", startDate: "2025-07-01", days: 20 })] }, "2026-02-01");
+    const hits = some.findings.filter((f) => f.ruleId === "annual-leave-min").map((f) => f.employeeId);
+    expect(hits).toEqual(["e2"]);
+    expect(some.skipped).not.toContain("annual-leave-min|e2|");
   });
 });

@@ -36,9 +36,11 @@ const key = (ruleId: string, employeeId: string, contractId: string | null) => `
 /**
  * Pure diff between what the engine produced tonight and what is stored.
  * - dismissed findings stay dismissed (a human decided), even if the rule still fires;
+ * - open findings whose rule was skipped because an input is unknown (`skipped` keys) are left alone;
  * - "fixed" findings that the engine still produces are reopened (the fix didn't stick).
  */
-export function planSync(orgId: string, computed: Finding[], stored: StoredFinding[]): SyncPlan {
+export function planSync(orgId: string, computed: Finding[], stored: StoredFinding[], skipped: Iterable<string> = []): SyncPlan {
+  const skippedKeys = new Set(skipped);
   const byKey = new Map(stored.map((s) => [key(s.rule_id, s.employee_id, s.contract_id), s]));
   const seen = new Set<string>();
   const plan: SyncPlan = { inserts: [], updates: [], autoResolve: [] };
@@ -68,7 +70,8 @@ export function planSync(orgId: string, computed: Finding[], stored: StoredFindi
   }
 
   for (const [k, s] of byKey) {
-    if (!seen.has(k) && s.status === "open") plan.autoResolve.push(s.id);
+    // Skipped (input unknown) is not fixed: leave the open finding untouched.
+    if (!seen.has(k) && !skippedKeys.has(k) && s.status === "open") plan.autoResolve.push(s.id);
   }
   return plan;
 }

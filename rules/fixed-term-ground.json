@@ -9,5 +9,5 @@
     { "fact": "hasFixedTermGround", "operator": "equal", "value": false }
   ] },
   "due": { "date": "asOf", "offsetDays": 0 },
-  "edge_cases": ["Skipped when the ground is unknown (null); an empty string means explicitly none.", "Rule checks presence of a ground, not whether the ground is lawful."]
+  "edge_cases": ["Skipped when the ground is unknown (null); an empty string means explicitly none (a blank ground in the manual forms). A skipped rule never auto-resolves an open finding.", "Rule checks presence of a ground, not whether the ground is lawful."]
 }

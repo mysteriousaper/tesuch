@@ -9,6 +9,8 @@ export interface RuleContext {
   /** All contracts of this employee with this company. */
   contracts: Contract[];
   leave: LeaveRecord[];
+  /** True when the company has at least one leave record (leave data was provided at all). */
+  companyHasLeave?: boolean;
 }
 
 const d = (iso: IsoDate) => parseISO(iso);
@@ -94,7 +96,8 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
     shortestMaternityLeaveDays: maternity.length ? Math.min(...maternity) : Number.POSITIVE_INFINITY,
     srcRegistered: c.srcRegistered,
     srcRegisteredKnown: c.srcRegistered !== null,
-    hasLeaveRecords: ctx.leave.length > 0,
+    // Company-level: an employee with no leave is checked (0 days taken) once any leave exists in the company.
+    hasLeaveRecords: ctx.companyHasLeave ?? ctx.leave.length > 0,
   };
 }
 

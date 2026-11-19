@@ -48,7 +48,15 @@ function contractRules<T extends z.ZodType<{ type: string; start_date: string; e
     .refine((v) => !v.probation_end || v.probation_end >= v.start_date, { path: ["probation_end"] });
 }
 
-export const employeeSchema = contractRules(employeeFields);
+/**
+ * Manual forms: a fixed-term contract with a blank ground means "none stated" (""), which the
+ * fixed-term-ground rule flags. null means unknown (imports with no mapped column) and is skipped.
+ */
+function blankGroundIsNone<T extends { type: string; fixed_term_ground: string | null }>(v: T): T {
+  return v.type === "fixed_term" && v.fixed_term_ground === null ? { ...v, fixed_term_ground: "" } : v;
+}
+
+export const employeeSchema = contractRules(employeeFields).transform(blankGroundIsNone);
 
 export const editSchema = contractRules(employeeFields.extend({
   terminated_on: optDate,
@@ -57,7 +65,8 @@ export const editSchema = contractRules(employeeFields.extend({
   notice_given_on: optDate,
   workforce_reduction: checkbox,
 })).refine((v) => !v.terminated_on || v.terminated_on >= v.start_date, { path: ["terminated_on"] })
-  .refine((v) => !v.notice_given_on || !v.terminated_on || v.notice_given_on <= v.terminated_on, { path: ["notice_given_on"] });
+  .refine((v) => !v.notice_given_on || !v.terminated_on || v.notice_given_on <= v.terminated_on, { path: ["notice_given_on"] })
+  .transform(blankGroundIsNone);
 
 export const leaveSchema = z.object({
   type: z.enum(["annual", "maternity", "cash_compensation", "other"]),
