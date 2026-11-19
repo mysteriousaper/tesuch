@@ -21,3 +21,7 @@ Tesuch (Տեսուչ) keeps Armenian companies ready for a labour inspection. Ne
 - `NODE_USE_ENV_PROXY=1 E2E_PORT=<unique> pnpm test:e2e <spec> --trace off`: Playwright against real Supabase (needs `.env.local`; throwaway users via `tests/e2e/helpers`).
 - Node or servers that call Supabase in this sandbox need `NODE_USE_ENV_PROXY=1`.
 - Never apply migrations to the real database or push to `main` unless you are the lead session.
+
+## Graphify (code graph + team memory)
+- If the Graphify tools are available, use them before grep for code structure: `graphify_find` (definitions), `graphify_callers`, `graphify_impact` with `include_risk=true` (blast radius + linked tests) before changing a function, `graphify_tests_for`, `query_graph` for "how does X work". Repository: `mysteriousaper/tesuch`. If a result's commit differs from HEAD, re-read changed files.
+- At session start, `recall` project gotchas (query: "gotchas and decisions"). Save new durable gotchas with `remember` (one fact per note).
