@@ -15,6 +15,9 @@ Tesuch (Տեսուչ) keeps Armenian companies ready for a labour inspection. Ne
 - Stay inside the files your department owns (`docs/ORG.md`). Shared files are changed by the lead session.
 - Model policy and execution model: `docs/ORG.md`.
 
+## Quality bar
+Follow `docs/QUALITY_BAR.md` (working method, content rules, motion/performance, accessibility, definition of done).
+
 ## Commands
 - `pnpm lint && pnpm typecheck && pnpm test`: must be green before handing back.
 - `runuser -u postgres -- bash supabase/tests/run.sh`: migrations + RLS/lane DB tests on throwaway Postgres.

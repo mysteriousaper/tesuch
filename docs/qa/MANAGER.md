@@ -16,6 +16,7 @@ The manager runs as its own cloud session (Sonnet) after the QA war. It owns `do
 - Lighthouse ≥ 90 on /hy, /hy/check, /hy/login, /hy/app (performance, accessibility, best practices, SEO).
 - Breaker re-test of all previously found security items: all fixed.
 - Top 5 product features from `docs/qa/product.md` shipped, or explicitly deferred with a reason.
+- Everything in `docs/QUALITY_BAR.md` "Done means" holds: four viewport sizes checked, axe-core clean (add `@axe-core/playwright` as a dev dependency in round 1), touch targets ≥ 44px, reduced motion respected.
 
 ## Limits
 - At most 6 rounds; then stop and report what is left.
