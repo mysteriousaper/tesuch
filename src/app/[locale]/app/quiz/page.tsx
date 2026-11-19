@@ -1,6 +1,6 @@
-import { format } from "date-fns";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CompanyPicker } from "@/components/documents/company-picker";
+import { yerevanToday } from "@/components/documents/yerevan-date";
 import { QuizForm } from "@/components/quiz/quiz-form";
 import { StreakPanel } from "@/components/quiz/streak-panel";
 import { citation, ruleById } from "@/lib/notify/i18n";
@@ -33,7 +33,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
   }
   const company = companies.find((c) => c.id === requested) ?? companies[0];
 
-  const today = format(new Date(), "yyyy-MM-dd");
+  const today = yerevanToday();
   const week = isoWeekOf(today);
   const key = weekKey(week);
   const questions = pickWeeklyQuestions(company.id, week);

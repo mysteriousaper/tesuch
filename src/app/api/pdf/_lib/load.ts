@@ -1,7 +1,6 @@
 import "server-only";
-import { format } from "date-fns";
-import { NextResponse } from "next/server";
 import { z } from "zod";
+import { yerevanToday } from "@/components/documents/yerevan-date";
 import { supabaseForUser } from "@/lib/supabase/server";
 
 // Shared helpers for the PDF routes. Every read goes through the signed-in user's RLS client,
@@ -11,11 +10,10 @@ export const uuid = z.string().uuid();
 export const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((s) => !Number.isNaN(Date.parse(s)));
 export const locale = z.enum(["hy", "ru", "en"]);
 
-export const today = () => format(new Date(), "yyyy-MM-dd");
+/** Armenia's calendar date: documents are dated where the employer is, not in the server's UTC. */
+export const today = () => yerevanToday();
 
-export const notFound = () => NextResponse.json({ error: "not found" }, { status: 404 });
-export const badRequest = (what: string) => NextResponse.json({ error: `invalid ${what}` }, { status: 400 });
-export const unauthorized = () => NextResponse.json({ error: "unauthorized" }, { status: 401 });
+export { pdfError } from "./error-page";
 
 /** Signed-in user's client, or null. */
 export async function userClient() {

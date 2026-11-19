@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContractDocs, type ContractRow } from "@/components/documents/contract-docs";
 import { CompanyPicker } from "@/components/documents/company-picker";
+import { yerevanToday } from "@/components/documents/yerevan-date";
 import { formatDate } from "@/lib/notify/i18n";
 import { supabaseForUser } from "@/lib/supabase/server";
 
@@ -37,7 +38,7 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
     .is("archived_at", null)
     .order("full_name");
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = yerevanToday();
 
   return (
     <section className="flex flex-col gap-6">

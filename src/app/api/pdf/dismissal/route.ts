@@ -1,5 +1,5 @@
 import { renderDismissalNotice } from "@/lib/pdf/render";
-import { badRequest, isoDate, loadContract, notFound, pdfResponse, today, unauthorized, userClient, uuid } from "../_lib/load";
+import { isoDate, loadContract, pdfError, pdfResponse, today, userClient, uuid } from "../_lib/load";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,16 +12,16 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   const contractId = uuid.safeParse(q.get("contract"));
-  if (!contractId.success) return badRequest("contract");
+  if (!contractId.success) return pdfError(req, "invalid", "contract");
   const date = isoDate.safeParse(q.get("date") || today());
-  if (!date.success) return badRequest("date");
+  if (!date.success) return pdfError(req, "invalid", "date");
   const termination = q.get("termination") ? isoDate.safeParse(q.get("termination")) : null;
-  if (termination && !termination.success) return badRequest("termination");
+  if (termination && !termination.success) return pdfError(req, "invalid", "termination");
 
   const db = await userClient();
-  if (!db) return unauthorized();
+  if (!db) return pdfError(req, "unauthorized");
   const b = await loadContract(db, contractId.data);
-  if (!b) return notFound();
+  if (!b) return pdfError(req, "notFound");
 
   const pdf = await renderDismissalNotice({
     company: { name: b.company.name, taxId: b.company.tax_id },

@@ -1,8 +1,8 @@
 "use server";
 
-import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { yerevanToday } from "@/components/documents/yerevan-date";
 import { isoWeekOf, pickWeeklyQuestions, scoreQuiz } from "@/lib/quiz/quiz";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
 import { weekKey } from "./streak";
@@ -35,7 +35,8 @@ export async function submitQuiz(raw: unknown): Promise<SubmitResult> {
   const { data: membership } = await db.from("memberships").select("role").eq("org_id", company.org_id).eq("user_id", user.id).maybeSingle();
   if (!membership || !["owner", "accountant"].includes(membership.role)) return { ok: false, error: "forbidden" };
 
-  const current = isoWeekOf(format(new Date(), "yyyy-MM-dd"));
+  // Same Armenia date as the quiz page, so the week never differs between render and submit.
+  const current = isoWeekOf(yerevanToday());
   if (weekKey(current) !== week) return { ok: false, error: "stale" };
 
   const questions = pickWeeklyQuestions(companyId, current);
@@ -52,7 +53,11 @@ export async function submitQuiz(raw: unknown): Promise<SubmitResult> {
     answers: result.answers.map((a) => ({ questionId: a.questionId, chosen: a.chosen })),
     score: result.percent,
   });
-  if (error) return { ok: false, error: error.code === "23505" ? "already" : "error" };
+  if (error) {
+    if (error.code === "23505") return { ok: false, error: "already" };
+    console.error("quiz_attempts insert failed", error.code, error.message);
+    return { ok: false, error: "error" };
+  }
 
   revalidatePath(`/${locale}/app/quiz`);
   return { ok: true };

@@ -3,7 +3,7 @@ import { renderChecklist } from "@/lib/pdf/render";
 import { effectiveSeverity } from "@/lib/rules/engine";
 import { inspectionReadyScore } from "@/lib/rules/score";
 import type { Finding } from "@/lib/rules/types";
-import { badRequest, locale as localeSchema, notFound, pdfResponse, today, unauthorized, userClient, uuid } from "../_lib/load";
+import { locale as localeSchema, pdfError, pdfResponse, today, userClient, uuid } from "../_lib/load";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,14 +12,14 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   const companyId = uuid.safeParse(q.get("company"));
-  if (!companyId.success) return badRequest("company");
+  if (!companyId.success) return pdfError(req, "invalid", "company");
   const loc = localeSchema.safeParse(q.get("locale") ?? "hy");
-  if (!loc.success) return badRequest("locale");
+  if (!loc.success) return pdfError(req, "invalid", "locale");
 
   const db = await userClient();
-  if (!db) return unauthorized();
+  if (!db) return pdfError(req, "unauthorized");
   const { data: company } = await db.from("companies").select("id, name, tax_id").eq("id", companyId.data).maybeSingle();
-  if (!company) return notFound();
+  if (!company) return pdfError(req, "notFound");
 
   const { data: rows } = await db
     .from("findings")
