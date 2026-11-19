@@ -34,3 +34,13 @@ Rules for every department:
 | Workers: mechanical work (docs formatting, i18n copying, screenshot checks, renames) | Haiku |
 
 Rule of thumb: no worker for anything under ~5 edits; managers do small pieces themselves.
+
+## Execution model (from 2026-11-19)
+Each department task runs as its own cloud sub-session (separate usage budget), on the model the task needs, pushing to its own branch `claude/dept-<name>`. The CEO session only reviews, merges into `claude/gallant-dijkstra-unyblc` and `main`, applies migrations, and deploys.
+
+| Sub-session | Model | Branch |
+|---|---|---|
+| Legal & Compliance (finish) | Sonnet | `claude/dept-legal` |
+| Localization (finish) | Sonnet | `claude/dept-localization` |
+| Platform (finish) | Sonnet | `claude/dept-platform` |
+| Engineering (members, audit, data rights) | Opus (security-critical), local agent | worktree, merged by CEO |
