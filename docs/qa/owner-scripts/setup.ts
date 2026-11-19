@@ -1,0 +1,20 @@
+import { chromium } from "playwright";
+import { writeFileSync } from "fs";
+import { createTestUser, emailOtp } from "../../../tests/e2e/helpers/supabase";
+(async () => {
+  const user = await createTestUser("owner", { consent: true });
+  const b = await chromium.launch();
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 } });
+  const p = await ctx.newPage();
+  await p.route("**/auth/v1/otp**", (r) => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+  await p.goto("http://localhost:3302/hy/login");
+  await p.locator("#email").fill(user.email);
+  await p.locator('form button[type="submit"]').click();
+  await p.locator("#code").waitFor();
+  await p.locator("#code").fill(await emailOtp(user.email));
+  await p.locator('form button[type="submit"]').click();
+  await p.waitForURL("**/hy/app");
+  await ctx.storageState({ path: "/tmp/claude-0/s/state.json" });
+  writeFileSync("/tmp/claude-0/s/user.json", JSON.stringify(user));
+  await b.close();
+})();
