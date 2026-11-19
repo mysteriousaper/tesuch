@@ -71,9 +71,9 @@ export function parseDate(v: RawCell): Parsed<IsoDate | null> {
 const TRUE_WORDS = new Set(["yes", "y", "true", "1", "+", "x", "✓", "այո", "հա", "да", "д", "истина"]);
 const FALSE_WORDS = new Set(["no", "n", "false", "0", "-", "ոչ", "չէ", "нет", "н", "ложь"]);
 
-/** Booleans: այո/ոչ, да/нет, yes/no, 1/0. Empty means false. */
-export function parseBool(v: RawCell): Parsed<boolean> {
-  if (v == null || isBlank(v)) return ok(false);
+/** Booleans: այո/ոչ, да/нет, yes/no, 1/0. Empty means unknown (null), never false. */
+export function parseBool(v: RawCell): Parsed<boolean | null> {
+  if (v == null || isBlank(v)) return ok(null);
   if (typeof v === "boolean") return ok(v);
   if (typeof v === "number") return v === 1 ? ok(true) : v === 0 ? ok(false) : fail;
   if (v instanceof Date) return fail;
@@ -105,6 +105,14 @@ export function parseInitiator(v: RawCell): Parsed<TerminationInitiator | null> 
   if (isBlank(v)) return ok(null);
   const t = INITIATORS[normalizeHeader(String(v))];
   return t ? ok(t) : fail;
+}
+
+/** Fixed-term ground: blank = unknown (null); an explicit "none" word = "" (stated as absent); else the text. */
+const NONE_WORDS = new Set(["none", "no", "n a", "n/a", "ոչ", "չկա", "нет", "отсутствует"]);
+export function parseGround(v: RawCell, max = 500): Parsed<string | null> {
+  const t = parseText(v, max);
+  if (!t.ok || t.value === null) return t;
+  return ok(NONE_WORDS.has(normalizeHeader(t.value)) ? "" : t.value);
 }
 
 export function parseText(v: RawCell, max = 500): Parsed<string | null> {

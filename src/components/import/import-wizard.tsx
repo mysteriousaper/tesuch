@@ -5,7 +5,7 @@ import { useId, useMemo, useState, useTransition } from "react";
 import { commitImport, type CommitResult } from "@/app/[locale]/app/import/actions";
 import { Link } from "@/i18n/navigation";
 import {
-  autoMap, buildImport, missingRequiredFields, parseCsv, TARGET_FIELDS, toMapping, toTable,
+  autoMap, buildImport, missingRequiredFields, parseCsv, TARGET_FIELDS, toMapping, toTable, unmappedImpact,
   type ColumnGuess, type ColumnMapping, type RawCell, type RawTable, type TargetField,
 } from "@/lib/import";
 import type { Locale } from "@/lib/notify/i18n";
@@ -73,6 +73,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     [table, mapping, step],
   );
   const missing = missingRequiredFields(mapping);
+  const unmapped = unmappedImpact(mapping);
   const duplicates = useMemo(() => {
     const seen = new Map<TargetField, number>();
     for (const f of Object.values(mapping)) if (f) seen.set(f, (seen.get(f) ?? 0) + 1);
@@ -245,6 +246,15 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
             {errorRows > 0 && <span className="rounded-full bg-surface-2 px-3 py-1 font-semibold text-danger">⚠ {t("errorRows", { count: errorRows })}</span>}
           </div>
           <p className="text-xs text-muted">{t("dupHint")}</p>
+
+          <div role="note" className="rounded-theme border border-warn p-3 text-sm">
+            <p className="font-semibold">{t("unmappedTitle")}</p>
+            <p className="mt-1 text-muted">{t("unmappedIntro")}</p>
+            <ul className="mt-2 list-inside list-disc">
+              {unmapped.map((u) => <li key={u.field}>{t(`impact.${u.field}`)}</li>)}
+              <li>{t("leaveNote")}</li>
+            </ul>
+          </div>
 
           {preview.errors.length > 0 && (
             <div className="overflow-x-auto rounded-theme border border-line">

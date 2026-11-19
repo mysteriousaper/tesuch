@@ -16,7 +16,7 @@ export interface EmployeeValues {
   probation_special_case: boolean;
   hired_by_transfer: boolean;
   fixed_term_ground: string | null;
-  src_registered: boolean;
+  src_registered: boolean | null;
   terminated_on: string | null;
   termination_ground: string | null;
   termination_initiator: "employer" | "employee" | "mutual" | null;
@@ -24,7 +24,7 @@ export interface EmployeeValues {
   workforce_reduction: boolean;
 }
 
-const FLAG_LABEL = { six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer", src_registered: "srcRegistered" } as const;
+const FLAG_LABEL = { six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer" } as const;
 
 /** Edit employee + contract. Saving re-runs the rules, so corrected data closes its findings. */
 export function EditEmployeeForm({ locale, companyId, employeeId, contractId, values }: {
@@ -80,6 +80,14 @@ export function EditEmployeeForm({ locale, companyId, employeeId, contractId, va
           </label>
         ))}
       </div>
+      <label className={`${labelCls} sm:col-span-2`}>
+        {t("fields.srcRegistered")}
+        <select name="src_registered" defaultValue={values.src_registered === null ? "" : values.src_registered ? "yes" : "no"} className={inputCls}>
+          <option value="">{t("fields.srcUnknown")}</option>
+          <option value="yes">{t("fields.srcYes")}</option>
+          <option value="no">{t("fields.srcNo")}</option>
+        </select>
+      </label>
       <details className="rounded-theme border border-line sm:col-span-2" open={Boolean(values.terminated_on)}>
         <summary className="cursor-pointer px-3 py-2 text-sm font-semibold">{t("termination")}</summary>
         <div className="grid gap-3 border-t border-line p-3 sm:grid-cols-2">

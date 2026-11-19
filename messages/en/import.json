@@ -106,6 +106,14 @@
     "dupHint": "Duplicates (same employee ID, or same name and birth date) are checked on import and skipped. Name-only matches are imported and flagged.",
     "possibleDuplicates": "{count, plural, one {# possible duplicate} other {# possible duplicates}}",
     "possibleDuplicatesHint": "These employees were imported, but someone with the same name already exists and there is no employee ID or birth date to tell them apart. Check them and delete any real duplicate.",
-    "moreNames": "and {count} more"
+    "moreNames": "and {count} more",
+    "unmappedTitle": "Not in your file",
+    "unmappedIntro": "These optional fields have no column. They stay unknown, and the checks that need them will not run.",
+    "impact": {
+      "src_registered": "SRC registration status: the SRC registration check will not run.",
+      "fixed_term_ground": "Fixed-term ground: the fixed-term ground check will not run.",
+      "birth_date": "Birth date: the check on probation for minors will not run."
+    },
+    "leaveNote": "Leave records are not imported. The annual leave check will not run for these employees until leave is added."
   }
 }

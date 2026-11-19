@@ -21,8 +21,10 @@ export interface Contract {
   probationEnd: IsoDate | null;
   probationSpecialCase: boolean;
   hiredByTransfer: boolean;
+  /** null = unknown; "" = explicitly none; text = the ground. */
   fixedTermGround: string | null;
-  srcRegistered: boolean;
+  /** null = unknown (not in the data); never treated as false. */
+  srcRegistered: boolean | null;
   terminatedOn: IsoDate | null;
   terminationGround: string | null;
   terminationInitiator: TerminationInitiator | null;

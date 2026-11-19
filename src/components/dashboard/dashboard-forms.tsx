@@ -89,13 +89,21 @@ export function AddEmployeeForm({ locale, companyId }: { locale: string; company
         </label>
       )}
       <div className="flex flex-col gap-2 text-sm sm:col-span-2">
-        {(["six_day_week", "probation_special_case", "hired_by_transfer", "src_registered"] as const).map((name) => (
+        {(["six_day_week", "probation_special_case", "hired_by_transfer"] as const).map((name) => (
           <label key={name} className="flex items-center gap-2">
-            <input type="checkbox" name={name} defaultChecked={name === "src_registered"} className="h-4 w-4" />
-            {t(`fields.${({ six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer", src_registered: "srcRegistered" } as const)[name]}`)}
+            <input type="checkbox" name={name} className="h-4 w-4" />
+            {t(`fields.${({ six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer" } as const)[name]}`)}
           </label>
         ))}
       </div>
+      <label className={`${labelCls} sm:col-span-2`}>
+        {t("fields.srcRegistered")}
+        <select name="src_registered" defaultValue="" className={inputCls}>
+          <option value="">{t("fields.srcUnknown")}</option>
+          <option value="yes">{t("fields.srcYes")}</option>
+          <option value="no">{t("fields.srcNo")}</option>
+        </select>
+      </label>
     </ActionForm>
   );
 }

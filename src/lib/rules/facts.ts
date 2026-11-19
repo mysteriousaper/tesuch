@@ -84,6 +84,7 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
     isActive: isActive(c, ctx.asOf),
     daysUntilProbationEnd: c.probationEnd ? days(c.probationEnd, ctx.asOf) : Number.NEGATIVE_INFINITY,
     isFixedTerm: c.type === "fixed_term",
+    fixedTermGroundKnown: c.fixedTermGround !== null,
     hasFixedTermGround: (c.fixedTermGround ?? "").trim().length > 0,
     daysUntilContractEnd: c.endDate ? days(c.endDate, ctx.asOf) : Number.NEGATIVE_INFINITY,
     isTerminated: terminated,
@@ -92,6 +93,8 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
     cashCompensatedLeaveCount: ctx.leave.filter((l) => l.type === "cash_compensation").length,
     shortestMaternityLeaveDays: maternity.length ? Math.min(...maternity) : Number.POSITIVE_INFINITY,
     srcRegistered: c.srcRegistered,
+    srcRegisteredKnown: c.srcRegistered !== null,
+    hasLeaveRecords: ctx.leave.length > 0,
   };
 }
 

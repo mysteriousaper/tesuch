@@ -117,9 +117,12 @@ describe("probation-ending (Art. 93)", () => {
 
 describe("fixed-term rules (Art. 95)", () => {
   it("flags a fixed-term contract with no ground, including whitespace-only", async () => {
-    expect(await ruleIds({ c: { type: "fixed_term", endDate: "2026-12-31" } })).toContain("fixed-term-ground");
+    expect(await ruleIds({ c: { type: "fixed_term", endDate: "2026-12-31", fixedTermGround: "" } })).toContain("fixed-term-ground");
     expect(await ruleIds({ c: { type: "fixed_term", endDate: "2026-12-31", fixedTermGround: "  " } })).toContain("fixed-term-ground");
     expect(await ruleIds({ c: { type: "fixed_term", endDate: "2026-12-31", fixedTermGround: "seasonal work" } })).not.toContain("fixed-term-ground");
+  });
+  it("skips an unknown ground (null): the file did not carry it", async () => {
+    expect(await ruleIds({ c: { type: "fixed_term", endDate: "2026-12-31", fixedTermGround: null } })).not.toContain("fixed-term-ground");
   });
   it("alerts 30 days before the end, not 31, and on the last day", async () => {
     const c = { type: "fixed_term" as const, endDate: "2026-03-03", fixedTermGround: "x" };
@@ -140,6 +143,10 @@ describe("termination-ground (Art. 113)", () => {
 });
 
 describe("annual-leave-min", () => {
+  it("skips employees with no leave records at all (data not provided)", async () => {
+    const c = { startDate: "2025-01-15" };
+    expect(await ruleIds({ c, asOf: "2026-02-01", l: [] })).not.toContain("annual-leave-min");
+  });
   const c = { startDate: "2025-01-15" };
   it("is silent before a full working year", async () => {
     expect(await ruleIds({ c, asOf: "2026-01-14" })).not.toContain("annual-leave-min");
@@ -159,7 +166,7 @@ describe("annual-leave-min", () => {
     const findings = await evaluateCompany(RULES, {
       employees: [emp()],
       contracts: [con({ id: "old", startDate: "2024-03-01", terminatedOn: "2025-12-31", terminationGround: "x", terminationInitiator: "mutual" }), con({ id: "new", startDate: "2026-01-01" })],
-      leave: [],
+      leave: [leave({ startDate: "2024-06-01", days: 5 })],
     }, "2026-02-01");
     expect(findings.map((f) => f.ruleId)).toContain("annual-leave-min");
   });
@@ -210,6 +217,10 @@ describe("maternity-min and src-registration", () => {
   });
   it("flags active contracts not registered with SRC", async () => {
     expect(await ruleIds({ c: { srcRegistered: false } })).toContain("src-registration");
+  });
+  it("skips unknown SRC status (null) and registered contracts", async () => {
+    expect(await ruleIds({ c: { srcRegistered: null } })).not.toContain("src-registration");
+    expect(await ruleIds({ c: { srcRegistered: true } })).not.toContain("src-registration");
   });
 });
 

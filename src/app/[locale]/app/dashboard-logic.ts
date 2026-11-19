@@ -13,6 +13,8 @@ export const uuid = z.string().uuid();
 const optDate = z.preprocess((v) => (v === "" || v == null ? null : v), isoDate.nullable());
 // Missing (field not rendered) and blank both mean "no value".
 const optText = z.preprocess((v) => (v == null || (typeof v === "string" && v.trim() === "") ? null : v), z.string().trim().max(300).nullable());
+// Tri-state select: "yes" / "no" / blank or missing = unknown (null). Never defaults to a value.
+const triState = z.preprocess((v) => (v === "yes" || v === "true" || v === "on" ? true : v === "no" || v === "false" ? false : null), z.boolean().nullable());
 const checkbox = z.preprocess((v) => v === "on" || v === "true", z.boolean());
 
 export type Role = "owner" | "accountant" | "viewer";
@@ -35,7 +37,7 @@ const employeeFields = z.object({
   probation_special_case: checkbox,
   hired_by_transfer: checkbox,
   fixed_term_ground: optText,
-  src_registered: checkbox,
+  src_registered: triState,
 });
 
 /** Mirrors the contracts table checks so users get a validation message instead of a database error. */

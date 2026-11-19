@@ -40,7 +40,10 @@
       "hiredByTransfer": "Hired by transfer",
       "fixedTermGround": "Ground for fixed term",
       "srcRegistered": "Registered on the SRC platform",
-      "optional": "optional"
+      "optional": "optional",
+      "srcUnknown": "Not known",
+      "srcYes": "Yes",
+      "srcNo": "No"
     },
     "save": "Save",
     "saved": "Saved.",

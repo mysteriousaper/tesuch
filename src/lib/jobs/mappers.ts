@@ -6,7 +6,7 @@ import type { Contract, Employee, LeaveRecord } from "@/lib/rules/types";
 export interface EmployeeRow { id: string; company_id: string; birth_date: string | null; six_day_week: boolean }
 export interface ContractRow {
   id: string; employee_id: string; type: Contract["type"]; start_date: string; end_date: string | null; probation_end: string | null;
-  probation_special_case: boolean; hired_by_transfer: boolean; fixed_term_ground: string | null; src_registered: boolean;
+  probation_special_case: boolean; hired_by_transfer: boolean; fixed_term_ground: string | null; src_registered: boolean | null;
   terminated_on: string | null; termination_ground: string | null; termination_initiator: Contract["terminationInitiator"];
   notice_given_on: string | null; workforce_reduction: boolean;
 }

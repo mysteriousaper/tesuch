@@ -11,9 +11,11 @@ import {
   parseContractType,
   parseCsv,
   parseDate,
+  parseGround,
   parseInitiator,
   toMapping,
   toTable,
+  unmappedImpact,
 } from "./index";
 
 const ids = () => {
@@ -55,7 +57,8 @@ describe("parseDate", () => {
 
 describe("parseBool / contract type / initiator", () => {
   it.each(["Այո", "да", "Yes", "1", "TRUE", "+"])("%s is true", (v) => expect(parseBool(v)).toEqual({ ok: true, value: true }));
-  it.each(["ոչ", "Нет", "no", "0", "", "-"])("%s is false", (v) => expect(parseBool(v)).toEqual({ ok: true, value: false }));
+  it.each(["ոչ", "Нет", "no", "0", "-"])("%s is false", (v) => expect(parseBool(v)).toEqual({ ok: true, value: false }));
+  it.each(["", "  ", null, undefined])("%j is unknown (null), not false", (v) => expect(parseBool(v)).toEqual({ ok: true, value: null }));
   it("rejects unknown words", () => expect(parseBool("maybe").ok).toBe(false));
 
   it.each([
@@ -155,8 +158,37 @@ describe("CSV → insert rows", () => {
       noticeGivenOn: c.notice_given_on, workforceReduction: c.workforce_reduction,
     }));
     const found = (await evaluateCompany(RULES, { employees, contracts, leave: [] }, "2026-02-01")).map((f) => `${f.employeeId}:${f.ruleId}`);
-    // Ani: minor on probation, probation one day over 3 months, fixed term with no ground, not registered with SRC.
-    expect(found).toEqual(["id-3:fixed-term-ground", "id-3:probation-max", "id-3:probation-minor", "id-3:src-registration"]);
+    // Ani: minor on probation, probation one day over 3 months, not registered with SRC.
+    // Her fixed-term ground is blank in the file: unknown, so that rule must not fire.
+    expect(found).toEqual(["id-3:probation-max", "id-3:probation-minor", "id-3:src-registration"]);
+  });
+
+  it("keeps blank and unmapped tri-state values as unknown and never floods findings", async () => {
+    const t = toTable(parseCsv("Name;Hire date;End date;SRC\nA B;15.01.2025;31.12.2026;\nC D;15.01.2025;31.12.2026;ոչ"));
+    const withCol = buildImport(t, toMapping(autoMap(t.headers)), opts());
+    expect(withCol.contracts.map((c) => c.src_registered)).toEqual([null, false]);
+    expect(withCol.contracts.map((c) => c.fixed_term_ground)).toEqual([null, null]);
+    const noCol = buildImport(t, { 0: "full_name", 1: "start_date", 2: "end_date" }, opts());
+    expect(noCol.contracts.every((c) => c.src_registered === null && c.fixed_term_ground === null)).toBe(true);
+    const contracts: Contract[] = noCol.contracts.map((c) => ({
+      id: c.id, employeeId: c.employee_id, type: c.type, startDate: c.start_date, endDate: c.end_date, probationEnd: null,
+      probationSpecialCase: false, hiredByTransfer: false, fixedTermGround: c.fixed_term_ground, srcRegistered: c.src_registered,
+      terminatedOn: null, terminationGround: null, terminationInitiator: null, noticeGivenOn: null, workforceReduction: false,
+    }));
+    const employees: Employee[] = noCol.employees.map((e) => ({ id: e.id, companyId: "co", birthDate: null, sixDayWeek: false }));
+    const found = await evaluateCompany(RULES, { employees, contracts, leave: [] }, "2026-02-01");
+    expect(found.map((f) => f.ruleId)).toEqual([]);
+  });
+
+  it("reads an explicit 'none' ground as empty (stated as absent), so the rule can fire", () => {
+    expect(parseGround("нет")).toEqual({ ok: true, value: "" });
+    expect(parseGround("")).toEqual({ ok: true, value: null });
+    expect(parseGround("Сезонная работа")).toEqual({ ok: true, value: "Сезонная работа" });
+  });
+
+  it("lists unmapped optional fields with their rules", () => {
+    expect(unmappedImpact({ 0: "full_name", 1: "start_date" }).map((u) => u.field).sort()).toEqual(["birth_date", "fixed_term_ground", "src_registered"]);
+    expect(unmappedImpact({ 0: "src_registered", 1: "fixed_term_ground", 2: "birth_date" })).toEqual([]);
   });
 });
 

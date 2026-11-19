@@ -16,7 +16,7 @@ export interface DemoContract {
   probation_special_case: boolean;
   hired_by_transfer: boolean;
   fixed_term_ground: string | null;
-  src_registered: boolean;
+  src_registered: boolean | null;
   terminated_on: string | null;
   termination_ground: string | null;
   termination_initiator: TerminationInitiator | null;
@@ -98,6 +98,7 @@ export function generateDemoCompanies(asOfIso: string, seed: number, companies =
           break;
         case "fixedNoGround":
           c.type = "fixed_term";
+          c.fixed_term_ground = ""; // explicitly none (null would mean unknown and skip the rule)
           c.end_date = iso(addDays(asOf, between(90, 300)));
           break;
         case "srcMissing":

@@ -38,11 +38,16 @@ describe("employeeSchema", () => {
   it("accepts an indefinite contract when optional fields are not rendered at all", () => {
     // Regression: the fixed-term ground input is absent for indefinite contracts.
     const v = employeeSchema.parse(form());
-    expect(v).toMatchObject({ end_date: null, probation_end: null, birth_date: null, fixed_term_ground: null, six_day_week: false, src_registered: false });
+    expect(v).toMatchObject({ end_date: null, probation_end: null, birth_date: null, fixed_term_ground: null, six_day_week: false, src_registered: null });
   });
   it("reads checkboxes and trims text", () => {
-    const v = employeeSchema.parse(form({ type: "fixed_term", end_date: "2026-12-31", fixed_term_ground: "  Սեզոնային  ", six_day_week: "on", src_registered: "on" }));
+    const v = employeeSchema.parse(form({ type: "fixed_term", end_date: "2026-12-31", fixed_term_ground: "  Սեզոնային  ", six_day_week: "on", src_registered: "yes" }));
     expect(v).toMatchObject({ fixed_term_ground: "Սեզոնային", six_day_week: true, src_registered: true });
+  });
+  it("reads SRC status as tri-state: blank is unknown, never false", () => {
+    expect(employeeSchema.parse(form({ src_registered: "" })).src_registered).toBeNull();
+    expect(employeeSchema.parse(form({ src_registered: "no" })).src_registered).toBe(false);
+    expect(employeeSchema.parse(form({ src_registered: "yes" })).src_registered).toBe(true);
   });
   it("mirrors the database contract checks", () => {
     expect(employeeSchema.safeParse(form({ end_date: "2026-12-31" })).success).toBe(false); // indefinite with an end date

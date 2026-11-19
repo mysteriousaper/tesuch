@@ -40,7 +40,10 @@
       "hiredByTransfer": "Ընդունված է փոխադրմամբ",
       "fixedTermGround": "Որոշակի ժամկետի հիմքը",
       "srcRegistered": "Գրանցված է ՊԵԿ հարթակում",
-      "optional": "ոչ պարտադիր"
+      "optional": "ոչ պարտադիր",
+      "srcUnknown": "Հայտնի չէ",
+      "srcYes": "Այո",
+      "srcNo": "Ոչ"
     },
     "save": "Պահպանել",
     "saved": "Պահպանված է։",

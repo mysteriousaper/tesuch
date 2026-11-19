@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { ContractType, IsoDate, TerminationInitiator } from "../rules/types";
 import type { TargetField } from "./fields";
 import type { ColumnMapping } from "./mapping";
-import { parseBool, parseContractType, parseDate, parseInitiator, parseText, type Parsed, type RawCell } from "./normalize";
+import { parseBool, parseContractType, parseDate, parseGround, parseInitiator, parseText, type Parsed, type RawCell } from "./normalize";
 import type { RawTable } from "./parse";
 
 /** Message keys are translated in the UI (messages/{hy,ru,en}.json → import.error.*). */
@@ -47,7 +47,8 @@ export interface ContractInsert {
   probation_special_case: boolean;
   hired_by_transfer: boolean;
   fixed_term_ground: string | null;
-  src_registered: boolean;
+  /** null = not in the file (unknown); rules skip it. */
+  src_registered: boolean | null;
   terminated_on: IsoDate | null;
   termination_ground: string | null;
   termination_initiator: TerminationInitiator | null;
@@ -71,8 +72,8 @@ export interface ImportOptions {
 }
 
 const DATE_FIELDS = ["birth_date", "start_date", "end_date", "probation_end", "terminated_on", "notice_given_on"] as const;
-const BOOL_FIELDS = ["six_day_week", "probation_special_case", "hired_by_transfer", "src_registered", "workforce_reduction"] as const;
-const TEXT_FIELDS = ["full_name", "first_name", "last_name", "patronymic", "external_ref", "fixed_term_ground", "termination_ground"] as const;
+const BOOL_FIELDS = ["six_day_week", "probation_special_case", "hired_by_transfer", "workforce_reduction"] as const;
+const TEXT_FIELDS = ["full_name", "first_name", "last_name", "patronymic", "external_ref", "termination_ground"] as const;
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -121,7 +122,10 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
     };
 
     const dates = Object.fromEntries(DATE_FIELDS.map((f) => [f, take(f, parseDate(cell(f)), "import.error.invalidDate", null)])) as Record<(typeof DATE_FIELDS)[number], IsoDate | null>;
-    const bools = Object.fromEntries(BOOL_FIELDS.map((f) => [f, take(f, parseBool(cell(f)), "import.error.invalidBoolean", false)])) as Record<(typeof BOOL_FIELDS)[number], boolean>;
+    const bools = Object.fromEntries(BOOL_FIELDS.map((f) => [f, take(f, parseBool(cell(f)), "import.error.invalidBoolean", null)])) as Record<(typeof BOOL_FIELDS)[number], boolean | null>;
+    // Unknown (blank or unmapped) stays null: these tri-state values are never defaulted to false.
+    const srcRegistered = take("src_registered", parseBool(cell("src_registered")), "import.error.invalidBoolean", null);
+    const fixedTermGround = take("fixed_term_ground", parseGround(cell("fixed_term_ground")), "import.error.tooLong", null);
     const texts = Object.fromEntries(TEXT_FIELDS.map((f) => [f, take(f, parseText(cell(f)), "import.error.tooLong", null)])) as Record<(typeof TEXT_FIELDS)[number], string | null>;
     const contractType = take("contract_type", parseContractType(cell("contract_type")), "import.error.invalidContractType", null);
     const initiator = take("termination_initiator", parseInitiator(cell("termination_initiator")), "import.error.invalidInitiator", null);
@@ -157,7 +161,7 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
       company_id: opts.companyId,
       full_name: fullName,
       birth_date: dates.birth_date,
-      six_day_week: bools.six_day_week,
+      six_day_week: bools.six_day_week ?? false,
       external_ref: texts.external_ref,
     });
     result.contracts.push({
@@ -168,16 +172,31 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
       start_date: dates.start_date!,
       end_date: dates.end_date,
       probation_end: dates.probation_end,
-      probation_special_case: bools.probation_special_case,
-      hired_by_transfer: bools.hired_by_transfer,
-      fixed_term_ground: texts.fixed_term_ground,
-      src_registered: bools.src_registered,
+      probation_special_case: bools.probation_special_case ?? false,
+      hired_by_transfer: bools.hired_by_transfer ?? false,
+      fixed_term_ground: fixedTermGround,
+      src_registered: srcRegistered,
       terminated_on: dates.terminated_on,
       termination_ground: texts.termination_ground,
       termination_initiator: initiator,
       notice_given_on: dates.notice_given_on,
-      workforce_reduction: bools.workforce_reduction,
+      workforce_reduction: bools.workforce_reduction ?? false,
     });
   }
   return result;
+}
+
+/** Optional fields whose absence makes a rule skip (unknown, not "all fine"). Rule ids are shown in the preview. */
+export const OPTIONAL_FIELD_IMPACT: Partial<Record<TargetField, string[]>> = {
+  src_registered: ["src-registration"],
+  fixed_term_ground: ["fixed-term-ground"],
+  birth_date: ["probation-minor"],
+};
+
+/** Optional fields not mapped to any column, with the rules that therefore cannot run. */
+export function unmappedImpact(mapping: ColumnMapping): { field: TargetField; rules: string[] }[] {
+  const mapped = new Set(Object.values(mapping).filter(Boolean));
+  return (Object.entries(OPTIONAL_FIELD_IMPACT) as [TargetField, string[]][])
+    .filter(([f]) => !mapped.has(f))
+    .map(([field, rules]) => ({ field, rules }));
 }
