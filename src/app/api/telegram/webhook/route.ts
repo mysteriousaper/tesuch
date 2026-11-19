@@ -13,7 +13,8 @@ export async function POST(req: Request) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   try {
     const reply = await handleUpdate(supabaseService(), await req.json());
-    if (reply && token) await sendTelegram(token, reply.chatId, reply.text.replace(/</g, "&lt;"));
+    // Replies are Telegram HTML built by commands.ts, which escapes every piece of user data.
+    if (reply && token) await sendTelegram(token, reply.chatId, reply.text);
   } catch {
     // Always 200 so Telegram doesn't retry a malformed update forever.
   }
