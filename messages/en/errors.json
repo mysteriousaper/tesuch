@@ -1,0 +1,21 @@
+{
+  "errors": {
+    "notFound": {
+      "metaTitle": "Page not found",
+      "code": "Error 404",
+      "title": "This page doesn't exist",
+      "body": "The link may be wrong or the page may have moved. Check the address or go back to the home page.",
+      "home": "Home page",
+      "app": "Open dashboard"
+    },
+    "boundary": {
+      "title": "Something went wrong",
+      "body": "We couldn't load this page. Your data is safe. Please try again in a few seconds.",
+      "retry": "Try again",
+      "home": "Home page",
+      "reference": "Error code: {digest}",
+      "referenceHint": "If this keeps happening, send this code to support."
+    },
+    "loading": "Loading…"
+  }
+}
