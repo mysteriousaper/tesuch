@@ -320,6 +320,16 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
                 {result.score !== null && <li className="font-semibold">{t("score", { score: result.score })}</li>}
                 {result.findings === null && <li className="text-warn">{t("rulesFailed")}</li>}
               </ul>
+              {result.possibleDuplicates.length > 0 && (
+                <div role="note" className="rounded-theme border border-warn p-3 text-sm">
+                  <p className="font-semibold text-warn">⚠ {t("possibleDuplicates", { count: result.possibleDuplicates.length })}</p>
+                  <p className="mt-1 text-muted">{t("possibleDuplicatesHint")}</p>
+                  <ul className="mt-2 list-inside list-disc">
+                    {result.possibleDuplicates.slice(0, 20).map((name, i) => <li key={i}>{name}</li>)}
+                  </ul>
+                  {result.possibleDuplicates.length > 20 && <p className="mt-1 text-xs text-muted">{t("moreNames", { count: result.possibleDuplicates.length - 20 })}</p>}
+                </div>
+              )}
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link href={`/app/companies/${result.companyId}`} className={btn}>{t("openCompany")}</Link>
                 <button type="button" onClick={reset} className={btnGhost}>{t("importMore")}</button>
@@ -329,7 +339,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
             <>
               <p role="alert" className="text-danger">{t(`commitError.${result.error}`)}</p>
               <div className="flex gap-3">
-                {result.error !== "forbidden" && <button type="button" onClick={() => setStep("preview")} className={btnGhost}>{t("back")}</button>}
+                {result.error !== "forbidden" && result.error !== "partial" && <button type="button" onClick={() => setStep("preview")} className={btnGhost}>{t("back")}</button>}
                 <button type="button" onClick={reset} className={btnGhost}>{t("importMore")}</button>
               </div>
             </>

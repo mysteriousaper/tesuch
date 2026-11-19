@@ -3,12 +3,13 @@
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { buildImport, TARGET_FIELDS, missingRequiredFields, type ColumnMapping, type EmployeeInsert } from "@/lib/import";
+import { dedupeEmployees } from "@/components/import/dedupe";
+import { MAX_IMPORT_ROWS } from "@/components/import/template";
+import { buildImport, TARGET_FIELDS, missingRequiredFields, type ColumnMapping } from "@/lib/import";
 import { ensureRules, runRulesForCompany } from "@/lib/jobs/run";
 import type { Locale } from "@/lib/notify/i18n";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
 
-import { MAX_IMPORT_ROWS } from "@/components/import/template";
 const MAX_COLUMNS = 60;
 
 // Never trust the client: the raw grid and mapping are re-validated and re-parsed here.
@@ -29,14 +30,15 @@ export type CommitResult =
       ok: true;
       imported: number;
       skippedDuplicates: number;
+      /** Imported, but share a name with someone and have no employee ID or birth date to tell them apart. */
+      possibleDuplicates: string[];
       skippedErrors: number;
       findings: number | null;
       score: number | null;
       companyId: string;
     }
-  | { ok: false; error: "forbidden" | "invalid" | "nothing" | "failed" };
-
-const dupKey = (e: Pick<EmployeeInsert, "full_name" | "birth_date">) => `${e.full_name.trim().toLocaleLowerCase()}|${e.birth_date ?? ""}`;
+  /** "partial": the import failed AND undoing it failed, so some employees may be saved without contracts. */
+  | { ok: false; error: "forbidden" | "invalid" | "nothing" | "failed" | "partial" };
 
 export async function commitImport(locale: Locale, input: ImportPayload): Promise<CommitResult> {
   const parsed = payloadSchema.safeParse(input);
@@ -71,36 +73,25 @@ export async function commitImport(locale: Locale, input: ImportPayload): Promis
   const result = buildImport({ headers, rows }, mapping, { orgId: company.org_id, companyId: company.id });
   const skippedErrors = new Set(result.errors.map((e) => e.row)).size;
 
-  // Duplicates: same external_ref, or same name + birth date, already in the company or earlier in the file.
+  // Duplicates: same employee ID, or same name + birth date. A shared name alone is flagged, never dropped.
   const { data: existing, error: exErr } = await supabase
     .from("employees").select("full_name, birth_date, external_ref").eq("company_id", company.id);
   if (exErr) return { ok: false, error: "failed" };
-  const refs = new Set((existing ?? []).map((e) => e.external_ref).filter(Boolean).map((r) => String(r).trim().toLocaleLowerCase()));
-  const keys = new Set((existing ?? []).map((e) => dupKey(e)));
-
-  const keepIds = new Set<string>();
-  let skippedDuplicates = 0;
-  for (const e of result.employees) {
-    const ref = e.external_ref?.trim().toLocaleLowerCase();
-    if ((ref && refs.has(ref)) || keys.has(dupKey(e))) {
-      skippedDuplicates++;
-      continue;
-    }
-    if (ref) refs.add(ref);
-    keys.add(dupKey(e));
-    keepIds.add(e.id);
-  }
-  const employees = result.employees.filter((e) => keepIds.has(e.id));
+  const dedupe = dedupeEmployees(result.employees, existing ?? []);
+  const employees = dedupe.keep;
+  const keepIds = new Set(employees.map((e) => e.id));
   const contracts = result.contracts.filter((c) => keepIds.has(c.employee_id));
   if (!employees.length) return { ok: false, error: "nothing" };
 
-  // Insert with the user's client so RLS applies. If contracts fail, remove the employees (contracts cascade).
+  // Insert with the user's client so RLS applies. Each insert is a single statement, so atomic on its own.
+  // All-or-nothing across the two: if contracts fail, delete the employees just added (their contracts cascade),
+  // and report plainly if even that cleanup fails.
   const { error: empErr } = await supabase.from("employees").insert(employees);
   if (empErr) return { ok: false, error: "failed" };
   const { error: conErr } = await supabase.from("contracts").insert(contracts);
   if (conErr) {
-    await supabase.from("employees").delete().in("id", employees.map((e) => e.id));
-    return { ok: false, error: "failed" };
+    const { error: undoErr } = await supabase.from("employees").delete().in("id", employees.map((e) => e.id));
+    return { ok: false, error: undoErr ? "partial" : "failed" };
   }
 
   // Findings are written by the system only: service role, after the authorisation checks above.
@@ -120,5 +111,5 @@ export async function commitImport(locale: Locale, input: ImportPayload): Promis
   }
 
   revalidatePath(`/${locale}/app`);
-  return { ok: true, imported: employees.length, skippedDuplicates, skippedErrors, findings, score, companyId: company.id };
+  return { ok: true, imported: employees.length, skippedDuplicates: dedupe.skipped, possibleDuplicates: dedupe.possibleDuplicates, skippedErrors, findings, score, companyId: company.id };
 }

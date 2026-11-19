@@ -61,7 +61,8 @@
       "forbidden": "You don’t have permission to add data to this company.",
       "invalid": "The data failed validation. Please upload the file again.",
       "nothing": "There are no new rows to import.",
-      "failed": "The import failed and nothing was saved. Please try again."
+      "failed": "The import failed and nothing was saved. Please try again.",
+      "partial": "The import failed and could not be fully undone: some employees may have been saved without a contract. Check the company page."
     },
     "templateSample": {
       "name": "Sample Employee",
@@ -102,6 +103,9 @@
       "fixedTermWithoutEnd": "A fixed-term contract needs an end date",
       "terminationBeforeStart": "Termination is before start"
     },
-    "dupHint": "Duplicates (same employee ID, or same name and birth date) are checked on import and skipped."
+    "dupHint": "Duplicates (same employee ID, or same name and birth date) are checked on import and skipped. Name-only matches are imported and flagged.",
+    "possibleDuplicates": "{count, plural, one {# possible duplicate} other {# possible duplicates}}",
+    "possibleDuplicatesHint": "These employees were imported, but someone with the same name already exists and there is no employee ID or birth date to tell them apart. Check them and delete any real duplicate.",
+    "moreNames": "and {count} more"
   }
 }
