@@ -70,3 +70,11 @@ Source: `docs/qa/RESULTS.md` (judged 2026-11-19). Owned by the program manager (
 | F3 | feature | owner | `rules/src-registration.json`, contracts migration, company page | SRC e-contract tracker; rule date needs the lawyer | open |
 | F4 | feature | security | RLS migrations, members/invitations, `src/lib/notify/**` | Company-scoped client access + owner digest; after C-1, with cross-tenant tests | open |
 | F5 | feature | data | `src/app/[locale]/app/import/**`, `src/lib/import/**`, new `import_mappings` migration | Re-sync import, saved mappings, ArmSoft preset (real file from owner) | open |
+
+## C-4: owner steps (Supabase dashboard, project `fbzzhtfakcwnwfuxrqsi`)
+Status: **waiting for owner** (needs dashboard access; not doable from the repo). After steps 1-2 tell the manager, who then wires `captchaToken` into `src/app/[locale]/login/login-form.tsx` and the localized 429 message.
+1. Create a Cloudflare Turnstile (or hCaptcha) site: Cloudflare dashboard > Turnstile > Add site, domain = production host, mode Managed. Copy site key and secret key.
+2. Supabase dashboard > Authentication > Attack Protection > "Enable Captcha protection", provider Turnstile, paste the secret key, Save. Add the site key to Vercel as `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (Preview + Production).
+3. Supabase dashboard > Authentication > Emails > SMTP Settings > "Enable Custom SMTP". Use Resend (or another provider) with a verified sending domain (add the SPF/DKIM DNS records it shows). Fill host, port, user, password, sender `Tesuch <noreply@your-domain>`. Save.
+4. Supabase dashboard > Authentication > Rate Limits: raise "Rate limit for sending emails" (only editable after step 3) from the default 30/hour to e.g. 200/hour; keep "Rate limit for sign-ups and sign-ins" per IP.
+5. Re-test: request 5 OTPs from one IP, confirm CAPTCHA is demanded and other users can still sign in.
