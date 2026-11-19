@@ -23,7 +23,7 @@
     "openFindings": "{count, plural, =0 {Խնդիր չկա} one {# բաց խնդիր} other {# բաց խնդիր}}",
     "firmScore": "Ֆիրմայի միջին ցուցանիշ",
     "fixThisWeek": "Ի՞նչ շտկել այս շաբաթ",
-    "markFixed": "Նշել շտկված",
+    "markFixed": "Նշել որպես շտկված",
     "streak": "{count} մաքուր շաբաթ անընդմեջ",
     "demoNote": "Բոլոր անունները հորինված են։"
   }

@@ -6,7 +6,7 @@
     "connected": "Միացված է",
     "notConnected": "Միացված չէ",
     "disconnect": "Անջատել",
-    "email": "Էլ. փոստ՝ {email}",
+    "email": "Էլ․ փոստ՝ {email}",
     "test": "Ուղարկել փորձնական զգուշացում",
     "testSent": "Ուղարկված է՝ {channels}։",
     "testNone": "Ոչինչ չուղարկվեց։ Միացրեք Telegram-ը կամ ստուգեք կարգավորումները։"
