@@ -3,7 +3,7 @@ import { RenameOrgForm } from "@/components/dashboard/dashboard-forms";
 import { OrgSwitcher } from "@/components/dashboard/org-switcher";
 import { currentOrg, userOrgs, type Role } from "@/components/dashboard/queries";
 import { createOrg } from "../actions";
-import { redirect } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import type { Locale } from "@/lib/notify/i18n";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
 import { NotificationsCard } from "../notifications-card";
@@ -20,6 +20,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
   const t = await getTranslations("dashboard");
   const [org, orgs] = await Promise.all([currentOrg(supabase, user.id), userOrgs(supabase, user.id)]);
   const o = await getTranslations("onboarding");
+  const m = await getTranslations("members");
   const { data: link } = await supabase.from("telegram_links").select("chat_id").eq("user_id", user.id).maybeSingle();
 
   // Members are read through RLS (only orgs the user belongs to); emails come from the auth admin API for those ids only.
@@ -50,7 +51,11 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
             <p className="font-medium">{org.name}</p>
           )}
           <div>
-            <h3 className="mb-2 text-sm font-semibold">{t("settings.members")}</h3>
+            <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+              <h3 className="text-sm font-semibold">{t("settings.members")}</h3>
+              {/* Engineering: team management lives on its own page until it is in the main nav. */}
+              <Link href="/app/members" className="text-sm text-accent underline">{m("title")}</Link>
+            </div>
             <ul className="divide-y divide-line rounded-theme border border-line">
               {members.map((m) => (
                 <li key={m.user_id} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm">

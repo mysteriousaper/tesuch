@@ -1,0 +1,35 @@
+{
+  "audit": {
+    "title": "Audit log",
+    "intro": "Every change to {org}'s data, newest first.",
+    "ownersOnly": "Only owners of the firm can see the audit log.",
+    "filters": "Filters",
+    "table": "Data",
+    "action": "Action",
+    "all": "All",
+    "apply": "Show",
+    "reset": "Clear filters",
+    "error": "Could not load the audit log. Please try again.",
+    "empty": "No entries match these filters.",
+    "time": "Time",
+    "actor": "Who",
+    "row": "Record",
+    "system": "System",
+    "pagination": "Pages",
+    "prev": "Newer",
+    "next": "Older",
+    "page": "Page {page} of {pages}",
+    "actions": { "insert": "Created", "update": "Changed", "delete": "Deleted" },
+    "tables": {
+      "memberships": "Members",
+      "invitations": "Invitations",
+      "companies": "Companies",
+      "employees": "Employees",
+      "contracts": "Contracts",
+      "leave_records": "Leave",
+      "findings": "Findings",
+      "templates": "Templates",
+      "quiz_attempts": "Quiz"
+    }
+  }
+}

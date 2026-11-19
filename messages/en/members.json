@@ -1,0 +1,99 @@
+{
+  "members": {
+    "title": "Team",
+    "noOrg": "Create a firm first in Settings.",
+    "related": "Related pages",
+    "auditLink": "Audit log",
+    "cancel": "Cancel",
+    "roles": { "owner": "Owner", "accountant": "Accountant", "viewer": "Viewer" },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "invalid": "Check the fields and try again.",
+      "forbidden": "Only owners of this firm can do this.",
+      "lastOwner": "A firm must keep at least one owner. Make someone else an owner first.",
+      "pending": "There is already an open invitation for this address.",
+      "alreadyMember": "This person is already a member of the firm."
+    },
+    "invite": {
+      "title": "Invite a colleague",
+      "hint": "The invitation link works for 7 days and only for the email address you enter.",
+      "email": "Email",
+      "role": "Role",
+      "send": "Invite",
+      "link": "Invitation link",
+      "copy": "Copy link",
+      "copied": "Copied",
+      "emailed": "Invitation sent to {email}. You can also share this link:",
+      "notEmailed": "Invitation created. Email could not be sent, so share this link yourself:"
+    },
+    "members": {
+      "title": "Members ({count})",
+      "ownerOnly": "Only owners can invite people or change roles.",
+      "you": "you",
+      "roleFor": "Role of {email}",
+      "saveRole": "Save role",
+      "saved": "Saved.",
+      "remove": "Remove",
+      "removeFor": "Remove {email}",
+      "removeTitle": "Remove member?",
+      "removeBody": "{email} will lose access to {org}. You can invite them again later.",
+      "lastOwner": "only owner"
+    },
+    "pending": {
+      "title": "Pending invitations",
+      "empty": "No pending invitations.",
+      "expired": "Expired. Invite again to send a new link.",
+      "expires": "Valid until {date}",
+      "revoke": "Revoke",
+      "revokeFor": "Revoke invitation for {email}",
+      "revokeTitle": "Revoke invitation?",
+      "revokeBody": "The link sent to {email} will stop working."
+    },
+    "email": {
+      "subject": "{inviter} invited you to {org} on Tesuch",
+      "body": "{inviter} invited you to join {org} on Tesuch as {role}.",
+      "cta": "Accept the invitation",
+      "expires": "The link is valid for 7 days. Sign in with this email address to accept."
+    },
+    "accept": {
+      "title": "Invitation",
+      "signInFirst": "Sign in with the email address the invitation was sent to.",
+      "mismatch": "This invitation is for {invited}, but you are signed in as {current}.",
+      "switchAccount": "Sign out and use another email",
+      "summary": "You are invited to {org} as {role}.",
+      "as": "Signed in as {email}",
+      "button": "Accept and open",
+      "toApp": "Go to my dashboard",
+      "errors": {
+        "notFound": "This invitation link is not valid. Ask for a new one.",
+        "used": "This invitation has already been used.",
+        "expired": "This invitation has expired. Ask the owner to invite you again.",
+        "mismatch": "This invitation is for another email address.",
+        "signIn": "Sign in first.",
+        "generic": "Could not accept the invitation. Please try again."
+      }
+    },
+    "data": {
+      "link": "Data export and deletion",
+      "title": "Data export and deletion",
+      "intro": "Download what Tesuch stores about an employee, or erase it for good.",
+      "orgExport": "Export the whole firm",
+      "orgExportHint": "One JSON file with companies, employees, contracts, leave, findings and members. Owners only.",
+      "orgExportButton": "Download firm data (JSON)",
+      "employees": "Employees",
+      "search": "Search by name",
+      "find": "Find",
+      "viewerNote": "Viewers can export but not delete.",
+      "noMatch": "No employees match this search.",
+      "empty": "No employees yet.",
+      "export": "Export",
+      "exportFor": "Export data of {name}",
+      "delete": "Delete",
+      "deleteFor": "Delete {name}",
+      "deleteTitle": "Delete employee for good?",
+      "deleteBody": "{name} and all their contracts, leave records and findings will be erased. This cannot be undone. Export the data first if you need a copy.",
+      "deleteConfirm": "Delete for good",
+      "more": "Showing the first {count}. Search to narrow the list."
+    }
+  }
+}
