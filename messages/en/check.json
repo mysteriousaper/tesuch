@@ -19,7 +19,7 @@
       "fixed-term-ending": { "q": "Do you know in advance when your fixed-term contracts end?", "why": "Letting the end date slip by can leave the legal status unclear. A lawyer must confirm the consequences." },
       "termination-ground": { "q": "Does every dismissal order state its ground?", "why": "The ground for ending an employment contract must be stated." },
       "annual-leave-min": { "q": "Does every employee get at least 20 working days of annual leave a year (24 on a six-day week)?", "why": "Minimum annual leave is 20 working days, or 24 on a six-day week." },
-      "leave-cash-swap": { "q": "Have you ever paid cash instead of annual leave to an employee who stays with you?", "why": "Annual leave may not be replaced by money, normally except when employment ends." },
+      "leave-cash-swap": { "q": "Have you ever paid cash instead of annual leave to an employee who stays with you?", "why": "As a rule, annual leave may not be replaced by money, except when employment ends." },
       "notice-period": { "q": "When you dismiss someone, do you give notice by length of service (14–60 days, 2 months for staff cuts)?", "why": "The notice period depends on length of service; for a reduction in staff it is 2 months." }
     },
     "result": {

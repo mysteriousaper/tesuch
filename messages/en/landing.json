@@ -30,7 +30,7 @@
       ]
     },
     "stats": {
-      "rules": "{n} rules",
+      "rules": "{n, plural, one {# rule} other {# rules}}",
       "rulesHint": "checked every night",
       "langs": "3 languages",
       "langsHint": "Armenian, Russian, English",
@@ -85,7 +85,7 @@
         { "t": "Data stays in the EU", "d": "The database runs in a European Union region. We keep only what the rules need." },
         { "t": "Firms are isolated", "d": "Each firm sees only its own data — enforced in the database itself and verified by automated tests." }
       ],
-      "status": "{n} rules · all in lawyer review"
+      "status": "{n, plural, one {# rule} other {# rules}} · all in lawyer review"
     },
     "faq": {
       "title": "Frequently asked questions",
