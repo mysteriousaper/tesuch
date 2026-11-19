@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { expectNoAxeViolations } from "./helpers/a11y";
 import { a11yIssues, expectNoHorizontalScroll, trackErrors } from "./helpers/page-checks";
 
 const PAGES: { path: string; lang: string }[] = [
@@ -44,6 +45,12 @@ test.describe("public pages", () => {
       await page.goto(path);
       await page.waitForLoadState("networkidle");
       expect(await a11yIssues(page)).toEqual([]);
+    });
+
+    test(`${path} has no axe WCAG A/AA violations`, async ({ page }, testInfo) => {
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
+      await expectNoAxeViolations(page, testInfo);
     });
   }
 

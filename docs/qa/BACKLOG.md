@@ -80,3 +80,5 @@ Status: **waiting for owner** (needs dashboard access; not doable from the repo)
 5. Re-test: request 5 OTPs from one IP, confirm CAPTCHA is demanded and other users can still sign in.
 
 | m-32 | minor | security | `supabase/migrations/**` | Supabase grants TRUNCATE to `authenticated` on public tables and it ignores RLS; revoke truncate on all public tables (found during C-1; only memberships done) | open |
+
+| Q-1 | minor | a11y | `tests/e2e/helpers/a11y.ts` | axe (round 1): public pages + app pages clean except allowlisted color-contrast m-19, m-20. Dashboard and company page axe tests skip until `company_stats` migration is applied (rerun then). Add `/ru/app`, `/en/app` variants; M-25 non-text contrast needs a token test (axe does not cover 1.4.11) | open |
