@@ -1,0 +1,16 @@
+HELD   invite: other email accepts  :: invitation is for another email
+   preview for a non-invitee token holder: [{"org_name":"Breaker Inv","role":"accountant","email":"qa-e-breaker-inv1-1795115966335-fawqs@example.com","status":"mismatch"}]
+HELD   invite: invitee accepts  :: ok
+HELD   invite: token reuse  :: invitation already used
+HELD   invite: upper-case email stored as-is  :: new row for relation "invitations" violates check constraint "invitations_email_check"
+HELD   invite: padded email  :: new row for relation "invitations" violates check constraint "invitations_email_check"
+HELD   invite: expired token  :: invitation expired
+BROKE  invite created by a since-demoted owner stays valid  :: inviter now viewer; invitee joined as owner
+HELD   consent gate: /app redirects unconsented user  :: 307 -> /en/consent
+BROKE  consent gate: unconsented user writes tenant data via API  :: org 72dd2f81-bbff-4047-ae2f-b40c35514bb3, company 709b8372-b7d6-4c8f-a6d0-64040861e57c
+BROKE  consent gate: unconsented owner downloads org export route  :: HTTP 200 attachment; filename="tesuch-org-no-consent-org-2026-11-19.json"
+BROKE  consent gate: unconsented user renders PDF  :: HTTP 200 application/pdf
+BROKE  consent evidence: client chooses ip_hash  :: row stored with ip_hash=aaaa…
+INFO   submitLead runs for anonymous callers (by design; no per-IP limit in the action) :: HTTP 200 1:{"ok":false,"reason":"invalid"}
+HELD   recordConsent without session  :: 1:{"ok":false,"error":"forbidden"}
+cleanup: 2 orgs, 5 users deleted

@@ -1,0 +1,3 @@
+BROKE lead cap: after 30 junk leads a real prospect is refused with P0429 (UI: "try later") for the rest of the hour
+BROKE forced membership: victim's first org (order by created_at) is the attacker's look-alike org
+BROKE erasure: audit_log rows still holding the deleted employee's full_name/birth_date: 2

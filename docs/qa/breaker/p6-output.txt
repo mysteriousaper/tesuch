@@ -1,0 +1,7 @@
+HELD   group chat cannot link  :: linked=undefined
+HELD   bot sender cannot link  :: linked=undefined
+HELD   valid token links private chat  :: linked=1eec2537-aec0-402c-b738-d546d90efb0f
+HELD   link token is single use  :: null
+HELD   malformed update -> 200, no crash  :: HTTP 200
+HELD   invalid JSON -> 200, no crash  :: HTTP 200
+cleanup: 0 orgs, 2 users deleted

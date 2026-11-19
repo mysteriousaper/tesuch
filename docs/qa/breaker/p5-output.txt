@@ -1,0 +1,5 @@
+BROKE  recovery link redirect_to=tesuch-anyone-samvel-hovsepyan-4774.vercel.app  :: action_link redirect_to=https://tesuch-anyone-samvel-hovsepyan-4774.vercel.app/steal
+BROKE  magiclink link redirect_to=tesuch-anyone-samvel-hovsepyan-4774.vercel.app  :: action_link redirect_to=https://tesuch-anyone-samvel-hovsepyan-4774.vercel.app/steal
+HELD   recovery link redirect_to=evil.example  :: action_link redirect_to=http://localhost:3000
+HELD   magiclink link redirect_to=evil.example  :: action_link redirect_to=http://localhost:3000
+cleanup: 0 orgs, 1 users deleted

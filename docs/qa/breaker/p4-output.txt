@@ -1,0 +1,8 @@
+HELD   PDFs + export for "<script>alert(1)</script><img "  :: 200 attachment; filename="tesuch-probation-confirm-b7e5dc13-2026-11-19.pdf" | 200 attachment; filename="tesuch-dismissal-b7e5dc13-2026-11-19.pdf" | 200 attachment; filename="tesuch-employee-script-alert-1-script-img-src-x-onerror--2026-11-19.json"
+HELD   PDFs + export for "Ann‮gpj.exe‬ a"  :: 200 attachment; filename="tesuch-probation-confirm-332c79ab-2026-11-19.pdf" | 200 attachment; filename="tesuch-dismissal-332c79ab-2026-11-19.pdf" | 200 attachment; filename="tesuch-employee-ann-gpj-exe-a-2026-11-19.json"
+HELD   PDFs + export for "=HYPERLINK(\"http://evil.exampl"  :: 200 attachment; filename="tesuch-probation-confirm-3cf23b7a-2026-11-19.pdf" | 200 attachment; filename="tesuch-dismissal-3cf23b7a-2026-11-19.pdf" | 200 attachment; filename="tesuch-employee-hyperlink-http-evil-example-x-2026-11-19.json"
+HELD   PDFs + export for "ԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶԶ"  :: 200 attachment; filename="tesuch-probation-confirm-129c71d7-2026-11-19.pdf" | 200 attachment; filename="tesuch-dismissal-129c71d7-2026-11-19.pdf" | 200 attachment; filename="tesuch-employee-2026-11-19.json"
+HELD   PDFs + export for "😀𝔘​"  :: 200 attachment; filename="tesuch-probation-confirm-ad60ca78-2026-11-19.pdf" | 200 attachment; filename="tesuch-dismissal-ad60ca78-2026-11-19.pdf" | 200 attachment; filename="tesuch-employee-u-2026-11-19.json"
+HELD   company page escapes <script> names  :: raw tag present: false
+HELD   checklist PDF with hostile org/company names  :: 200
+cleanup: 1 orgs, 1 users deleted
