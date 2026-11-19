@@ -20,3 +20,4 @@
 | 16 | 2026-11-18 | Supabase project in eu-west-1 (Ireland). | EU hosting requirement met. |
 | 17 | 2026-11-18 | postcss pinned to a patched version via pnpm override. | `pnpm audit --prod` clean. |
 | 18 | 2026-11-18 | Parallel "arena" lanes with strict file ownership; one translation file per feature (`messages/<locale>/<ns>.json`). | Lets agents work concurrently without merge conflicts. |
+| 19 | 2026-11-19 | Final theme: option 1 "Official" (calm navy, light + dark). Other two themes stay in tokens for later. | Owner's choice; already the default, no rebuild needed. |
