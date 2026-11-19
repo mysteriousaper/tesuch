@@ -13,9 +13,9 @@ const PAGES: { path: string; lang: string }[] = [
 ];
 
 test.describe("public pages", () => {
-  // next-intl negotiates from the browser language; Armenian is the fallback for anything unsupported.
-  for (const [locale, expected] of [["hy-AM", "hy"], ["de-DE", "hy"], ["ru-RU", "ru"], ["en-US", "en"]] as const) {
-    test(`root redirects by browser language (${locale} → ${expected})`, async ({ browser }) => {
+  // Browser-language detection is off (QA D-3): everyone lands on Armenian and switches explicitly.
+  for (const [locale, expected] of [["hy-AM", "hy"], ["de-DE", "hy"], ["ru-RU", "hy"], ["en-US", "hy"]] as const) {
+    test(`root always redirects to Armenian (${locale} → ${expected})`, async ({ browser }) => {
       const ctx = await browser.newContext({ locale });
       const page = await ctx.newPage();
       await page.goto("/");

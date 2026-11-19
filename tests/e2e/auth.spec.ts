@@ -45,14 +45,16 @@ test.describe("authentication and onboarding", () => {
     const firm = `QA Firm ${Date.now()}`;
     await page.getByLabel("Firm name").fill(firm);
     await page.getByRole("button", { name: "Create" }).click();
-    await expect(page.getByRole("heading", { level: 1, name: "Your firms" })).toBeVisible();
-    await expect(page.getByText(firm)).toBeVisible();
+    // Dashboard shows the new firm as its title.
+    await expect(page.getByRole("heading", { level: 1, name: firm })).toBeVisible();
 
     // The firm exists in the database with this user as owner.
     const { data: m } = await admin().from("memberships").select("role, orgs(name)").eq("user_id", user.id);
     expect(m).toEqual([{ role: "owner", orgs: { name: firm } }]);
 
-    // Notifications card: Telegram not linked yet, own email shown, test button present.
+    // Notifications card lives in Settings: Telegram not linked yet, own email shown, test button present.
+    await page.getByRole("navigation", { name: "App" }).getByRole("link", { name: "Settings" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Settings" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Notifications" })).toBeVisible();
     await expect(page.getByText("Not connected")).toBeVisible();
     await expect(page.getByText(`Email: ${user.email}`)).toBeVisible();
