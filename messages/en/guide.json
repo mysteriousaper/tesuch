@@ -16,6 +16,7 @@
     },
     "toc": "On this page",
     "nav": {
+      "done": "No time? We do it for you",
       "why": "Why Tesuch",
       "gain": "What you gain",
       "how": "How to use it",
@@ -246,6 +247,26 @@
       "help": "the list of commands",
       "stop": "turn Telegram off"
     },
-    "footerLink": "How it works"
+    "footerLink": "How it works",
+    "done": {
+      "title": "No time? We do it for you",
+      "intro": "You do not have to set anything up yourself. Pick the way that suits you.",
+      "items": [
+        {
+          "t": "Send us one file",
+          "d": "Export your staff list from ArmSoft, 1C or any other system as Excel or CSV and send it to us. The Tesuch team imports it. Technically, you invite the Tesuch team as “Accountant” in Team, and you can remove that access at any time."
+        },
+        {
+          "t": "Your accounting firm sets it up",
+          "d": "If you work with an accounting firm, it can set everything up for you. You only read the Telegram digest."
+        },
+        {
+          "t": "Only minimal data is needed",
+          "d": "Names or codes, date of birth and contract dates are enough. No salaries, passport data or addresses."
+        }
+      ],
+      "note": "Pricing is not final yet. Contact us, and we agree the terms before you start.",
+      "securityLink": "Is my data safe? How we protect it"
+    }
   }
 }

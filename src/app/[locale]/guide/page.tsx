@@ -6,6 +6,7 @@ import { BOT_COMMANDS, STEP_SHOTS } from "@/components/guide/shots";
 import { pageSeo, siteUrl } from "@/components/landing/site";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
+import { Cards as FactCards } from "@/components/trust/cards";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -18,7 +19,7 @@ type Item = { t: string; d: string };
 type Step = Item & { alts: string[] };
 type Faq = { q: string; a: string };
 
-const SECTIONS = ["why", "gain", "how", "limits", "faq"] as const;
+const SECTIONS = ["done", "why", "gain", "how", "limits", "faq"] as const;
 const btn = "inline-flex min-h-11 items-center justify-center rounded-theme px-5 text-sm font-semibold motion-reduce:transition-none print:hidden";
 
 function Eyebrow({ children }: { children: string }) {
@@ -43,6 +44,7 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
   setRequestLocale(locale);
   const t = await getTranslations("guide");
   const c = await getTranslations("common");
+  const done = t.raw("done.items") as Item[];
   const problems = t.raw("why.problems") as Item[];
   const firm = t.raw("gain.firm") as Item[];
   const owner = t.raw("gain.owner") as Item[];
@@ -96,6 +98,20 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
             ))}
           </ul>
         </nav>
+
+        <section id="done" aria-labelledby="done-h" className="mt-14 scroll-mt-24">
+          <div className="rounded-theme-lg border-l-4 border-highlight bg-surface p-5 sm:p-6">
+            <h2 id="done-h" className="text-2xl font-bold sm:text-3xl">{t("done.title")}</h2>
+            <p className="mt-2 text-muted">{t("done.intro")}</p>
+            <FactCards items={done} />
+            <p className="mt-4 leading-relaxed">{t("done.note")}</p>
+            <p className="mt-3">
+              <Link href="/security" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4 print:hidden">
+                {t("done.securityLink")}
+              </Link>
+            </p>
+          </div>
+        </section>
 
         <section id="why" aria-labelledby="why-h" className="mt-14 scroll-mt-24">
           <h2 id="why-h" className="text-2xl font-bold sm:text-3xl">{t("why.title")}</h2>

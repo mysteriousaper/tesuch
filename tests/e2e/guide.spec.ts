@@ -34,6 +34,13 @@ for (const locale of LOCALES) {
       expect(errors, "console errors").toEqual([]);
     });
 
+    test("done-for-you section links to the security page", async ({ page }) => {
+      await page.goto(`/${locale}/guide`);
+      await expect(page.locator("#done li")).toHaveCount(3);
+      await expect(page.locator(`#done a[href="/${locale}/security"]`)).toBeVisible();
+      await expect(page.locator(`footer a[href="/${locale}/security"]`)).toBeVisible();
+    });
+
     test("canonical and hreflang metadata", async ({ page }) => {
       await page.goto(`/${locale}/guide`);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", new RegExp(`/${locale}/guide$`));
