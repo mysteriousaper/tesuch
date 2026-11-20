@@ -4,7 +4,7 @@ import { routing } from "./routing";
 
 // One JSON file per feature namespace (messages/<locale>/<namespace>.json) so parallel work never edits the same file.
 // Add a new namespace by creating the file in all three locales and listing it here.
-export const NAMESPACES = ["common", "home", "themes", "auth", "onboarding", "notifications", "app", "dashboard", "import", "documents", "quiz", "landing", "check", "members", "audit", "legal", "errors", "privacy"] as const;
+export const NAMESPACES = ["common", "home", "themes", "auth", "onboarding", "notifications", "app", "dashboard", "import", "documents", "quiz", "landing", "check", "members", "audit", "legal", "errors", "privacy", "guide"] as const;
 
 async function load(locale: string) {
   const parts = await Promise.all(
