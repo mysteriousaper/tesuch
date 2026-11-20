@@ -63,23 +63,24 @@ test.describe("dashboard (lane A)", () => {
     await firstCompany.click();
     await expect(page.getByRole("heading", { level: 1, name: companyName })).toBeVisible();
 
-    const findingsList = page.locator("section[aria-labelledby=findings-h] > div > ul").first();
-    const openBefore = await findingsList.locator(":scope > li").count();
+    // Open issues are grouped by rule: each group is a <section> with the rule title as its heading.
+    const findingsList = page.locator("section[aria-labelledby=findings-h] section > ul");
+    const openBefore = await findingsList.locator("> li").count();
     expect(openBefore, "riskiest demo company has at least 2 open findings").toBeGreaterThanOrEqual(2);
     const scoreBefore = await gaugeScore(page, "Inspection readiness");
 
     // Every finding cites its source and shows the advisory disclaimer (all rules are unverified).
-    await expect(findingsList.locator(":scope > li").first().getByRole("link", { name: "arlis.am" })).toHaveAttribute("href", /^https:\/\/www\.arlis\.am\//);
+    await expect(findingsList.locator("> li").first().getByRole("link", { name: "arlis.am" })).toHaveAttribute("href", /^https:\/\/www\.arlis\.am\//);
     await expect(page.getByText(/not legal advice/).first()).toBeVisible();
 
-    const titleOf = async (i: number) => (await findingsList.locator(":scope > li").nth(i).locator("p").first().textContent())!.trim();
+    const titleOf = async (i: number) => (await findingsList.locator("> li").nth(i).locator("xpath=ancestor::section[1]/h3").textContent())!.replace(/\s*\(\d+\)\s*$/, "").trim();
     const fixedTitle = await titleOf(0);
-    await findingsList.locator(":scope > li").first().getByRole("button", { name: "Mark fixed" }).click();
-    await expect(findingsList.locator(":scope > li")).toHaveCount(openBefore - 1);
+    await findingsList.locator("> li").first().getByRole("button", { name: "Mark fixed" }).click();
+    await expect(findingsList.locator("> li")).toHaveCount(openBefore - 1);
 
     const dismissedTitle = await titleOf(0);
-    await findingsList.locator(":scope > li").first().getByRole("button", { name: "Dismiss" }).click();
-    await expect(findingsList.locator(":scope > li")).toHaveCount(openBefore - 2);
+    await findingsList.locator("> li").first().getByRole("button", { name: "Dismiss" }).click();
+    await expect(findingsList.locator("> li")).toHaveCount(openBefore - 2);
     await expect(page.getByText("Closed issues (2)")).toBeVisible();
 
     // Score never drops when issues are closed.
@@ -96,7 +97,7 @@ test.describe("dashboard (lane A)", () => {
     await expect(page.getByText(/^Checked\. Open issues: \d+\.$/)).toBeVisible({ timeout: 30_000 });
     await page.reload();
     await expect(page.getByText("Closed issues (1)")).toBeVisible();
-    await expect(findingsList.locator(":scope > li").filter({ hasText: fixedTitle }).first()).toBeVisible();
+    await expect(page.locator("section[aria-labelledby=findings-h] h3").filter({ hasText: fixedTitle }).first()).toBeVisible();
     await page.getByText("Closed issues (1)").click();
     await expect(page.locator("details li").filter({ hasText: dismissedTitle })).toContainText("Dismissed");
     expect(errors, "console errors").toEqual([]);

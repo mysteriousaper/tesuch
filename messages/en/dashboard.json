@@ -26,7 +26,11 @@
     "dismiss": "Dismiss",
     "reopen": "Reopen",
     "showClosed": "Closed issues ({count})",
-    "status": { "open": "Open", "fixed": "Fixed", "dismissed": "Dismissed" },
+    "status": {
+      "open": "Open",
+      "fixed": "Fixed",
+      "dismissed": "Dismissed"
+    },
     "employees": "Employees",
     "noEmployees": "No employees yet.",
     "addEmployee": "Add employee",
@@ -90,8 +94,14 @@
     "deleteCompanyWarn": "All of this company's employees, contracts, leave records and findings will be permanently deleted. The action is recorded in the audit log.",
     "deleteTypeName": "To confirm, type the company name: \"{name}\"",
     "deleteCompanyConfirm": "Delete company",
-    "info": { "demoExists": "Demo data is already loaded in this firm." },
-    "org": { "label": "Firm", "switch": "Switch", "createAnother": "Create another firm" },
+    "info": {
+      "demoExists": "Demo data is already loaded in this firm."
+    },
+    "org": {
+      "label": "Firm",
+      "switch": "Switch",
+      "createAnother": "Create another firm"
+    },
     "reopenHint": "If the data still breaks the rule, an issue marked fixed reopens at the next check. Correct the employee or contract data and the issue closes by itself.",
     "editData": "Fix the data",
     "editEmployee": "Employee and contract details",
@@ -104,7 +114,11 @@
       "noticeGivenOn": "Notice date",
       "workforceReduction": "Workforce reduction",
       "none": "—",
-      "initiators": { "employer": "Employer", "employee": "Employee", "mutual": "Mutual agreement" }
+      "initiators": {
+        "employer": "Employer",
+        "employee": "Employee",
+        "mutual": "Mutual agreement"
+      }
     },
     "settings": {
       "title": "Settings",
@@ -113,9 +127,39 @@
       "rename": "Save name",
       "members": "Members",
       "you": "you",
-      "roles": { "owner": "Owner", "accountant": "Accountant", "viewer": "Viewer" },
-      "privacy": { "title": "Privacy mode", "intro": "When on, employees are stored with a code (for example EMP-014) instead of a name. Tesuch no longer asks for or stores names, and lists, documents, notifications and emails show the code.", "table": "Your firm keeps the table that matches codes to names. Tesuch holds no names, so a code cannot be tied to a real person here.", "existing": "Names of employees already added are not deleted. To replace one with a code, open the employee and save a code. Name columns in imported files are ignored.", "toggle": "Store employees by code instead of name", "save": "Save" },
-      "codesNotice": {"title": "Store employees by code, not by name", "body": "Tesuch can keep employees under a code (for example EMP-014) with no names. Lists, documents and notifications then show only the code. Names you already added are not deleted.", "enable": "Switch to codes", "dismiss": "Keep names"}
+      "roles": {
+        "owner": "Owner",
+        "accountant": "Accountant",
+        "viewer": "Viewer"
+      },
+      "privacy": {
+        "title": "Privacy mode",
+        "intro": "When on, employees are stored with a code (for example EMP-014) instead of a name. Tesuch no longer asks for or stores names, and lists, documents, notifications and emails show the code.",
+        "table": "Your firm keeps the table that matches codes to names. Tesuch holds no names, so a code cannot be tied to a real person here.",
+        "existing": "Names of employees already added are not deleted. To replace one with a code, open the employee and save a code. Name columns in imported files are ignored.",
+        "toggle": "Store employees by code instead of name",
+        "save": "Save"
+      },
+      "codesNotice": {
+        "title": "Store employees by code, not by name",
+        "body": "Tesuch can keep employees under a code (for example EMP-014) with no names. Lists, documents and notifications then show only the code. Names you already added are not deleted.",
+        "enable": "Switch to codes",
+        "dismiss": "Keep names"
+      }
+    },
+    "findingFilters": {
+      "label": "Filter issues",
+      "severity": "Type",
+      "all": "All",
+      "employee": "Employee",
+      "apply": "Filter",
+      "clear": "Clear filters",
+      "none": "No issues match these filters.",
+      "pages": "Pages",
+      "prev": "← Previous",
+      "next": "Next →",
+      "pageOf": "Page {page} of {pages} · {total} issues",
+      "closedCap": "Showing the latest {shown} of {total} closed issues."
     }
   }
 }

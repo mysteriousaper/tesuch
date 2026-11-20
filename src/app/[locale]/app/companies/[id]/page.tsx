@@ -5,6 +5,7 @@ import { CompanySettings } from "@/components/dashboard/company-settings";
 import { AddEmployeeForm, RecheckButton } from "@/components/dashboard/dashboard-forms";
 import { orgPrivacyMode } from "@/components/dashboard/privacy";
 import { FindingList, fmtDate, type FindingView } from "@/components/dashboard/finding-list";
+import { FINDINGS_PAGE_SIZE, likePattern, pageCount, pageRange, parseFindingParams } from "@/components/dashboard/finding-query";
 import { statsFor } from "@/components/dashboard/stats";
 import { companyStats, todayIso } from "@/components/dashboard/queries";
 import { Link, redirect } from "@/i18n/navigation";
@@ -13,8 +14,9 @@ import { latestContract } from "../../dashboard-logic";
 
 export const dynamic = "force-dynamic";
 
-export default async function CompanyPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function CompanyPage({ params, searchParams }: { params: Promise<{ locale: string; id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale, id } = await params;
+  const fp = parseFindingParams(await searchParams);
   setRequestLocale(locale);
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const supabase = await supabaseForUser();
@@ -25,8 +27,26 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
   const { data: company } = await supabase.from("companies").select("id, name, tax_id, org_id").eq("id", id).maybeSingle();
   if (!company) notFound();
 
-  const [findingsRes, employeesRes] = await Promise.all([
-    supabase.from("findings").select("id, rule_id, severity, due_date, status, employee_id, employees(full_name)").eq("company_id", id),
+  // Open findings: filtered, ordered (severity enum order = red, amber, advisory, info; then due date) and paged in the database,
+  // so a big company never hits the 1000-row API cap. Closed ones are a separate, capped query.
+  const pattern = likePattern(fp.q);
+  const { from, to } = pageRange(fp.page);
+  let openQ = supabase
+    .from("findings")
+    .select(`id, rule_id, severity, due_date, status, employee_id, ${pattern ? "employees!inner(full_name)" : "employees(full_name)"}`, { count: "exact" })
+    .eq("company_id", id)
+    .eq("status", "open");
+  if (fp.sev) openQ = openQ.eq("severity", fp.sev);
+  if (pattern) openQ = openQ.ilike("employees.full_name", pattern);
+  const [openRes, closedRes, employeesRes] = await Promise.all([
+    openQ.order("severity").order("due_date").order("id").range(from, to),
+    supabase
+      .from("findings")
+      .select("id, rule_id, severity, due_date, status, employee_id, employees(full_name)", { count: "exact" })
+      .eq("company_id", id)
+      .neq("status", "open")
+      .order("due_date", { ascending: false })
+      .limit(50),
     supabase.from("employees").select("id, full_name, contracts(type, start_date, end_date, terminated_on)").eq("company_id", id).is("archived_at", null).order("full_name"),
   ]);
   const { data: membership } = await supabase.from("memberships").select("role").eq("user_id", user.id).eq("org_id", company.org_id).maybeSingle();
@@ -37,14 +57,18 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
   const t = await getTranslations("dashboard");
   const c = await getTranslations("common");
   const today = todayIso();
-  const findings: FindingView[] = (findingsRes.data ?? []).map((f) => ({
+  const view = (rows: typeof openRes.data): FindingView[] => (rows ?? []).map((f) => ({
     id: f.id, rule_id: f.rule_id, severity: f.severity, due_date: f.due_date, status: f.status, employee_id: f.employee_id,
     employee_name: (f.employees as unknown as { full_name: string } | null)?.full_name ?? "",
   }));
-  const open = findings.filter((f) => f.status === "open");
+  const open = view(openRes.data);
+  const closed = view(closedRes.data);
   const stats = statsFor(await companyStats(supabase, company.org_id, company.id), company.id);
   const score = stats.score;
   const employees = employeesRes.data ?? [];
+  // Open-finding badge per employee comes from the current page only when filtered; fine as a hint, the list above is the source of truth.
+  const openByEmployee = new Map<string, number>();
+  for (const f of open) openByEmployee.set(f.employee_id, (openByEmployee.get(f.employee_id) ?? 0) + 1);
 
   return (
     <div className="flex flex-col gap-6">
@@ -76,7 +100,10 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <section className="rounded-theme-lg border border-line bg-surface" aria-labelledby="findings-h">
           <h2 id="findings-h" className="border-b border-line px-4 py-3 font-semibold">{t("findings")}</h2>
-          <FindingList findings={findings} locale={locale} companyId={company.id} today={today} canEdit={canEdit} />
+          <FindingList
+            open={open} total={openRes.count ?? open.length} closed={closed} closedTotal={closedRes.count ?? closed.length}
+            params={fp} pages={pageCount(openRes.count ?? 0, FINDINGS_PAGE_SIZE)} locale={locale} companyId={company.id} today={today} canEdit={canEdit}
+          />
         </section>
 
         <section className="flex flex-col gap-4" aria-labelledby="employees-h">
@@ -86,7 +113,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
               <ul className="divide-y divide-line">
                 {employees.map((e) => {
                   const k = latestContract(e.contracts as unknown as { type: string; start_date: string; end_date: string | null; terminated_on: string | null }[]);
-                  const n = open.filter((f) => f.employee_id === e.id).length;
+                  const n = openByEmployee.get(e.id) ?? 0;
                   return (
                     <li key={e.id}>
                       <Link href={`/app/companies/${company.id}/employees/${e.id}`} className="flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-surface-2">
