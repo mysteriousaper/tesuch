@@ -103,3 +103,9 @@ export async function deleteAllTestUsers(staleMinutes = 120): Promise<number> {
 export async function keepNames(orgId: string): Promise<void> {
   await admin().from("orgs").update({ privacy_mode: false }).eq("id", orgId);
 }
+
+/** True once migration 20261124000000 (findings.dismissed_reason) is applied: dismissing needs it. Specs skip their dismiss steps until then. */
+export async function hasDismissReason(): Promise<boolean> {
+  const { error } = await admin().from("findings").select("dismissed_reason").limit(1);
+  return !error;
+}

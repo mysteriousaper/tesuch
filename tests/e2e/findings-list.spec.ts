@@ -3,7 +3,7 @@ import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
 import { seedDocsFixture, type DocsFixture } from "./helpers/lane-c";
 import { trackErrors } from "./helpers/page-checks";
-import { admin, createTestUser, deleteTestUsers, type TestUser } from "./helpers/supabase";
+import { admin, createTestUser, deleteTestUsers, hasDismissReason, type TestUser } from "./helpers/supabase";
 
 test.describe("findings list: grouping, filters, paging (M-9)", () => {
   test.skip(!hasSupabase(), "Supabase keys not configured");
@@ -61,5 +61,40 @@ test.describe("findings list: grouping, filters, paging (M-9)", () => {
     expect(bad?.status()).toBe(200);
     await expect(items).toHaveCount(50);
     expect(errors, "console errors").toEqual([]);
+  });
+
+  test("bulk: fix several at once; dismissing needs a reason (M-14)", async ({ page }) => {
+    await signInViaUi(page, user, "en");
+    const base = `/en/app/companies/${fx.companyId}`;
+    await page.goto(`${base}?q=Pager%201`);
+    const boxes = page.getByRole("checkbox", { name: "Select this issue" });
+    const n = await boxes.count();
+    expect(n).toBeGreaterThanOrEqual(3);
+
+    // nothing selected → plain message, nothing changes
+    await page.getByRole("button", { name: "Mark selected as fixed" }).click();
+    await expect(page.getByText("Select at least one issue first.")).toBeVisible();
+
+    // dismiss without a reason is refused in the UI action too
+    await boxes.nth(0).check();
+    await page.getByRole("button", { name: "Dismiss selected" }).click();
+    await expect(page.getByText("Please write a short reason (at least 3 characters).")).toBeVisible();
+
+    // fix two selected
+    await boxes.nth(1).check();
+    await page.getByRole("button", { name: "Mark selected as fixed" }).click();
+    await expect(page.getByText("2 issues updated.")).toBeVisible();
+    const { count } = await admin().from("findings").select("id", { count: "exact", head: true }).eq("company_id", fx.companyId).eq("status", "fixed");
+    expect(count).toBe(2);
+
+    if (await hasDismissReason()) {
+      await page.reload();
+      await page.getByRole("checkbox", { name: "Select this issue" }).first().check();
+      await page.getByLabel("Reason for dismissing").fill("Not applicable to seasonal staff");
+      await page.getByRole("button", { name: "Dismiss selected" }).click();
+      await expect(page.getByText("1 issues updated.")).toBeVisible();
+      const { data } = await admin().from("findings").select("dismissed_reason").eq("company_id", fx.companyId).eq("status", "dismissed");
+      expect(data).toEqual([{ dismissed_reason: "Not applicable to seasonal staff" }]);
+    }
   });
 });

@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
 import { a11yIssues, expectNoHorizontalScroll, trackErrors } from "./helpers/page-checks";
-import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser, keepNames } from "./helpers/supabase";
+import { admin, clientAs, createTestUser, deleteTestUsers, hasDismissReason, type TestUser, keepNames } from "./helpers/supabase";
 
 const FIRM = "QA Dashboard Firm";
 
@@ -55,6 +55,7 @@ test.describe("dashboard (lane A)", () => {
   });
 
   test("company page: fix and dismiss findings, re-check keeps decisions honest", async ({ page }) => {
+    test.skip(!(await hasDismissReason()), "needs migration 20261124000000 (dismissed_reason)");
     const errors = trackErrors(page);
     await signInViaUi(page, user, "en");
     // Open the riskiest company: it has the most open findings to work with.
@@ -79,6 +80,8 @@ test.describe("dashboard (lane A)", () => {
     await expect(findingsList.locator("> li")).toHaveCount(openBefore - 1);
 
     const dismissedTitle = await titleOf(0);
+    await findingsList.locator("> li").first().locator("summary", { hasText: "Dismiss" }).click();
+    await findingsList.locator("> li").first().getByLabel("Why is this being dismissed?").fill("Handled on paper");
     await findingsList.locator("> li").first().getByRole("button", { name: "Dismiss" }).click();
     await expect(findingsList.locator("> li")).toHaveCount(openBefore - 2);
     await expect(page.getByText("Closed issues (2)")).toBeVisible();

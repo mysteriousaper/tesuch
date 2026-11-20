@@ -11,7 +11,7 @@ import type { Locale } from "@/lib/notify/i18n";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
 import {
-  applyPrivacyIdentity, canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  applyPrivacyIdentity, bulkFindingSchema, canEditRole, dismissReasonSchema, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
   leaveSchema, splitEmployee, uuid, type ActionState,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
@@ -172,21 +172,50 @@ export async function recheckCompany(locale: string, companyId: string): Promise
   }
 }
 
-/** Fix / dismiss / reopen. RLS (can_edit) and the findings trigger (status-only) enforce the rest; 0 rows = refused. */
+/**
+ * Fix / dismiss / reopen. RLS (can_edit) and the findings trigger (status, assignee and dismissed_reason only) enforce the rest;
+ * 0 rows = refused. Dismissing needs a written reason (checked here and again by the trigger).
+ */
 export async function setFindingStatus(
-  locale: string, companyId: string, findingId: string, status: "open" | "fixed" | "dismissed",
+  locale: string, companyId: string, findingId: string, status: "open" | "fixed" | "dismissed", _prev?: ActionState, form?: FormData,
 ): Promise<ActionState> {
   const parsed = findingStatusSchema.safeParse({ companyId, findingId, status });
   if (!parsed.success) return FAIL("invalid");
+  let reason: string | null = null;
+  if (parsed.data.status === "dismissed") {
+    const r = dismissReasonSchema.safeParse(form?.get("reason") ?? "");
+    if (!r.success) return FAIL("reasonRequired");
+    reason = r.data;
+  }
   const { supabase, user } = await session();
   if (!user) return FAIL("forbidden");
-  const { data, error } = await supabase.from("findings").update({ status: parsed.data.status })
+  const { data, error } = await supabase.from("findings")
+    .update({ status: parsed.data.status, ...(reason ? { dismissed_reason: reason } : {}) })
     .eq("id", parsed.data.findingId).eq("company_id", parsed.data.companyId).select("id");
   if (error) return FAIL("generic");
   if (!data?.length) return FAIL("forbidden");
   revalidatePath(`/${locale}/app/companies/${companyId}`);
   revalidatePath(`/${locale}/app`);
   return { ok: true };
+}
+
+/** Fix or dismiss many open findings of one company at once (checkboxes on the company page). Same checks as the single action. */
+export async function bulkSetFindingStatus(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
+  // `status` comes from the clicked button (name="status"); the schema only accepts "fixed" or "dismissed".
+  const parsed = bulkFindingSchema.safeParse({ companyId, ids: form.getAll("ids").map(String), status: form.get("status")?.toString(), reason: form.get("reason")?.toString() });
+  if (!parsed.success) {
+    return FAIL(parsed.error.issues.some((i) => i.path[0] === "reason") ? "reasonRequired" : parsed.error.issues.some((i) => i.path[0] === "ids") ? "nothingSelected" : "invalid");
+  }
+  const { supabase, user } = await session();
+  if (!user) return FAIL("forbidden");
+  const { data, error } = await supabase.from("findings")
+    .update({ status: parsed.data.status, ...(parsed.data.reason ? { dismissed_reason: parsed.data.reason } : {}) })
+    .in("id", parsed.data.ids).eq("company_id", parsed.data.companyId).eq("status", "open").select("id");
+  if (error) return FAIL("generic");
+  if (!data?.length) return FAIL("forbidden");
+  revalidatePath(`/${locale}/app/companies/${companyId}`);
+  revalidatePath(`/${locale}/app`);
+  return { ok: true, count: data.length };
 }
 
 export async function addEmployee(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {

@@ -62,7 +62,9 @@
       "generic": "Something went wrong. Please try again.",
       "invalid": "Please check the fields.",
       "forbidden": "You don't have permission to do this.",
-      "duplicateCode": "An employee with this code already exists in this company."
+      "duplicateCode": "An employee with this code already exists in this company.",
+      "reasonRequired": "Please write a short reason (at least 3 characters).",
+      "nothingSelected": "Select at least one issue first."
     },
     "viewerNote": "You are a viewer and can't make changes.",
     "back": "Back",
@@ -160,6 +162,18 @@
       "next": "Next →",
       "pageOf": "Page {page} of {pages} · {total} issues",
       "closedCap": "Showing the latest {shown} of {total} closed issues."
+    },
+    "findingBulk": {
+      "title": "Selected issues",
+      "hint": "Tick issues in the list, then:",
+      "fixed": "Mark selected as fixed",
+      "dismiss": "Dismiss selected",
+      "reason": "Reason for dismissing",
+      "select": "Select this issue",
+      "done": "{count} issues updated.",
+      "dismissReason": "Why is this being dismissed?",
+      "dismissConfirm": "Dismiss",
+      "reasonShown": "Reason: {reason}"
     }
   }
 }

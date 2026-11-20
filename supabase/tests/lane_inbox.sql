@@ -72,7 +72,7 @@ select pg_temp.expect_error(format($q$update public.findings set last_seen_at = 
 select pg_temp.expect_error(format($q$update public.findings set resolved_by = '1a000000-0000-0000-0000-00000000000a' where id = %L$q$, :'f_a'), 'cannot forge resolved_by without a status change', 'only status and assignee');
 select pg_temp.expect_error(format($q$update public.findings set status = 'fixed', due_date = '2030-01-01' where id = %L$q$, :'f_a'), 'status change cannot carry another column', 'only status and assignee');
 -- Both allowed columns together.
-update public.findings set status = 'dismissed', assignee_id = '1a000000-0000-0000-0000-00000000000b' where id = :'f_a';
+update public.findings set status = 'dismissed', dismissed_reason = 'test reason', assignee_id = '1a000000-0000-0000-0000-00000000000b' where id = :'f_a';
 select pg_temp.expect_rows(format($q$select 1 from public.findings where id = %L and status = 'dismissed' and assignee_id = '1a000000-0000-0000-0000-00000000000b' and resolved_by = '1a000000-0000-0000-0000-00000000000a'$q$, :'f_a'), 1, 'status and assignee change together, resolver recorded');
 update public.findings set status = 'open' where id = :'f_a';
 

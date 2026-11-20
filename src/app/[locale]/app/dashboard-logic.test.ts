@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  applyPrivacyIdentity, canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  applyPrivacyIdentity, bulkFindingSchema, MAX_BULK_FINDINGS, canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, findingStatusSchema, insertDemo, insertEmployeeWithContract,
   latestContract, leaveSchema, splitEmployee, type DemoWriter, type EmployeeWriter,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
@@ -254,5 +254,29 @@ describe("privacy mode identity", () => {
       insertContract: vi.fn(), deleteEmployee: vi.fn(),
     } as unknown as EmployeeWriter;
     expect(await insertEmployeeWithContract(w, { full_name: "A", birth_date: null, six_day_week: false, employee_code: "A" }, {})).toEqual({ ok: false, duplicateCode: true });
+  });
+});
+
+describe("bulk finding schema (M-14)", () => {
+  const id = "11111111-1111-4111-8111-111111111111";
+  const id2 = "22222222-2222-4222-8222-222222222222";
+  const co = "33333333-3333-4333-8333-333333333333";
+  it("fix needs no reason and dedupes ids", () => {
+    const r = bulkFindingSchema.safeParse({ companyId: co, ids: [id, id, id2], status: "fixed" });
+    expect(r.success && r.data).toEqual({ companyId: co, ids: [id, id2], status: "fixed", reason: null });
+  });
+  it("dismiss needs a trimmed reason of 3+ characters", () => {
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: [id], status: "dismissed" }).success).toBe(false);
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: [id], status: "dismissed", reason: "  ab " }).success).toBe(false);
+    const ok = bulkFindingSchema.safeParse({ companyId: co, ids: [id], status: "dismissed", reason: "  on paper " });
+    expect(ok.success && ok.data.reason).toBe("on paper");
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: [id], status: "dismissed", reason: "x".repeat(501) }).success).toBe(false);
+  });
+  it("rejects empty, oversize, non-uuid and reopen", () => {
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: [], status: "fixed" }).success).toBe(false);
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: ["nope"], status: "fixed" }).success).toBe(false);
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: [id], status: "open" }).success).toBe(false);
+    const many = Array.from({ length: MAX_BULK_FINDINGS + 1 }, (_, i) => `00000000-0000-4000-8000-${String(i).padStart(12, "0")}`);
+    expect(bulkFindingSchema.safeParse({ companyId: co, ids: many, status: "fixed" }).success).toBe(false);
   });
 });

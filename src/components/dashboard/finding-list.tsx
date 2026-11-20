@@ -1,6 +1,7 @@
 import { format, parseISO } from "date-fns";
 import { useTranslations } from "next-intl";
 import { FindingActions } from "./finding-actions";
+import { BULK_FORM_ID, FindingBulkBar } from "./finding-bulk";
 import { findingsHref, groupByRule, SEVERITIES, type FindingParams } from "./finding-query";
 import { Link } from "@/i18n/navigation";
 import { RULES } from "@/lib/rules/catalog";
@@ -33,6 +34,12 @@ function FindingItem({ f, locale, companyId, today, canEdit, showTitle = true }:
 
   return (
     <li className="flex flex-col gap-2 px-4 py-3">
+      {canEdit && f.status === "open" && (
+        <label className="flex items-center gap-2 text-xs text-muted">
+          <input type="checkbox" name="ids" value={f.id} form={BULK_FORM_ID} className="h-5 w-5" />
+          {t("findingBulk.select")}
+        </label>
+      )}
       <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className={`rounded-full border px-2 py-0.5 font-semibold ${CHIP[f.severity]}`}>{c(`severity.${f.severity}`)}</span>
         {overdue && <span className="rounded-full bg-danger px-2 py-0.5 font-semibold text-accent-ink">{c("overdue")}</span>}
@@ -101,6 +108,7 @@ export function FindingList({ open, total, closed, closedTotal, params, pages, l
         <button type="submit" className="min-h-11 rounded-theme border border-control bg-surface px-4 text-sm font-medium hover:bg-surface-2">{t("findingFilters.apply")}</button>
         {filtered && <Link href={`/app/companies/${companyId}${findingsHref({})}`} className="min-h-11 content-center text-sm text-accent underline">{t("findingFilters.clear")}</Link>}
       </form>
+      {canEdit && total > 0 && <FindingBulkBar locale={locale} companyId={companyId} />}
       {canEdit && total > 0 && (
         <p className="border-b border-line bg-surface-2 px-4 py-2 text-xs text-muted">ⓘ {t("reopenHint")}</p>
       )}

@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { DemoCompany, DemoContract, DemoEmployee } from "./demo-data";
 
 /** Result shape for forms using useActionState. `error` is a key in dashboard.errors. */
-export type ActionError = "generic" | "invalid" | "forbidden" | "duplicateCode";
+export type ActionError = "generic" | "invalid" | "forbidden" | "duplicateCode" | "reasonRequired" | "nothingSelected";
 export type ActionState = { ok: true; count?: number; info?: "demoExists" } | { ok: false; error: ActionError } | null;
 export const FAIL = (error: ActionError): ActionState => ({ ok: false, error });
 
@@ -86,6 +86,29 @@ export const findingStatusSchema = z.object({
   findingId: uuid,
   status: z.enum(["open", "fixed", "dismissed"]),
 });
+
+/** Written reason for dismissing a finding (3-500 characters once trimmed). */
+export const dismissReasonSchema = z.string().trim().min(3).max(500);
+
+export const MAX_BULK_FINDINGS = 200;
+
+/** Bulk fix / dismiss: up to 200 distinct finding ids; reopening is not offered in bulk. A reason is required to dismiss and ignored otherwise. */
+export const bulkFindingSchema = z
+  .object({
+    companyId: uuid,
+    ids: z.array(uuid).min(1).max(MAX_BULK_FINDINGS).transform((a) => [...new Set(a)]),
+    status: z.enum(["fixed", "dismissed"]),
+    reason: z.string().optional(),
+  })
+  .transform((v, ctx) => {
+    if (v.status !== "dismissed") return { companyId: v.companyId, ids: v.ids, status: v.status, reason: null as string | null };
+    const r = dismissReasonSchema.safeParse(v.reason ?? "");
+    if (!r.success) {
+      ctx.addIssue({ code: "custom", message: "reason required", path: ["reason"] });
+      return z.NEVER;
+    }
+    return { companyId: v.companyId, ids: v.ids, status: v.status, reason: r.data };
+  });
 
 // ---------- Privacy mode ("code instead of name") ----------
 
