@@ -44,10 +44,10 @@ test.describe("owner home for a single business (S-2)", () => {
     });
     expect(ins.error).toBeNull();
     await signInViaUi(page, user, "en");
-    await expect(page.locator("ol li")).toHaveCount(1);
-    await expect(page.locator("ol li").first()).toContainText("Probation exceeds the legal maximum");
-    await expect(page.locator("ol li").first()).toContainText(emp!.full_name);
-    await expect(page.locator("ol li").first()).toContainText("by 01.01.2099");
+    await expect(page.locator('section[aria-labelledby="tasks-h"] li')).toHaveCount(1);
+    await expect(page.locator('section[aria-labelledby="tasks-h"] li').first()).toContainText("Probation exceeds the legal maximum");
+    await expect(page.locator('section[aria-labelledby="tasks-h"] li').first()).toContainText(emp!.full_name);
+    await expect(page.locator('section[aria-labelledby="tasks-h"] li').first()).toContainText("by 01.01.2099");
   });
 
   test("serious overdue issues turn the status to Risk", async ({ page }) => {
@@ -60,7 +60,7 @@ test.describe("owner home for a single business (S-2)", () => {
     expect(ins.error).toBeNull();
     await signInViaUi(page, user, "en");
     await expect(page.getByTestId("readiness-status")).toHaveAttribute("data-status", "risk");
-    await expect(page.locator("ol li")).toHaveCount(3);
+    await expect(page.locator('section[aria-labelledby="tasks-h"] li')).toHaveCount(3);
   });
 
   test("two companies keep the firm dashboard; ?view=firm is the advanced view", async ({ page }) => {
