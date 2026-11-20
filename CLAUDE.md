@@ -7,6 +7,7 @@ Tesuch (Տեսուչ) keeps Armenian companies ready for a labour inspection. Ne
 - Exempt: anything persisted (code, comments, docs, commits, UI strings, legal text), security warnings, questions to the human.
 
 ## Hard rules
+- Budget: free tiers only (Supabase, Vercel Hobby, Resend, Telegram, Graphify free) and the owner's Claude Pro plan. No paid services, no extra/overage usage. Prefer Haiku/Sonnet; Opus only for security review. Keep sessions short; stop at plan limits instead of paying.
 - No payments, billing or Stripe in the product.
 - Legal logic = versioned rules in `rules/*.json`. Never invent article numbers. Unverified rules show as advisory only.
 - No AI-generated people, faces or voices in any asset.
