@@ -1,8 +1,8 @@
 {
   "onboarding": {
-    "title": "Create your firm",
-    "name": "Firm name",
-    "create": "Create",
+    "title": "Welcome to Tesuch",
+    "name": "What is your business called?",
+    "create": "Start",
     "yourOrgs": "Your firms"
   }
 }

@@ -63,6 +63,13 @@ describe("PDF rendering", { timeout: 60_000 }, () => {
     expect(isPdf(b)).toBe(true);
     save(`checklist-${locale}.pdf`, b);
   });
+  it.each(["hy", "ru", "en"] as const)("renders the inspection pack (checklist + documents to have ready) in %s", async (locale) => {
+    const plain = await renderChecklist({ locale, company, asOf: "2026-11-18", score: 100, items: [] });
+    const pack = await renderChecklist({ locale, company, asOf: "2026-11-18", score: 100, items: [], pack: true });
+    expect(isPdf(pack)).toBe(true);
+    expect(pack.length).toBeGreaterThan(plain.length);
+    save(`pack-${locale}.pdf`, pack);
+  });
   it("renders a checklist without a score (no staff yet)", async () => {
     expect(isPdf(await renderChecklist({ locale: "en", company, asOf: "2026-11-18", score: null, items: [] }))).toBe(true);
   });

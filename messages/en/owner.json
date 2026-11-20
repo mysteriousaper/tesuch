@@ -1,0 +1,49 @@
+{
+  "owner": {
+    "status": {
+      "ready": "You're ready",
+      "attention": "Needs attention",
+      "risk": "At risk",
+      "none": "Add your staff to see where you stand"
+    },
+    "hint": {
+      "ready": "Nothing urgent. If an inspector comes today, you are in good shape.",
+      "attention": "A few things should be fixed before an inspector comes.",
+      "risk": "Fix the items below first. An inspector could find serious gaps today.",
+      "none": "Upload your staff list and Tesuch will check it."
+    },
+    "score": "Score {score}/100",
+    "tasksTitle": "Do this week",
+    "noTasks": "Nothing to do this week.",
+    "due": "by {date}",
+    "overdue": "was due {date}",
+    "inspector": "Inspector is here",
+    "inspectorHint": "Download the checklist and the list of documents to have ready (PDF).",
+    "details": "Open full details",
+    "allCompanies": "All companies and details",
+    "backSimple": "Back to the simple view",
+    "addStaff": "Add your staff",
+    "onboard": {
+      "title": "Get ready in 3 steps",
+      "skip": "Done",
+      "now": "Now",
+      "next": "Next",
+      "s1": {
+        "title": "Add your staff",
+        "body": "Upload your staff list (Excel or CSV). No file? Let Tesuch do it for you.",
+        "upload": "Upload staff list"
+      },
+      "s2": {
+        "title": "Check and confirm",
+        "body": "Tesuch shows what it understood from your file. Nothing is saved until you confirm."
+      },
+      "s3": {
+        "title": "Connect Telegram",
+        "body": "Get a message when something needs your attention.",
+        "connect": "Connect Telegram",
+        "connected": "Telegram is connected"
+      },
+      "nudge": "Get alerts in Telegram"
+    }
+  }
+}

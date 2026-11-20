@@ -39,12 +39,12 @@ test.describe("authentication and onboarding", () => {
     users.push(user);
 
     await signInViaUi(page, user, "en");
-    await expect(page.getByRole("heading", { level: 1, name: "Create your firm" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Welcome to Tesuch" })).toBeVisible();
     expect(await a11yIssues(page)).toEqual([]);
 
     const firm = `QA Firm ${Date.now()}`;
-    await page.getByLabel("Firm name").fill(firm);
-    await page.getByRole("button", { name: "Create" }).click();
+    await page.getByLabel("What is your business called?").fill(firm);
+    await page.getByRole("button", { name: "Start" }).click();
     // Dashboard shows the new firm as its title.
     await expect(page.getByRole("heading", { level: 1, name: firm })).toBeVisible();
 
@@ -79,15 +79,15 @@ test.describe("authentication and onboarding", () => {
     users.push(user);
     await signInViaUi(page, user, "hy");
     await expect(page.locator("html")).toHaveAttribute("lang", "hy");
-    await expect(page.getByRole("heading", { level: 1, name: "Ստեղծեք ձեր ֆիրման" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Բարի գալուստ Tesuch" })).toBeVisible();
   });
 
   test("a second firm name is not created for blank input", async ({ page }) => {
     const user = await createTestUser("blank");
     users.push(user);
     await signInViaUi(page, user, "en");
-    await page.getByLabel("Firm name").fill("   ");
-    await page.getByRole("button", { name: "Create" }).click();
+    await page.getByLabel("What is your business called?").fill("   ");
+    await page.getByRole("button", { name: "Start" }).click();
     const { data } = await admin().from("memberships").select("org_id").eq("user_id", user.id);
     expect(data).toEqual([]);
   });

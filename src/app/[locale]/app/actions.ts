@@ -82,6 +82,9 @@ export async function createOrg(locale: string, form: FormData) {
   const { data, error } = await supabase.rpc("create_org", { p_name: name });
   if (error) throw new Error(error.message);
   await rememberOrg(data as string);
+  // A new business starts with its company already created from the name, so the owner never meets the word "company" first.
+  // Best effort: if this fails the firm still exists and the dashboard offers "Add company".
+  await supabase.from("companies").insert({ org_id: data as string, name });
   revalidatePath(`/${locale}/app`, "layout");
 }
 

@@ -8,7 +8,7 @@ import { locale as localeSchema, pdfError, pdfResponse, today, userClient, uuid 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** GET /api/pdf/checklist?company=<id>&locale=hy|ru|en — open findings of one company. */
+/** GET /api/pdf/checklist?company=<id>&locale=hy|ru|en[&pack=1] — open findings of one company; pack=1 adds the documents-to-have-ready page. */
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
   const companyId = uuid.safeParse(q.get("company"));
@@ -64,6 +64,7 @@ export async function GET(req: Request) {
     locale: loc.data,
     company: { name: company.name, taxId: company.tax_id },
     asOf,
+    pack: q.get("pack") === "1",
     // Unknown head count (query error) falls back to scoring; zero staff has no score.
     score: !staffErr && staff === 0 ? null : inspectionReadyScore(items.map((i) => i.finding)),
     items,

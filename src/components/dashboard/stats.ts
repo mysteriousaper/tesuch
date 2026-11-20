@@ -30,3 +30,8 @@ export function buildOverview(companies: { id: string; name: string }[], stats: 
   rows.sort((a, b) => (a.score ?? Infinity) - (b.score ?? Infinity) || a.name.localeCompare(b.name));
   return { rows, firm: firmScore(rows.map((r) => r.score)) };
 }
+
+/** Open issues that count towards the score (not "info") and are already past their due date. */
+export function overdueScoringOf(rows: StatRow[], companyId: string): number {
+  return rows.reduce((sum, r) => (r.company_id === companyId && r.overdue && isSeverity(r.kind) && r.kind !== "info" ? sum + Number(r.n) : sum), 0);
+}
