@@ -88,4 +88,29 @@ test.describe("staff import (lane B)", () => {
       { full_name: "Թեստ Աշխատող Մեկ", birth_date: "1990-03-15" },
     ]);
   });
+
+  test("title rows above the header and windows-1251 encoding are handled", async ({ page }) => {
+    await signInViaUi(page, user, "en");
+    await page.goto("/en/app/import");
+    await page.getByLabel("Company").selectOption(companyId);
+    // windows-1251 file with two title rows above the header (Cyrillic headers, so mojibake would break the mapping).
+    const csv = ["Список сотрудников;;", "Итого: 1;;", "ФИО;Дата приема;Дата рождения", "Тест Кодировка;01.09.2026;15.03.1990"].join("\n");
+    const buffer = new Uint8Array(Buffer.from(csv, "latin1"));
+    for (let i = 0, cp = Array.from(csv); i < cp.length; i++) {
+      const c = cp[i].charCodeAt(0);
+      buffer[i] = c >= 0x410 && c <= 0x44f ? c - 0x410 + 0xc0 : c;
+    }
+    await page.getByLabel("File (.csv, .xlsx)").setInputFiles({ name: "cp1251.csv", mimeType: "text/csv", buffer: Buffer.from(buffer) });
+    await expect(page.getByRole("heading", { name: "Match the columns" })).toBeVisible();
+    await expect(page.getByLabel("Header row")).toHaveValue("3");
+    await expect(page.getByLabel("Encoding")).toHaveValue("windows-1251");
+    await expect(page.getByText("Found 1 row")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Next" })).toBeEnabled();
+
+    // Manual override re-parses live; row 1 has no recognisable columns, so Next is blocked.
+    await page.getByLabel("Header row").fill("1");
+    await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+    await page.getByLabel("Header row").fill("3");
+    await expect(page.getByRole("button", { name: "Next" })).toBeEnabled();
+  });
 });

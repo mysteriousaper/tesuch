@@ -5,8 +5,8 @@ import { useId, useMemo, useState, useTransition } from "react";
 import { commitImport, type CommitResult } from "@/app/[locale]/app/import/actions";
 import { Link } from "@/i18n/navigation";
 import {
-  autoMap, buildImport, missingRequiredFields, parseCsv, TARGET_FIELDS, toMapping, toTable, unmappedImpact,
-  type ColumnGuess, type ColumnMapping, type RawCell, type RawTable, type TargetField,
+  autoMap, buildImport, decodeCsv, detectHeaderRow, missingRequiredFields, parseCsv, TARGET_FIELDS, toMapping, toTable, unmappedImpact,
+  type ColumnGuess, type CsvEncoding, type ColumnMapping, type RawCell, type RawTable, type TargetField,
 } from "@/lib/import";
 import type { Locale } from "@/lib/notify/i18n";
 import { MAX_IMPORT_ROWS, templateCsv } from "./template";
@@ -40,12 +40,20 @@ function serializable(table: RawTable): RawTable {
   };
 }
 
-async function readFile(file: File): Promise<RawCell[][]> {
+interface Source {
+  grid: RawCell[][];
+  /** Raw CSV bytes, kept so the encoding can be switched. Null for Excel files. */
+  bytes: ArrayBuffer | null;
+}
+
+async function readFile(file: File): Promise<{ source: Source; encoding: CsvEncoding | null }> {
   if (/\.xlsx$/i.test(file.name)) {
     const { readXlsxGrid } = await import("@/lib/import/xlsx-browser");
-    return readXlsxGrid(file);
+    return { source: { grid: await readXlsxGrid(file), bytes: null }, encoding: null };
   }
-  return parseCsv(await file.text());
+  const bytes = await file.arrayBuffer();
+  const decoded = decodeCsv(bytes);
+  return { source: { grid: parseCsv(decoded.text), bytes }, encoding: decoded.encoding };
 }
 
 const fmtDate = (iso: string | null) => (iso ? iso.split("-").reverse().join(".") : "—");
@@ -53,7 +61,7 @@ const fmtDate = (iso: string | null) => (iso ? iso.split("-").reverse().join("."
 export function ImportWizard({ locale, companies }: { locale: Locale; companies: ImportCompany[] }) {
   const t = useTranslations("import");
   const tRoot = useTranslations();
-  const ids = { company: useId(), file: useId() };
+  const ids = { company: useId(), file: useId(), headerRow: useId(), encoding: useId() };
 
   const [step, setStep] = useState<Step>("upload");
   const [companyId, setCompanyId] = useState(companies[0]?.id ?? "");
@@ -61,6 +69,10 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
   const [table, setTable] = useState<RawTable | null>(null);
   const [guesses, setGuesses] = useState<ColumnGuess[]>([]);
   const [mapping, setMapping] = useState<ColumnMapping>({});
+  const [source, setSource] = useState<Source | null>(null);
+  const [encoding, setEncoding] = useState<CsvEncoding | null>(null);
+  const [headerRow, setHeaderRow] = useState("1");
+  const [mapError, setMapError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [reading, setReading] = useState(false);
   const [result, setResult] = useState<CommitResult | null>(null);
@@ -89,25 +101,61 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     );
   }
 
+  /** Build the table from a grid and header row (null = auto-detect). Returns an error message key or null. */
+  function applyGrid(grid: RawCell[][], row: number | null): "empty" | "tooManyRows" | null {
+    const parsed = toTable(grid, { headerRow: row });
+    if (!parsed.headers.length || !parsed.rows.length) return "empty";
+    if (parsed.rows.length > MAX_IMPORT_ROWS) return "tooManyRows";
+    const g = autoMap(parsed.headers);
+    setTable(serializable(parsed));
+    setGuesses(g);
+    setMapping(toMapping(g));
+    return null;
+  }
+
   async function onFile(file: File | undefined) {
     setUploadError(null);
+    setMapError(null);
     if (!file) return;
     setReading(true);
     setFileName(file.name);
     try {
-      const parsed = toTable(await readFile(file));
-      if (!parsed.headers.length || !parsed.rows.length) return setUploadError(t("empty"));
-      if (parsed.rows.length > MAX_IMPORT_ROWS) return setUploadError(t("tooManyRows", { count: parsed.rows.length, max: MAX_IMPORT_ROWS }));
-      const g = autoMap(parsed.headers);
-      setTable(serializable(parsed));
-      setGuesses(g);
-      setMapping(toMapping(g));
+      const { source: src, encoding: enc } = await readFile(file);
+      const detected = detectHeaderRow(src.grid);
+      const err = applyGrid(src.grid, detected);
+      if (err === "empty") return setUploadError(t("empty"));
+      if (err === "tooManyRows") return setUploadError(t("tooManyRows", { count: toTable(src.grid, { headerRow: detected }).rows.length, max: MAX_IMPORT_ROWS }));
+      setSource(src);
+      setEncoding(enc);
+      setHeaderRow(String(detected ?? 1));
       setStep("map");
     } catch {
       setUploadError(t("readError"));
     } finally {
       setReading(false);
     }
+  }
+
+  function onHeaderRow(value: string) {
+    setHeaderRow(value);
+    setMapError(null);
+    const n = Number(value);
+    if (!source || !Number.isInteger(n) || n < 1) return setMapError(t("headerRowInvalid"));
+    const err = applyGrid(source.grid, n);
+    if (err === "empty") setMapError(t("headerRowEmpty", { row: n }));
+    else if (err === "tooManyRows") setMapError(t("tooManyRows", { count: toTable(source.grid, { headerRow: n }).rows.length, max: MAX_IMPORT_ROWS }));
+  }
+
+  function onEncoding(next: CsvEncoding) {
+    if (!source?.bytes) return;
+    const grid = parseCsv(decodeCsv(source.bytes, next).text);
+    const detected = detectHeaderRow(grid);
+    const src = { ...source, grid };
+    setEncoding(next);
+    setSource(src);
+    setHeaderRow(String(detected ?? 1));
+    setMapError(null);
+    if (applyGrid(grid, detected)) setMapError(t("headerRowEmpty", { row: detected ?? 1 }));
   }
 
   function downloadTemplate() {
@@ -138,6 +186,9 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     setMapping({});
     setResult(null);
     setFileName("");
+    setSource(null);
+    setEncoding(null);
+    setMapError(null);
   }
 
   const errorRows = preview ? new Set(preview.errors.map((e) => e.row)).size : 0;
@@ -193,6 +244,33 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
             <p className="text-sm text-muted">{t("mapIntro")}</p>
             <p className="mt-1 text-xs text-muted">{fileName} · {t("rowsFound", { count: table.rows.length })}</p>
           </div>
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={ids.headerRow} className="text-sm font-medium">{t("headerRow")}</label>
+              <input
+                id={ids.headerRow}
+                type="number"
+                inputMode="numeric"
+                min={1}
+                step={1}
+                value={headerRow}
+                onChange={(e) => onHeaderRow(e.target.value)}
+                aria-describedby={`${ids.headerRow}-hint`}
+                className="w-24 rounded-theme border border-control bg-surface px-3 py-2 text-base tabular-nums"
+              />
+            </div>
+            {encoding && (
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor={ids.encoding} className="text-sm font-medium">{t("encoding")}</label>
+                <select id={ids.encoding} value={encoding} onChange={(e) => onEncoding(e.target.value as CsvEncoding)} className="rounded-theme border border-control bg-surface px-3 py-2 text-sm">
+                  <option value="utf-8">UTF-8</option>
+                  <option value="windows-1251">windows-1251</option>
+                </select>
+              </div>
+            )}
+          </div>
+          <p id={`${ids.headerRow}-hint`} className="-mt-2 text-xs text-muted">{t("headerRowHint")}{encoding ? ` ${t("encodingHint", { encoding: encoding === "utf-8" ? "UTF-8" : "windows-1251" })}` : ""}</p>
+          {mapError && <p role="alert" className="text-sm text-danger">{mapError}</p>}
           <ul className="flex flex-col divide-y divide-line rounded-theme border border-line">
             {guesses.map((g) => {
               const value = mapping[g.column] ?? "";

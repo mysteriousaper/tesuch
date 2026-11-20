@@ -4,6 +4,7 @@ import { evaluateCompany } from "../rules/engine";
 import type { Contract, Employee } from "../rules/types";
 import {
   autoMap,
+  detectHeaderRow,
   buildImport,
   excelSerialToIso,
   missingRequiredFields,
@@ -229,5 +230,36 @@ describe("row pipeline with Excel-typed cells", () => {
     const r = buildImport(table, mapping, opts());
     expect(r.employees[0].full_name).toBe("Петросян Арам Ваганович");
     expect(r.contracts[0].start_date).toBe("2026-03-01");
+  });
+});
+
+describe("header-row detection", () => {
+  const title = [["Staff list 2026", "", "", ""], ["Total employees: 2", "", "", ""], ["", "", "", ""]];
+  const header = ["Full name", "Date of birth", "Hire date", "Contract end"];
+  const data = [["A B", "01.01.1990", "01.02.2026", ""], ["C D", "02.02.1991", "01.03.2026", ""]];
+
+  it("finds the header below title/summary rows and keeps 1-based row numbers", () => {
+    const grid = [...title, header, ...data];
+    expect(detectHeaderRow(grid)).toBe(4);
+    const t = toTable(grid);
+    expect(t.headers).toEqual(header);
+    expect(t.rows.map((r) => r.rowNumber)).toEqual([5, 6]);
+  });
+
+  it("falls back to the first non-empty row when nothing is recognisable", () => {
+    const grid = [[""], ["Foo", "Bar"], ["x", "y"]];
+    expect(detectHeaderRow(grid)).toBe(2);
+    expect(toTable(grid).headers).toEqual(["Foo", "Bar"]);
+    expect(detectHeaderRow([[""], []])).toBeNull();
+    expect(toTable([]).headers).toEqual([]);
+  });
+
+  it("uses the manual override (1-based) instead of detection", () => {
+    const grid = [...title, header, ...data];
+    const t = toTable(grid, { headerRow: 2 });
+    expect(t.headers[0]).toBe("Total employees: 2");
+    expect(t.rows[0].rowNumber).toBe(4);
+    expect(toTable(grid, { headerRow: 99 })).toEqual({ headers: [], rows: [] });
+    expect(toTable(grid, { headerRow: 0 })).toEqual({ headers: [], rows: [] });
   });
 });
