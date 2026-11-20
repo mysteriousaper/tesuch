@@ -27,8 +27,10 @@ export interface EmployeeValues {
 const FLAG_LABEL = { six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer" } as const;
 
 /** Edit employee + contract. Saving re-runs the rules, so corrected data closes its findings. */
-export function EditEmployeeForm({ locale, companyId, employeeId, contractId, values }: {
+export function EditEmployeeForm({ locale, companyId, employeeId, contractId, values, privacy = false, employeeCode = "" }: {
   locale: string; companyId: string; employeeId: string; contractId: string; values: EmployeeValues;
+  /** Privacy mode: a required code replaces the name field. */
+  privacy?: boolean; employeeCode?: string;
 }) {
   const t = useTranslations("dashboard");
   const [fixed, setFixed] = useState(values.type === "fixed_term");
@@ -47,10 +49,17 @@ export function EditEmployeeForm({ locale, companyId, employeeId, contractId, va
       resetOnSuccess={false}
       className="grid gap-3 sm:grid-cols-2"
     >
-      <label className={`${labelCls} sm:col-span-2`}>
-        {t("fields.fullName")}
-        <input name="full_name" required maxLength={200} defaultValue={values.full_name} className={inputCls} />
-      </label>
+      {privacy ? (
+        <label className={`${labelCls} sm:col-span-2`}>
+          {t("fields.employeeCode")}
+          <input name="employee_code" required maxLength={40} defaultValue={employeeCode} autoComplete="off" placeholder={t("fields.employeeCodeHint")} className={inputCls} />
+        </label>
+      ) : (
+        <label className={`${labelCls} sm:col-span-2`}>
+          {t("fields.fullName")}
+          <input name="full_name" required maxLength={200} defaultValue={values.full_name} className={inputCls} />
+        </label>
+      )}
       {date("birth_date", <>{t("fields.birthDate")}{optional}</>)}
       <fieldset className="flex flex-col gap-1 text-sm font-medium">
         <legend className="mb-1">{t("fields.contractType")}</legend>

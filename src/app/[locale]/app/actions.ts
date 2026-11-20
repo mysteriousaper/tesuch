@@ -5,12 +5,13 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { currentOrg, ORG_COOKIE, userOrgs } from "@/components/dashboard/queries";
+import { orgPrivacyMode } from "@/components/dashboard/privacy";
 import { ensureRules, runRulesForCompany } from "@/lib/jobs/run";
 import type { Locale } from "@/lib/notify/i18n";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
 import {
-  canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  applyPrivacyIdentity, canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
   leaveSchema, splitEmployee, uuid, type ActionState,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
@@ -186,14 +187,18 @@ export async function setFindingStatus(
 }
 
 export async function addEmployee(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
-  const parsed = employeeSchema.safeParse(Object.fromEntries(form));
-  if (!parsed.success || !uuid.safeParse(companyId).success) return FAIL("invalid");
+  if (!uuid.safeParse(companyId).success) return FAIL("invalid");
   const { supabase, user } = await session();
   if (!user) return FAIL("forbidden");
   const co = await editableCompany(supabase, user.id, companyId);
   if (!co) return FAIL("forbidden");
+  // Privacy mode comes from the firm's row, never from the form: with it on, the code replaces the name.
+  const identity = applyPrivacyIdentity(Object.fromEntries(form), await orgPrivacyMode(supabase, co.org_id));
+  if (!identity.ok) return FAIL("invalid");
+  const parsed = employeeSchema.safeParse(identity.raw);
+  if (!parsed.success) return FAIL("invalid");
 
-  const { employee, contract } = splitEmployee(parsed.data);
+  const { employee, contract } = splitEmployee(parsed.data, identity.code);
   const result = await insertEmployeeWithContract({
     insertEmployee: async (row) => must(await supabase.from("employees").insert({ org_id: co.org_id, company_id: co.id, ...row }).select("id").single()).id,
     insertContract: async (employeeId, row) => {
@@ -204,7 +209,7 @@ export async function addEmployee(locale: string, companyId: string, _prev: Acti
       await supabase.from("employees").delete().eq("id", employeeId).eq("company_id", co.id);
     },
   }, employee, contract);
-  if (!result.ok) return FAIL("generic");
+  if (!result.ok) return FAIL(result.duplicateCode ? "duplicateCode" : "generic");
 
   await recheckQuietly(co);
   revalidatePath(`/${locale}/app/companies/${companyId}`);
@@ -244,17 +249,20 @@ export async function renameOrg(locale: string, orgId: string, _prev: ActionStat
 export async function updateEmployee(
   locale: string, companyId: string, employeeId: string, contractId: string, _prev: ActionState, form: FormData,
 ): Promise<ActionState> {
-  const parsed = editSchema.safeParse(Object.fromEntries(form));
-  if (!parsed.success || ![companyId, employeeId, contractId].every((id) => uuid.safeParse(id).success)) return FAIL("invalid");
+  if (![companyId, employeeId, contractId].every((id) => uuid.safeParse(id).success)) return FAIL("invalid");
   const { supabase, user } = await session();
   if (!user) return FAIL("forbidden");
   const co = await editableCompany(supabase, user.id, companyId);
   if (!co) return FAIL("forbidden");
+  const identity = applyPrivacyIdentity(Object.fromEntries(form), await orgPrivacyMode(supabase, co.org_id));
+  if (!identity.ok) return FAIL("invalid");
+  const parsed = editSchema.safeParse(identity.raw);
+  if (!parsed.success) return FAIL("invalid");
 
   // Ids are only used as filters: an employee must belong to this company and the contract to this employee.
-  const { employee, contract } = splitEmployee(parsed.data);
+  const { employee, contract } = splitEmployee(parsed.data, identity.code);
   const { data: emp, error } = await supabase.from("employees").update(employee).eq("id", employeeId).eq("company_id", co.id).select("id");
-  if (error) return FAIL("generic");
+  if (error) return FAIL(error.code === "23505" ? "duplicateCode" : "generic");
   if (!emp?.length) return FAIL("forbidden");
   const { data: con, error: ce } = await supabase.from("contracts").update(contract).eq("id", contractId).eq("employee_id", employeeId).select("id");
   if (ce) return FAIL("generic");

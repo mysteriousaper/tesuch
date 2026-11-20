@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
 import { CompanySettings } from "@/components/dashboard/company-settings";
 import { AddEmployeeForm, RecheckButton } from "@/components/dashboard/dashboard-forms";
+import { orgPrivacyMode } from "@/components/dashboard/privacy";
 import { FindingList, fmtDate, type FindingView } from "@/components/dashboard/finding-list";
 import { statsFor } from "@/components/dashboard/stats";
 import { companyStats, todayIso } from "@/components/dashboard/queries";
@@ -31,6 +32,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
   const { data: membership } = await supabase.from("memberships").select("role").eq("user_id", user.id).eq("org_id", company.org_id).maybeSingle();
   const canEdit = membership?.role === "owner" || membership?.role === "accountant";
   const isOwner = membership?.role === "owner";
+  const privacy = canEdit ? await orgPrivacyMode(supabase, company.org_id) : false;
 
   const t = await getTranslations("dashboard");
   const c = await getTranslations("common");
@@ -110,7 +112,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
           {canEdit && (
             <details className="rounded-theme-lg border border-line bg-surface">
               <summary className="cursor-pointer px-4 py-3 font-semibold">{t("addEmployee")}</summary>
-              <div className="border-t border-line p-4"><AddEmployeeForm locale={locale} companyId={company.id} /></div>
+              <div className="border-t border-line p-4"><AddEmployeeForm locale={locale} companyId={company.id} privacy={privacy} /></div>
             </details>
           )}
           {isOwner && <CompanySettings locale={locale} companyId={company.id} name={company.name} taxId={company.tax_id} />}

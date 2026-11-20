@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ContractType, IsoDate, TerminationInitiator } from "../rules/types";
-import type { TargetField } from "./fields";
+import { NAME_FIELDS, type TargetField } from "./fields";
 import type { ColumnMapping } from "./mapping";
 import { parseBool, parseContractType, parseDate, parseGround, parseInitiator, parseText, type Parsed, type RawCell } from "./normalize";
 import type { RawTable } from "./parse";
@@ -13,6 +13,7 @@ export type ImportErrorKey =
   | "import.error.invalidContractType"
   | "import.error.invalidInitiator"
   | "import.error.tooLong"
+  | "import.error.duplicateCode"
   | "import.error.endBeforeStart"
   | "import.error.probationBeforeStart"
   | "import.error.endDateOnIndefinite"
@@ -34,6 +35,8 @@ export interface EmployeeInsert {
   birth_date: IsoDate | null;
   six_day_week: boolean;
   external_ref: string | null;
+  /** Present only in privacy mode (then full_name equals it). Absent otherwise, so the column is never written without need. */
+  employee_code?: string;
 }
 
 export interface ContractInsert {
@@ -69,11 +72,19 @@ export interface ImportOptions {
   companyId: string;
   /** Injected for deterministic tests; defaults to crypto.randomUUID. */
   newId?: () => string;
+  /** Privacy mode: the code replaces the name. Name columns are ignored and never stored; the code is required and unique in the file. */
+  privacy?: boolean;
 }
+
+/** Mirrors employees.employee_code check (1-40 characters). */
+export const MAX_CODE_LENGTH = 40;
+
+/** Codes compare case-insensitively inside the app (the database index is exact, so this is stricter). */
+export const codeKey = (code: string) => code.normalize("NFC").trim().toLocaleLowerCase();
 
 const DATE_FIELDS = ["birth_date", "start_date", "end_date", "probation_end", "terminated_on", "notice_given_on"] as const;
 const BOOL_FIELDS = ["six_day_week", "probation_special_case", "hired_by_transfer", "workforce_reduction"] as const;
-const TEXT_FIELDS = ["full_name", "first_name", "last_name", "patronymic", "external_ref", "termination_ground"] as const;
+const TEXT_FIELDS = ["full_name", "first_name", "last_name", "patronymic", "employee_code", "external_ref", "termination_ground"] as const;
 
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -108,6 +119,8 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
   for (const [col, field] of Object.entries(mapping)) if (field) columnOf.set(field, Number(col));
 
   const result: ImportResult = { employees: [], contracts: [], errors: [], rowCount: table.rows.length };
+  const privacy = opts.privacy === true;
+  const seenCodes = new Set<string>();
 
   for (const { rowNumber, cells } of table.rows) {
     const errors: ImportError[] = [];
@@ -126,11 +139,19 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
     // Unknown (blank or unmapped) stays null: these tri-state values are never defaulted to false.
     const srcRegistered = take("src_registered", parseBool(cell("src_registered")), "import.error.invalidBoolean", null);
     const fixedTermGround = take("fixed_term_ground", parseGround(cell("fixed_term_ground")), "import.error.tooLong", null);
-    const texts = Object.fromEntries(TEXT_FIELDS.map((f) => [f, take(f, parseText(cell(f)), "import.error.tooLong", null)])) as Record<(typeof TEXT_FIELDS)[number], string | null>;
+    // Privacy mode never reads name columns; outside privacy mode the code column is not read.
+    const skipped = (f: TargetField) => (privacy ? NAME_FIELDS.includes(f) : f === "employee_code");
+    const texts = Object.fromEntries(TEXT_FIELDS.map((f) => [f, skipped(f) ? null : take(f, parseText(cell(f)), "import.error.tooLong", null)])) as Record<(typeof TEXT_FIELDS)[number], string | null>;
     const contractType = take("contract_type", parseContractType(cell("contract_type")), "import.error.invalidContractType", null);
     const initiator = take("termination_initiator", parseInitiator(cell("termination_initiator")), "import.error.invalidInitiator", null);
 
-    const fullName = texts.full_name ?? [texts.last_name, texts.first_name, texts.patronymic].filter(Boolean).join(" ");
+    const code = privacy ? texts.employee_code : null;
+    if (privacy) {
+      if (!code) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.required" });
+      else if (code.length > MAX_CODE_LENGTH) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.tooLong" });
+      else if (seenCodes.has(codeKey(code))) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.duplicateCode" });
+    }
+    const fullName = privacy ? (code ?? "") : texts.full_name ?? [texts.last_name, texts.first_name, texts.patronymic].filter(Boolean).join(" ");
 
     const check = rowSchema.safeParse({
       full_name: fullName,
@@ -143,7 +164,7 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
     });
     if (!check.success) {
       for (const issue of check.error.issues) {
-        const field = issue.path[0] as TargetField;
+        const field = (privacy && issue.path[0] === "full_name" ? "employee_code" : issue.path[0]) as TargetField;
         // Date fields that failed parsing already have a more specific error.
         if (!errors.some((e) => e.field === field)) errors.push({ row: rowNumber, field, key: issue.message as ImportErrorKey });
       }
@@ -154,6 +175,7 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
       continue;
     }
 
+    if (code) seenCodes.add(codeKey(code));
     const employeeId = newId();
     result.employees.push({
       id: employeeId,
@@ -163,6 +185,7 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
       birth_date: dates.birth_date,
       six_day_week: bools.six_day_week ?? false,
       external_ref: texts.external_ref,
+      ...(privacy && code ? { employee_code: code } : {}),
     });
     result.contracts.push({
       id: newId(),

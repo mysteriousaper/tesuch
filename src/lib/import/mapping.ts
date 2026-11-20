@@ -1,4 +1,4 @@
-import { FIELD_ALIASES, normalizeHeader, TARGET_FIELDS, type TargetField } from "./fields";
+import { FIELD_ALIASES, normalizeHeader, selectableFields, type TargetField } from "./fields";
 
 export interface ColumnGuess {
   column: number;
@@ -22,11 +22,15 @@ function score(header: string, alias: string): number {
 }
 
 /** Guess a field for each header. Each field is used at most once; the best-scoring pair wins. */
-export function autoMap(headers: string[]): ColumnGuess[] {
+export function autoMap(headers: string[], opts: { privacy?: boolean } = {}): ColumnGuess[] {
+  const privacy = opts.privacy === true;
+  // Privacy mode: the code field goes first so it wins ties with external_ref (same "Табельный номер" header), and names are not offered.
+  const fields = selectableFields(privacy);
+  if (privacy) fields.sort((a, b) => Number(b === "employee_code") - Number(a === "employee_code"));
   const normalized = headers.map((h) => normalizeHeader(String(h ?? "")));
   const candidates: { column: number; field: TargetField; score: number; aliasLen: number }[] = [];
   normalized.forEach((h, column) => {
-    for (const field of TARGET_FIELDS) {
+    for (const field of fields) {
       for (const raw of FIELD_ALIASES[field]) {
         const alias = normalizeHeader(raw);
         const s = score(h, alias);
@@ -50,11 +54,13 @@ export function toMapping(guesses: ColumnGuess[]): ColumnMapping {
   return Object.fromEntries(guesses.map((g) => [g.column, g.field]));
 }
 
-/** Fields the import cannot work without. Name may come from full_name or first+last name. */
-export function missingRequiredFields(mapping: ColumnMapping): TargetField[] {
+/** Fields the import cannot work without. Name may come from full_name or first+last name; in privacy mode the code replaces the name. */
+export function missingRequiredFields(mapping: ColumnMapping, opts: { privacy?: boolean } = {}): TargetField[] {
   const mapped = new Set(Object.values(mapping).filter((f): f is TargetField => f !== null));
   const missing: TargetField[] = [];
-  if (!mapped.has("full_name") && !(mapped.has("first_name") && mapped.has("last_name"))) missing.push("full_name");
+  if (opts.privacy) {
+    if (!mapped.has("employee_code")) missing.push("employee_code");
+  } else if (!mapped.has("full_name") && !(mapped.has("first_name") && mapped.has("last_name"))) missing.push("full_name");
   if (!mapped.has("start_date")) missing.push("start_date");
   return missing;
 }

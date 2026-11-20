@@ -1,5 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RenameOrgForm } from "@/components/dashboard/dashboard-forms";
+import { PrivacyModeForm } from "@/components/dashboard/privacy-mode-form";
+import { orgPrivacyMode } from "@/components/dashboard/privacy";
 import { OrgSwitcher } from "@/components/dashboard/org-switcher";
 import { currentOrg, userOrgs, type Role } from "@/components/dashboard/queries";
 import { createOrg } from "../actions";
@@ -21,6 +23,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
   const [org, orgs] = await Promise.all([currentOrg(supabase, user.id), userOrgs(supabase, user.id)]);
   const o = await getTranslations("onboarding");
   const m = await getTranslations("members");
+  const privacy = org?.role === "owner" ? await orgPrivacyMode(supabase, org.id) : false;
   const { data: link } = await supabase.from("telegram_links").select("chat_id").eq("user_id", user.id).maybeSingle();
 
   // Members are read through RLS (only orgs the user belongs to); emails come from the auth admin API for those ids only.
@@ -68,6 +71,16 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
               ))}
             </ul>
           </div>
+        </section>
+      )}
+
+      {org?.role === "owner" && (
+        <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="privacy-h">
+          <h2 id="privacy-h" className="text-lg font-semibold">{t("privacy.title")}</h2>
+          <p className="text-sm text-muted">{t("privacy.intro")}</p>
+          <p className="text-sm text-muted">{t("privacy.table")}</p>
+          <p className="text-sm text-muted">{t("privacy.existing")}</p>
+          <PrivacyModeForm locale={locale} enabled={privacy} />
         </section>
       )}
 

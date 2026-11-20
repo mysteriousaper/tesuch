@@ -263,3 +263,49 @@ describe("header-row detection", () => {
     expect(toTable(grid, { headerRow: 0 })).toEqual({ headers: [], rows: [] });
   });
 });
+
+describe("privacy mode import", () => {
+  const csv = [
+    "Табельный номер;ФИО;Дата приёма",
+    "EMP-001;Иван Иванов;15.01.2026",
+    "EMP-002;;16.01.2026",
+    "emp-001;Другой;17.01.2026",
+    ";Без кода;18.01.2026",
+    `${"x".repeat(41)};Длинный;19.01.2026`,
+  ].join("\n");
+  const table = toTable(parseCsv(csv));
+  const privacyMap = toMapping(autoMap(table.headers, { privacy: true }));
+
+  it("maps the tabel number to the code (not external_ref) and offers no name fields", () => {
+    expect(privacyMap).toEqual({ 0: "employee_code", 1: null, 2: "start_date" });
+    expect(toMapping(autoMap(table.headers))).toEqual({ 0: "external_ref", 1: "full_name", 2: "start_date" });
+  });
+  it.each([
+    ["Employee code", "employee_code"], ["Code", "employee_code"], ["Tab. No", "employee_code"], ["Աշխատակցի կոդ", "employee_code"],
+    ["Կոդ", "employee_code"], ["Код", "employee_code"], ["Таб. №", "employee_code"], ["Табельный номер", "employee_code"], ["Tabel number", "employee_code"],
+  ])("privacy: header %s maps to the code", (h, f) => expect(autoMap([h], { privacy: true })[0].field).toBe(f));
+  it("outside privacy mode a Code header never maps to employee_code", () => {
+    expect(autoMap(["Code"])[0].field).toBeNull();
+    expect(autoMap(["Employee code"]).map((g) => g.field)).not.toContain("employee_code");
+  });
+  it("requires the code instead of a name", () => {
+    expect(missingRequiredFields({ 0: "start_date" }, { privacy: true })).toEqual(["employee_code"]);
+    expect(missingRequiredFields({ 0: "employee_code", 1: "start_date" }, { privacy: true })).toEqual([]);
+    expect(missingRequiredFields({ 0: "employee_code", 1: "start_date" })).toEqual(["full_name"]);
+  });
+  it("stores full_name = code, ignores names in the file, reports missing / long / repeated codes", () => {
+    const r = buildImport(table, { 0: "employee_code", 1: "full_name", 2: "start_date" }, { orgId: "o", companyId: "c", privacy: true });
+    expect(r.employees.map((e) => [e.full_name, e.employee_code])).toEqual([["EMP-001", "EMP-001"], ["EMP-002", "EMP-002"]]);
+    expect(JSON.stringify(r.employees)).not.toMatch(/Иван|Другой|Без кода/);
+    expect(r.errors.map((e) => [e.row, e.field, e.key])).toEqual([
+      [4, "employee_code", "import.error.duplicateCode"],
+      [5, "employee_code", "import.error.required"],
+      [6, "employee_code", "import.error.tooLong"],
+    ]);
+  });
+  it("outside privacy mode the code column is ignored and no employee_code key is written", () => {
+    const r = buildImport(table, { 0: "employee_code", 1: "full_name", 2: "start_date" }, { orgId: "o", companyId: "c" });
+    expect(r.employees[0]).not.toHaveProperty("employee_code");
+    expect(r.employees[0].full_name).toBe("Иван Иванов");
+  });
+});

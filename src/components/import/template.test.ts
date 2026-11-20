@@ -19,6 +19,19 @@ describe("import template", () => {
       expect(guesses.every((g) => g.confidence === 1)).toBe(true);
     });
 
+    it(`${locale}: the privacy template has a code and no names, maps cleanly and imports`, () => {
+      const pcsv = templateCsv(locale, (f) => (m.fields as Record<TargetField, string>)[f], { name: m.templateSample.name, ground: m.templateSample.ground }, { privacy: true });
+      const table = toTable(parseCsv(pcsv));
+      const map = toMapping(autoMap(table.headers, { privacy: true }));
+      expect(Object.values(map)).toContain("employee_code");
+      expect(Object.values(map)).not.toContain("full_name");
+      expect(Object.values(map)).not.toContain("external_ref");
+      expect(Object.values(map).every(Boolean)).toBe(true);
+      const result = buildImport(table, map, { orgId: "o", companyId: "c", privacy: true });
+      expect(result.errors).toEqual([]);
+      expect(result.employees[0]).toMatchObject({ full_name: "EMP-014", employee_code: "EMP-014" });
+    });
+
     it(`${locale}: the sample row imports without errors`, () => {
       const table = toTable(parseCsv(csv));
       const result = buildImport(table, toMapping(autoMap(table.headers)), { orgId: "o", companyId: "c" });

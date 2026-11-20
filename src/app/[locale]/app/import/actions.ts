@@ -3,7 +3,8 @@
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { dedupeEmployees } from "@/components/import/dedupe";
+import { orgPrivacyMode } from "@/components/dashboard/privacy";
+import { dedupeEmployees, type ExistingEmployee } from "@/components/import/dedupe";
 import { MAX_IMPORT_ROWS } from "@/components/import/template";
 import { buildImport, TARGET_FIELDS, missingRequiredFields, type ColumnMapping } from "@/lib/import";
 import { ensureRules, runRulesForCompany } from "@/lib/jobs/run";
@@ -57,7 +58,6 @@ export async function commitImport(locale: Locale, input: ImportPayload): Promis
     }
     mapping[c] = field;
   }
-  if (missingRequiredFields(mapping).length) return { ok: false, error: "invalid" };
 
   const supabase = await supabaseForUser();
   const { data: { user } } = await supabase.auth.getUser();
@@ -70,14 +70,19 @@ export async function commitImport(locale: Locale, input: ImportPayload): Promis
     .from("memberships").select("role").eq("org_id", company.org_id).eq("user_id", user.id).maybeSingle();
   if (!membership || !["owner", "accountant"].includes(membership.role)) return { ok: false, error: "forbidden" };
 
-  const result = buildImport({ headers, rows }, mapping, { orgId: company.org_id, companyId: company.id });
+  // Privacy mode is read from the firm's row, never from the client: with it on, names in the file are ignored and never stored.
+  const privacy = await orgPrivacyMode(supabase, company.org_id);
+  if (missingRequiredFields(mapping, { privacy }).length) return { ok: false, error: "invalid" };
+
+  const result = buildImport({ headers, rows }, mapping, { orgId: company.org_id, companyId: company.id, privacy });
   const skippedErrors = new Set(result.errors.map((e) => e.row)).size;
 
   // Duplicates: same employee ID, or same name + birth date. A shared name alone is flagged, never dropped.
+  // Existing codes are read only in privacy mode, so the normal import never touches the new column.
   const { data: existing, error: exErr } = await supabase
-    .from("employees").select("full_name, birth_date, external_ref").eq("company_id", company.id);
+    .from("employees").select(privacy ? "full_name, birth_date, external_ref, employee_code" : "full_name, birth_date, external_ref").eq("company_id", company.id);
   if (exErr) return { ok: false, error: "failed" };
-  const dedupe = dedupeEmployees(result.employees, existing ?? []);
+  const dedupe = dedupeEmployees(result.employees, (existing ?? []) as unknown as ExistingEmployee[]);
   const employees = dedupe.keep;
   const keepIds = new Set(employees.map((e) => e.id));
   const contracts = result.contracts.filter((c) => keepIds.has(c.employee_id));

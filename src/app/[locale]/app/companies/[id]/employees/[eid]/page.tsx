@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AddLeaveForm } from "@/components/dashboard/dashboard-forms";
 import { EditEmployeeForm, type EmployeeValues } from "@/components/dashboard/edit-employee-form";
+import { employeeCodeOf, orgPrivacyMode } from "@/components/dashboard/privacy";
 import { fmtDate } from "@/components/dashboard/finding-list";
 import { todayIso } from "@/components/dashboard/queries";
 import { Timeline, type TimelineEvent } from "@/components/dashboard/timeline";
@@ -35,6 +36,9 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
     supabase.from("memberships").select("role").eq("user_id", user.id).eq("org_id", emp.org_id).maybeSingle(),
   ]);
   const canEdit = membership?.role === "owner" || membership?.role === "accountant";
+  // Privacy mode: only the edit form needs it, read separately so a missing column can never break this page.
+  const privacy = canEdit ? await orgPrivacyMode(supabase, emp.org_id) : false;
+  const employeeCode = privacy ? await employeeCodeOf(supabase, eid) : "";
 
   const t = await getTranslations("dashboard");
   const today = todayIso();
@@ -87,6 +91,8 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
               companyId={id}
               employeeId={eid}
               contractId={latest.id}
+              privacy={privacy}
+              employeeCode={employeeCode}
               values={{ full_name: emp.full_name, birth_date: emp.birth_date, six_day_week: emp.six_day_week, ...latest }}
             />
           ) : (

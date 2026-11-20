@@ -43,16 +43,23 @@ export function RecheckButton({ locale, companyId }: { locale: string; companyId
   );
 }
 
-export function AddEmployeeForm({ locale, companyId }: { locale: string; companyId: string }) {
+export function AddEmployeeForm({ locale, companyId, privacy = false }: { locale: string; companyId: string; privacy?: boolean }) {
   const t = useTranslations("dashboard");
   const [fixed, setFixed] = useState(false);
   const optional = <span className="font-normal text-muted"> ({t("fields.optional")})</span>;
   return (
     <ActionForm action={addEmployee.bind(null, locale, companyId)} submitLabel={t("save")} className="grid gap-3 sm:grid-cols-2">
-      <label className={`${labelCls} sm:col-span-2`}>
-        {t("fields.fullName")}
-        <input name="full_name" required maxLength={200} autoComplete="off" className={inputCls} />
-      </label>
+      {privacy ? (
+        <label className={`${labelCls} sm:col-span-2`}>
+          {t("fields.employeeCode")}
+          <input name="employee_code" required maxLength={40} autoComplete="off" placeholder={t("fields.employeeCodeHint")} className={inputCls} />
+        </label>
+      ) : (
+        <label className={`${labelCls} sm:col-span-2`}>
+          {t("fields.fullName")}
+          <input name="full_name" required maxLength={200} autoComplete="off" className={inputCls} />
+        </label>
+      )}
       <label className={labelCls}>
         <span>{t("fields.birthDate")}{optional}</span>
         <input name="birth_date" type="date" className={inputCls} />

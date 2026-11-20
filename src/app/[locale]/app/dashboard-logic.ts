@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { DemoCompany, DemoContract, DemoEmployee } from "./demo-data";
 
 /** Result shape for forms using useActionState. `error` is a key in dashboard.errors. */
-export type ActionError = "generic" | "invalid" | "forbidden";
+export type ActionError = "generic" | "invalid" | "forbidden" | "duplicateCode";
 export type ActionState = { ok: true; count?: number; info?: "demoExists" } | { ok: false; error: ActionError } | null;
 export const FAIL = (error: ActionError): ActionState => ({ ok: false, error });
 
@@ -87,29 +87,53 @@ export const findingStatusSchema = z.object({
   status: z.enum(["open", "fixed", "dismissed"]),
 });
 
-/** Splits validated employee form data into the employees row and the contracts row. */
-export function splitEmployee<T extends { full_name: string; birth_date: string | null; six_day_week: boolean }>(v: T) {
+// ---------- Privacy mode ("code instead of name") ----------
+
+/** Mirrors employees.employee_code check (1-40 characters after trimming). */
+export const employeeCodeSchema = z.string().trim().min(1).max(40);
+
+/**
+ * Prepares raw form data for the employee schemas, given the firm's privacy mode (read from the database, never from the client).
+ * - Privacy on: a code is required and becomes full_name too, so every display shows the code and no name is stored.
+ *   Any name sent by the client is discarded.
+ * - Privacy off: employee_code is discarded, the name stays required.
+ */
+export function applyPrivacyIdentity(raw: Record<string, unknown>, privacy: boolean): { ok: true; raw: Record<string, unknown>; code: string | null } | { ok: false } {
+  const { employee_code, ...rest } = raw;
+  if (!privacy) return { ok: true, raw: rest, code: null };
+  const code = employeeCodeSchema.safeParse(employee_code);
+  if (!code.success) return { ok: false };
+  return { ok: true, raw: { ...rest, full_name: code.data }, code: code.data };
+}
+
+/** Postgres unique violation (the per-company code index). */
+export const isUniqueViolation = (e: unknown): boolean => typeof e === "object" && e !== null && (e as { code?: unknown }).code === "23505";
+
+/** Splits validated employee form data into the employees row and the contracts row. employee_code is written only in privacy mode. */
+export function splitEmployee<T extends { full_name: string; birth_date: string | null; six_day_week: boolean }>(v: T, code: string | null = null) {
   const { full_name, birth_date, six_day_week, ...contract } = v;
-  return { employee: { full_name, birth_date, six_day_week }, contract };
+  return { employee: { full_name, birth_date, six_day_week, ...(code ? { employee_code: code } : {}) }, contract };
 }
 
 // ---------- Multi-step inserts with rollback ----------
 
+type EmployeeRow = { full_name: string; birth_date: string | null; six_day_week: boolean; employee_code?: string };
+
 export interface EmployeeWriter {
-  insertEmployee(row: { full_name: string; birth_date: string | null; six_day_week: boolean }): Promise<string>;
+  insertEmployee(row: EmployeeRow): Promise<string>;
   insertContract(employeeId: string, row: Record<string, unknown>): Promise<void>;
   deleteEmployee(employeeId: string): Promise<void>;
 }
 
 /** Employee + contract. If the contract fails, the employee is deleted so no contract-less person is left behind. */
 export async function insertEmployeeWithContract(
-  w: EmployeeWriter, employee: { full_name: string; birth_date: string | null; six_day_week: boolean }, contract: Record<string, unknown>,
-): Promise<{ ok: true; employeeId: string } | { ok: false }> {
+  w: EmployeeWriter, employee: EmployeeRow, contract: Record<string, unknown>,
+): Promise<{ ok: true; employeeId: string } | { ok: false; duplicateCode?: true }> {
   let employeeId: string;
   try {
     employeeId = await w.insertEmployee(employee);
-  } catch {
-    return { ok: false };
+  } catch (e) {
+    return isUniqueViolation(e) ? { ok: false, duplicateCode: true } : { ok: false };
   }
   try {
     await w.insertContract(employeeId, contract);

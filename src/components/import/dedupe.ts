@@ -1,9 +1,11 @@
-import type { EmployeeInsert } from "@/lib/import";
+import { codeKey, type EmployeeInsert } from "../../lib/import";
 
 export interface ExistingEmployee {
   full_name: string;
   birth_date: string | null;
   external_ref: string | null;
+  /** Only read in privacy mode. */
+  employee_code?: string | null;
 }
 
 export interface DedupeResult {
@@ -18,6 +20,7 @@ const norm = (s: string) => s.normalize("NFC").replace(/\s+/g, " ").trim().toLoc
 
 /**
  * Decide which imported employees are already known, against the company's existing staff and earlier rows of the same file.
+ * - Same employee_code (privacy mode) → same person (skip).
  * - Same external_ref → same person (skip).
  * - Same name AND same birth date (both present) → same person (skip).
  * - Same name but nothing else to compare → could be two different people: import, but flag for the user.
@@ -27,7 +30,9 @@ export function dedupeEmployees(candidates: EmployeeInsert[], existing: Existing
   const refs = new Set<string>();
   const nameBirth = new Set<string>();
   const names = new Set<string>();
+  const codes = new Set<string>();
   const remember = (e: ExistingEmployee) => {
+    if (e.employee_code?.trim()) codes.add(codeKey(e.employee_code));
     if (e.external_ref?.trim()) refs.add(norm(e.external_ref));
     if (e.birth_date) nameBirth.add(`${norm(e.full_name)}|${e.birth_date}`);
     names.add(norm(e.full_name));
@@ -38,6 +43,12 @@ export function dedupeEmployees(candidates: EmployeeInsert[], existing: Existing
   for (const e of candidates) {
     const ref = e.external_ref?.trim() ? norm(e.external_ref) : null;
     const name = norm(e.full_name);
+    if (e.employee_code) {
+      // A code is unique per company: a known code is the same person, and a new code is never a name-only guess.
+      if (codes.has(codeKey(e.employee_code))) result.skipped++;
+      else { result.keep.push(e); remember(e); }
+      continue;
+    }
     if ((ref && refs.has(ref)) || (e.birth_date && nameBirth.has(`${name}|${e.birth_date}`))) {
       result.skipped++;
       continue;

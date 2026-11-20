@@ -5,7 +5,7 @@ import { useId, useMemo, useState, useTransition } from "react";
 import { commitImport, type CommitResult } from "@/app/[locale]/app/import/actions";
 import { Link } from "@/i18n/navigation";
 import {
-  autoMap, buildImport, decodeCsv, detectHeaderRow, missingRequiredFields, parseCsv, TARGET_FIELDS, toMapping, toTable, unmappedImpact,
+  autoMap, buildImport, decodeCsv, detectHeaderRow, missingRequiredFields, NAME_FIELDS, parseCsv, selectableFields, toMapping, toTable, unmappedImpact,
   type ColumnGuess, type CsvEncoding, type ColumnMapping, type RawCell, type RawTable, type TargetField,
 } from "@/lib/import";
 import type { Locale } from "@/lib/notify/i18n";
@@ -14,11 +14,14 @@ import { MAX_IMPORT_ROWS, templateCsv } from "./template";
 export interface ImportCompany {
   id: string;
   name: string;
+  /** The firm runs in privacy mode: a code column replaces names. */
+  privacy?: boolean;
 }
 
 type Step = "upload" | "map" | "preview" | "done";
 const STEPS: Step[] = ["upload", "map", "preview", "done"];
 const REQUIRED: TargetField[] = ["full_name", "start_date"];
+const REQUIRED_PRIVACY: TargetField[] = ["employee_code", "start_date"];
 const PREVIEW_ROWS = 10;
 const ERRORS_SHOWN = 50;
 
@@ -79,12 +82,14 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
   const [committing, startCommit] = useTransition();
 
   const field = (f: TargetField) => t(`fields.${f}`);
+  const privacy = companies.find((c) => c.id === companyId)?.privacy === true;
 
   const preview = useMemo(
-    () => (table && step !== "upload" ? buildImport(table, mapping, { orgId: "preview", companyId: "preview", newId: () => crypto.randomUUID() }) : null),
-    [table, mapping, step],
+    () => (table && step !== "upload" ? buildImport(table, mapping, { orgId: "preview", companyId: "preview", newId: () => crypto.randomUUID(), privacy }) : null),
+    [table, mapping, step, privacy],
   );
-  const missing = missingRequiredFields(mapping);
+  const missing = missingRequiredFields(mapping, { privacy });
+  const namesIgnored = privacy && Object.values(mapping).some((f) => f !== null && NAME_FIELDS.includes(f));
   const unmapped = unmappedImpact(mapping);
   const duplicates = useMemo(() => {
     const seen = new Map<TargetField, number>();
@@ -106,7 +111,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     const parsed = toTable(grid, { headerRow: row });
     if (!parsed.headers.length || !parsed.rows.length) return "empty";
     if (parsed.rows.length > MAX_IMPORT_ROWS) return "tooManyRows";
-    const g = autoMap(parsed.headers);
+    const g = autoMap(parsed.headers, { privacy });
     setTable(serializable(parsed));
     setGuesses(g);
     setMapping(toMapping(g));
@@ -159,7 +164,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
   }
 
   function downloadTemplate() {
-    const csv = templateCsv(locale, field, { name: t("templateSample.name"), ground: t("templateSample.ground") });
+    const csv = templateCsv(locale, field, { name: t("templateSample.name"), ground: t("templateSample.ground") }, { privacy });
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const a = Object.assign(document.createElement("a"), { href: url, download: `tesuch-import-${locale}.csv` });
     a.click();
@@ -297,8 +302,8 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
                     className="w-full min-w-0 rounded-theme border border-control bg-surface px-2 py-2 text-sm"
                   >
                     <option value="">{t("skip")}</option>
-                    {TARGET_FIELDS.map((f) => (
-                      <option key={f} value={f}>{field(f)}{REQUIRED.includes(f) ? ` (${t("required")})` : ""}</option>
+                    {selectableFields(privacy).map((f) => (
+                      <option key={f} value={f}>{field(f)}{(privacy ? REQUIRED_PRIVACY : REQUIRED).includes(f) ? ` (${t("required")})` : ""}</option>
                     ))}
                   </select>
                 </li>
@@ -323,7 +328,12 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
             <span className="rounded-full bg-surface-2 px-3 py-1 font-semibold text-ok">✓ {t("validRows", { count: preview.employees.length })}</span>
             {errorRows > 0 && <span className="rounded-full bg-surface-2 px-3 py-1 font-semibold text-danger">⚠ {t("errorRows", { count: errorRows })}</span>}
           </div>
-          <p className="text-xs text-muted">{t("dupHint")}</p>
+          <p className="text-xs text-muted">{privacy ? t("dupHintPrivacy") : t("dupHint")}</p>
+          {privacy && (
+            <p role="note" className="rounded-theme border border-line p-3 text-sm">
+              {t("privacyNote")}{namesIgnored ? ` ${t("privacyNamesIgnored")}` : ""}
+            </p>
+          )}
 
           <div role="note" className="rounded-theme border border-warn p-3 text-sm">
             <p className="font-semibold">{t("unmappedTitle")}</p>
@@ -361,7 +371,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
                 <caption className="px-3 py-2 text-left font-semibold">{t("firstRows")}</caption>
                 <thead className="bg-surface-2 text-xs text-muted">
                   <tr>
-                    {(["full_name", "birth_date", "contract_type", "start_date", "end_date", "probation_end"] as const).map((f) => (
+                    {([privacy ? "employee_code" : "full_name", "birth_date", "contract_type", "start_date", "end_date", "probation_end"] as const).map((f) => (
                       <th key={f} scope="col" className="whitespace-nowrap px-3 py-2">{field(f)}</th>
                     ))}
                   </tr>

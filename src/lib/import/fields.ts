@@ -8,6 +8,7 @@ export const TARGET_FIELDS = [
   "birth_date",
   "six_day_week",
   "external_ref",
+  "employee_code",
   "contract_type",
   "start_date",
   "end_date",
@@ -48,6 +49,12 @@ export const FIELD_ALIASES: Record<TargetField, string[]> = {
     "employee id", "employee number", "personnel number", "tab number", "id",
     "տաբելային համար", "տաբել համար", "աշխատողի կոդ",
     "табельный номер", "табельный №", "таб номер", "таб №",
+  ],
+  // Privacy mode only: the code replaces the name. Some aliases overlap external_ref; autoMap prefers this field in privacy mode.
+  employee_code: [
+    "code", "employee code", "tabel number", "tabel no", "tab no", "tab number",
+    "կոդ", "աշխատակցի կոդ", "աշխատողի կոդ",
+    "код", "табельный номер", "таб №", "код сотрудника",
   ],
   contract_type: [
     "contract type", "type of contract",
@@ -124,4 +131,12 @@ export function normalizeHeader(s: string): string {
     .replace(/[«»"'`’.,:;()\[\]{}_\-–—/\\#№*]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/** Fields that carry a person's name. In privacy mode they are never read or stored. */
+export const NAME_FIELDS: readonly TargetField[] = ["full_name", "first_name", "last_name", "patronymic"];
+
+/** Fields offered in the column picker: the code in privacy mode, names otherwise (never both). */
+export function selectableFields(privacy: boolean): TargetField[] {
+  return TARGET_FIELDS.filter((f) => (privacy ? !NAME_FIELDS.includes(f) : f !== "employee_code"));
 }

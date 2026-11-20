@@ -32,6 +32,8 @@
     "addEmployee": "Add employee",
     "fields": {
       "fullName": "Full name",
+      "employeeCode": "Employee code",
+      "employeeCodeHint": "e.g. EMP-014",
       "birthDate": "Date of birth",
       "sixDayWeek": "Six-day working week",
       "contractType": "Contract type",
@@ -54,7 +56,8 @@
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "invalid": "Please check the fields.",
-      "forbidden": "You don't have permission to do this."
+      "forbidden": "You don't have permission to do this.",
+      "duplicateCode": "An employee with this code already exists in this company."
     },
     "viewerNote": "You are a viewer and can't make changes.",
     "back": "Back",
@@ -109,7 +112,8 @@
       "rename": "Save name",
       "members": "Members",
       "you": "you",
-      "roles": { "owner": "Owner", "accountant": "Accountant", "viewer": "Viewer" }
+      "roles": { "owner": "Owner", "accountant": "Accountant", "viewer": "Viewer" },
+      "privacy": { "title": "Privacy mode", "intro": "When on, employees are stored with a code (for example EMP-014) instead of a name. Tesuch no longer asks for or stores names, and lists, documents, notifications and emails show the code.", "table": "Your firm keeps the table that matches codes to names. Tesuch holds no names, so a code cannot be tied to a real person here.", "existing": "Names of employees already added are not deleted. To replace one with a code, open the employee and save a code. Name columns in imported files are ignored.", "toggle": "Store employees by code instead of name", "save": "Save" }
     }
   }
 }

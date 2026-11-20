@@ -55,3 +55,13 @@ describe("dedupeEmployees", () => {
     expect(r.skipped).toBe(2);
   });
 });
+
+describe("dedupe by employee code (privacy mode)", () => {
+  const coded = (code: string): EmployeeInsert => ({ ...emp(code), employee_code: code });
+  it("skips a code that already exists in the company, case-insensitively, and never flags it as a name match", () => {
+    const r = dedupeEmployees([coded("EMP-1"), coded("EMP-2")], [{ full_name: "emp-1", birth_date: null, external_ref: null, employee_code: "emp-1" }]);
+    expect(r.keep.map((e) => e.employee_code)).toEqual(["EMP-2"]);
+    expect(r.skipped).toBe(1);
+    expect(r.possibleDuplicates).toEqual([]);
+  });
+});

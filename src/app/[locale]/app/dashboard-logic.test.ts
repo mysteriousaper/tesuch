@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  applyPrivacyIdentity, canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, findingStatusSchema, insertDemo, insertEmployeeWithContract,
   latestContract, leaveSchema, splitEmployee, type DemoWriter, type EmployeeWriter,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
@@ -221,5 +221,38 @@ describe("confirmsCompanyName", () => {
     expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", "դեմո 1 սպը")).toBe(false);
     expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", "")).toBe(false);
     expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", null)).toBe(false);
+  });
+});
+
+describe("privacy mode identity", () => {
+  it("off: drops any code and keeps the required name", () => {
+    const r = applyPrivacyIdentity({ ...form(), employee_code: "EMP-1" }, false);
+    expect(r).toEqual({ ok: true, raw: form(), code: null });
+  });
+  it("on: the code becomes full_name too, and a client-sent name is discarded", () => {
+    const r = applyPrivacyIdentity({ ...form({ full_name: "Real Name" }), employee_code: "  EMP-014 " }, true);
+    expect(r.ok && r.code).toBe("EMP-014");
+    expect(r.ok && r.raw.full_name).toBe("EMP-014");
+    expect(JSON.stringify(r)).not.toContain("Real Name");
+  });
+  it("on: a missing, blank or over-long code is invalid", () => {
+    expect(applyPrivacyIdentity(form(), true)).toEqual({ ok: false });
+    expect(applyPrivacyIdentity({ ...form(), employee_code: "   " }, true)).toEqual({ ok: false });
+    expect(applyPrivacyIdentity({ ...form(), employee_code: "x".repeat(41) }, true)).toEqual({ ok: false });
+    expect(applyPrivacyIdentity({ ...form(), employee_code: "x".repeat(40) }, true).ok).toBe(true);
+  });
+  it("a privacy form still passes the employee schema and writes employee_code only in privacy mode", () => {
+    const r = applyPrivacyIdentity({ type: "indefinite", start_date: "2026-01-10", employee_code: "EMP-014" }, true);
+    if (!r.ok) throw new Error("unexpected");
+    const parsed = employeeSchema.parse(r.raw);
+    expect(splitEmployee(parsed, r.code).employee).toEqual({ full_name: "EMP-014", birth_date: null, six_day_week: false, employee_code: "EMP-014" });
+    expect(splitEmployee(employeeSchema.parse(form())).employee).not.toHaveProperty("employee_code");
+  });
+  it("reports a duplicate code (unique violation) separately from other failures", async () => {
+    const w = {
+      insertEmployee: vi.fn(async () => { throw Object.assign(new Error("dup"), { code: "23505" }); }),
+      insertContract: vi.fn(), deleteEmployee: vi.fn(),
+    } as unknown as EmployeeWriter;
+    expect(await insertEmployeeWithContract(w, { full_name: "A", birth_date: null, six_day_week: false, employee_code: "A" }, {})).toEqual({ ok: false, duplicateCode: true });
   });
 });
