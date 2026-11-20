@@ -87,7 +87,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
                   {t("hero.ctaCheck")}
                   <IconArrow width={18} height={18} className="transition-transform group-hover:translate-x-0.5" />
                 </Link>
-                <Link href="/login" className="rounded-theme border border-line bg-surface px-5 py-3.5 font-semibold transition-colors hover:bg-surface-2">
+                <Link href="/login" className="rounded-theme border border-control bg-surface px-5 py-3.5 font-semibold transition-colors hover:bg-surface-2">
                   {t("hero.ctaLogin")}
                 </Link>
               </div>

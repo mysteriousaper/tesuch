@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 interface Row { id: number; at: string; actor: string | null; action: string; table_name: string; row_id: string | null }
 
-const selectCls = "rounded-theme border border-line bg-surface px-3 py-2.5 text-base";
+const selectCls = "rounded-theme border border-control bg-surface px-3 py-2.5 text-base";
 
 /** Owners only. RLS on audit_log already limits rows to orgs the caller owns; the role check here gives a clear message. */
 export default async function AuditPage({ params, searchParams }: {
@@ -116,9 +116,9 @@ export default async function AuditPage({ params, searchParams }: {
 
       {pages > 1 && (
         <nav aria-label={t("pagination")} className="flex items-center justify-between gap-2 text-sm">
-          {q.page > 1 ? <a href={auditHref(q, q.page - 1)} rel="prev" className="rounded-theme border border-line px-3 py-2 hover:bg-surface-2">← {t("prev")}</a> : <span />}
+          {q.page > 1 ? <a href={auditHref(q, q.page - 1)} rel="prev" className="rounded-theme border border-control px-3 py-2 hover:bg-surface-2">← {t("prev")}</a> : <span />}
           <span className="text-muted">{t("page", { page: q.page, pages })}</span>
-          {q.page < pages ? <a href={auditHref(q, q.page + 1)} rel="next" className="rounded-theme border border-line px-3 py-2 hover:bg-surface-2">{t("next")} →</a> : <span />}
+          {q.page < pages ? <a href={auditHref(q, q.page + 1)} rel="next" className="rounded-theme border border-control px-3 py-2 hover:bg-surface-2">{t("next")} →</a> : <span />}
         </nav>
       )}
     </div>

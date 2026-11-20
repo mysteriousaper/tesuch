@@ -99,8 +99,8 @@ export default async function DpaPage({ params }: { params: Promise<{ locale: st
         </section>
 
         <nav aria-label={t("relatedLabel")} className="mt-12 flex flex-wrap gap-3 border-t border-line pt-6 text-sm print:hidden">
-          <Link href="/terms" className="rounded-theme border border-line px-3 py-2 text-muted hover:text-ink">{t("related.terms")}</Link>
-          <Link href="/privacy" className="rounded-theme border border-line px-3 py-2 text-muted hover:text-ink">{t("related.privacy")}</Link>
+          <Link href="/terms" className="rounded-theme border border-control px-3 py-2 text-muted hover:text-ink">{t("related.terms")}</Link>
+          <Link href="/privacy" className="rounded-theme border border-control px-3 py-2 text-muted hover:text-ink">{t("related.privacy")}</Link>
         </nav>
       </main>
       <div className="print:hidden">

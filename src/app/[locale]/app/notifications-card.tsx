@@ -35,7 +35,7 @@ export function NotificationsCard({ locale, linked, email }: { locale: Locale; l
           const sent = await sendTestAlert(locale);
           setResult(sent.length ? t("testSent", { channels: sent.join(", ") }) : t("testNone"));
         })}
-        className="self-start rounded-theme border border-line px-4 py-2 text-sm font-medium disabled:opacity-60"
+        className="self-start rounded-theme border border-control px-4 py-2 text-sm font-medium disabled:opacity-60"
       >
         {t("test")}
       </button>

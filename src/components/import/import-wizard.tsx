@@ -23,7 +23,7 @@ const PREVIEW_ROWS = 10;
 const ERRORS_SHOWN = 50;
 
 const btn = "rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-50";
-const btnGhost = "rounded-theme border border-line px-4 py-2.5 text-sm font-medium hover:bg-surface-2";
+const btnGhost = "rounded-theme border border-control px-4 py-2.5 text-sm font-medium hover:bg-surface-2";
 const card = "rounded-theme-lg border border-line bg-surface";
 
 function cellText(v: RawCell): string {
@@ -164,7 +164,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
         <section className={`${card} flex flex-col gap-4 p-5`}>
           <div className="flex flex-col gap-1.5">
             <label htmlFor={ids.company} className="text-sm font-medium">{t("company")}</label>
-            <select id={ids.company} value={companyId} onChange={(e) => setCompanyId(e.target.value)} className="rounded-theme border border-line bg-surface px-3 py-2.5 text-base">
+            <select id={ids.company} value={companyId} onChange={(e) => setCompanyId(e.target.value)} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base">
               {companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
@@ -176,7 +176,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
               accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               onChange={(e) => onFile(e.target.files?.[0])}
               aria-describedby={`${ids.file}-hint`}
-              className="rounded-theme border border-dashed border-line bg-bg px-3 py-6 text-sm file:mr-3 file:rounded-theme file:border-0 file:bg-accent file:px-3 file:py-2 file:font-semibold file:text-accent-ink"
+              className="rounded-theme border border-dashed border-control bg-bg px-3 py-6 text-sm file:mr-3 file:rounded-theme file:border-0 file:bg-accent file:px-3 file:py-2 file:font-semibold file:text-accent-ink"
             />
             <p id={`${ids.file}-hint`} className="text-xs text-muted">{t("fileHint", { max: MAX_IMPORT_ROWS })}</p>
           </div>
@@ -216,7 +216,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
                     id={selectId}
                     value={value}
                     onChange={(e) => setMapping((m) => ({ ...m, [g.column]: (e.target.value || null) as TargetField | null }))}
-                    className="w-full min-w-0 rounded-theme border border-line bg-surface px-2 py-2 text-sm"
+                    className="w-full min-w-0 rounded-theme border border-control bg-surface px-2 py-2 text-sm"
                   >
                     <option value="">{t("skip")}</option>
                     {TARGET_FIELDS.map((f) => (

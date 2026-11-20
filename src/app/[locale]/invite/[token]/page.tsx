@@ -46,7 +46,7 @@ export default async function InvitePage({ params }: { params: Promise<{ locale:
       <>
         <p role="alert" className="text-danger">{t("mismatch", { invited: preview!.email, current: user.email ?? "" })}</p>
         <form action={async () => { "use server"; await signOut(); }}>
-          <button className="rounded-theme border border-line bg-surface px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("switchAccount")}</button>
+          <button className="rounded-theme border border-control bg-surface px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("switchAccount")}</button>
         </form>
       </>
     );

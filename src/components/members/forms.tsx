@@ -7,9 +7,9 @@ import { ROLES, type Role } from "./lib";
 
 type Action = (prev: MembersState, form: FormData) => Promise<MembersState>;
 
-export const inputCls = "w-full rounded-theme border border-line bg-surface px-3 py-2.5 text-base text-ink";
+export const inputCls = "w-full rounded-theme border border-control bg-surface px-3 py-2.5 text-base text-ink";
 export const primaryBtn = "rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-60";
-export const secondaryBtn = "rounded-theme border border-line bg-surface px-3 py-2 text-sm font-medium text-ink hover:bg-surface-2 disabled:opacity-60";
+export const secondaryBtn = "rounded-theme border border-control bg-surface px-3 py-2 text-sm font-medium text-ink hover:bg-surface-2 disabled:opacity-60";
 export const dangerBtn = "rounded-theme border border-danger px-3 py-2 text-sm font-medium text-danger hover:bg-surface-2 disabled:opacity-60";
 
 function Status({ state, success }: { state: MembersState; success?: string }) {
@@ -85,7 +85,7 @@ export function RoleForm({ action, userId, role, label }: { action: Action; user
   return (
     <form action={formAction} className="flex flex-wrap items-center gap-2" aria-busy={pending}>
       <input type="hidden" name="user_id" value={userId} />
-      <select name="role" defaultValue={role} aria-label={label} className="rounded-theme border border-line bg-surface px-2 py-2 text-sm">
+      <select name="role" defaultValue={role} aria-label={label} className="rounded-theme border border-control bg-surface px-2 py-2 text-sm">
         {ROLES.map((r) => <option key={r} value={r}>{t(`roles.${r}`)}</option>)}
       </select>
       <button type="submit" disabled={pending} className={secondaryBtn}>{pending ? "…" : t("members.saveRole")}</button>

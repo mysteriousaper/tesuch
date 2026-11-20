@@ -36,7 +36,7 @@ export function LoginForm({ configured, linkFailed }: { configured: boolean; lin
     window.location.assign(`/${locale}/app`);
   }
 
-  const input = "rounded-theme border border-line bg-surface px-3 py-2.5 text-base";
+  const input = "rounded-theme border border-control bg-surface px-3 py-2.5 text-base";
   const primary = "rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink disabled:opacity-60";
 
   return (

@@ -85,7 +85,7 @@ export function CheckFlow({ questions }: { questions: FlowQuestion[] }) {
               aria-pressed={selected}
               onClick={() => choose(q.id, a)}
               className={`rounded-theme border px-4 py-4 text-base font-semibold transition-all hover:-translate-y-0.5 hover:border-accent ${
-                selected ? "border-accent bg-accent text-accent-ink" : "border-line bg-bg"
+                selected ? "border-accent bg-accent text-accent-ink" : "border-control bg-bg"
               }`}
             >
               {t(`answers.${a}`)}
@@ -173,7 +173,7 @@ function Result({
 
       <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-xl">ⓘ {t("result.disclaimer")}</p>
-        <button type="button" onClick={onRestart} className="shrink-0 rounded-theme border border-line px-4 py-2 font-medium text-ink hover:bg-surface-2">
+        <button type="button" onClick={onRestart} className="shrink-0 rounded-theme border border-control px-4 py-2 font-medium text-ink hover:bg-surface-2">
           {t("result.restart")}
         </button>
       </div>
@@ -195,7 +195,7 @@ function LeadForm({ answers }: { answers: Record<string, Answer> }) {
     );
   }
 
-  const input = "w-full rounded-theme border border-line bg-bg px-3 py-2.5 text-base";
+  const input = "w-full rounded-theme border border-control bg-bg px-3 py-2.5 text-base";
   return (
     <section aria-labelledby="lead-title" className="rounded-theme-lg border border-line bg-surface p-5 sm:p-8">
       <h3 id="lead-title" className="text-lg font-semibold">{t("title")}</h3>

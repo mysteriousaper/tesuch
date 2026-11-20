@@ -27,7 +27,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
               <div className="flex flex-wrap gap-3">
                 <button type="button" onClick={() => reset()} className="rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink">{x.retry}</button>
                 {/* Plain <a>: a full reload is the point when the app shell is broken. */}
-                <a href={x.href} className="rounded-theme border border-line bg-surface px-4 py-2.5 font-semibold">{x.home}</a>
+                <a href={x.href} className="rounded-theme border border-control bg-surface px-4 py-2.5 font-semibold">{x.home}</a>
               </div>
             </section>
           ))}

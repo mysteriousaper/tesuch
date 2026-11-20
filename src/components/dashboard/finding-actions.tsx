@@ -7,7 +7,7 @@ import { setFindingStatus } from "@/app/[locale]/app/actions";
 type Status = "open" | "fixed" | "dismissed";
 
 const primary = "whitespace-nowrap rounded-theme bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60";
-const secondary = "whitespace-nowrap rounded-theme border border-line px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:opacity-60";
+const secondary = "whitespace-nowrap rounded-theme border border-control px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:opacity-60";
 
 function StatusButton({ locale, companyId, findingId, to, label, cls }: {
   locale: string; companyId: string; findingId: string; to: Status; label: string; cls: string;

@@ -81,7 +81,7 @@ export async function LegalDocument({
 
         <nav aria-label={t("relatedLabel")} className="mt-12 flex flex-wrap gap-3 border-t border-line pt-6 text-sm">
           {related.map((r) => (
-            <Link key={r} href={HREF[r]} className="rounded-theme border border-line px-3 py-2 text-muted hover:text-ink">
+            <Link key={r} href={HREF[r]} className="rounded-theme border border-control px-3 py-2 text-muted hover:text-ink">
               {t(`related.${r}`)}
             </Link>
           ))}

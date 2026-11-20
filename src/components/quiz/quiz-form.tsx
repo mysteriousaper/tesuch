@@ -46,7 +46,7 @@ export function QuizForm({ locale, companyId, week, questions }: { locale: "hy" 
               <label
                 key={oi}
                 className={`flex cursor-pointer items-start gap-3 rounded-theme border px-3 py-2.5 text-sm ${
-                  chosen[qi] === oi ? "border-accent bg-surface-2" : "border-line hover:bg-surface-2"
+                  chosen[qi] === oi ? "border-accent bg-surface-2" : "border-control hover:bg-surface-2"
                 }`}
               >
                 <input

@@ -78,7 +78,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
         <form action={createOrg.bind(null, locale)} className="flex flex-col gap-3 border-t border-line p-4">
           <label className="flex flex-col gap-1 text-sm font-medium">
             {o("name")}
-            <input name="name" required maxLength={200} className="rounded-theme border border-line bg-surface px-3 py-2.5 text-base" />
+            <input name="name" required maxLength={200} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
           </label>
           <button className="self-start rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{o("create")}</button>
         </form>

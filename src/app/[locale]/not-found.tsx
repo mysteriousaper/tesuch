@@ -20,7 +20,7 @@ export default function LocaleNotFound() {
         <p className="text-muted">{t("body")}</p>
         <div className="mt-2 flex flex-wrap gap-3">
           <Link href="/" className="rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink">{t("home")}</Link>
-          <Link href="/app" className="rounded-theme border border-line bg-surface px-4 py-2.5 font-semibold">{t("app")}</Link>
+          <Link href="/app" className="rounded-theme border border-control bg-surface px-4 py-2.5 font-semibold">{t("app")}</Link>
         </div>
       </section>
     </main>
