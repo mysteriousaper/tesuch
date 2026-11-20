@@ -2,6 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { Turnstile } from "@/components/auth/turnstile";
+import { classifyAuthError } from "@/lib/auth/errors";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 
 type Step = { kind: "email" } | { kind: "code"; email: string };
@@ -13,17 +15,32 @@ export function LoginForm({ configured, linkFailed }: { configured: boolean; lin
   const [step, setStep] = useState<Step>({ kind: "email" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(linkFailed ? t("linkFailed") : null);
+  // Captcha is off unless the site key is configured; then the form behaves as before.
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaReset, setCaptchaReset] = useState(0);
+  const needsCaptcha = siteKey !== "" && !captchaToken;
 
   if (!configured) return <p className="rounded-theme border border-line bg-surface p-4 text-sm text-muted">{t("notConfigured")}</p>;
 
-  const fail = (status?: number) => setError(status === 429 ? t("rateLimited") : t("error"));
+  const fail = (e: Parameters<typeof classifyAuthError>[0]) => {
+    const kind = classifyAuthError(e);
+    setError(kind === "rateLimited" ? t("rateLimited") : kind === "captcha" ? t("captchaFailed") : t("error"));
+  };
 
   async function sendCode(email: string) {
     setBusy(true);
     setError(null);
-    const { error: e } = await supabaseBrowser().auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+    const { error: e } = await supabaseBrowser().auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true, ...(siteKey && captchaToken ? { captchaToken } : {}) },
+    });
     setBusy(false);
-    if (e) return fail(e.status);
+    if (siteKey) {
+      setCaptchaToken(null);
+      setCaptchaReset((n) => n + 1);
+    }
+    if (e) return fail(e);
     setStep({ kind: "code", email });
   }
 
@@ -32,7 +49,7 @@ export function LoginForm({ configured, linkFailed }: { configured: boolean; lin
     setError(null);
     const { error: e } = await supabaseBrowser().auth.verifyOtp({ email, token: code, type: "email" });
     setBusy(false);
-    if (e) return setError(e.status === 429 ? t("rateLimited") : t("badCode"));
+    if (e) return setError(classifyAuthError(e) === "rateLimited" ? t("rateLimited") : t("badCode"));
     window.location.assign(`/${locale}/app`);
   }
 
@@ -45,7 +62,7 @@ export function LoginForm({ configured, linkFailed }: { configured: boolean; lin
         <form action={(f) => sendCode(String(f.get("email") ?? "").trim())} className="flex flex-col gap-3">
           <label htmlFor="email" className="text-sm font-medium">{t("email")}</label>
           <input id="email" name="email" type="email" required autoComplete="email" className={input} />
-          <button type="submit" disabled={busy} className={primary}>{t("send")}</button>
+          <button type="submit" disabled={busy || needsCaptcha} className={primary}>{t("send")}</button>
         </form>
       ) : (
         <form action={(f) => verify(step.email, String(f.get("code") ?? "").replace(/\s/g, ""))} className="flex flex-col gap-3">
@@ -56,11 +73,22 @@ export function LoginForm({ configured, linkFailed }: { configured: boolean; lin
             className={`${input} text-center text-2xl tracking-[0.4em]`}
           />
           <button type="submit" disabled={busy} className={primary}>{t("verify")}</button>
-          <button type="button" disabled={busy} onClick={() => sendCode(step.email)} className="text-sm text-muted underline">
+          <button type="button" disabled={busy || needsCaptcha} onClick={() => sendCode(step.email)} className="text-sm text-muted underline">
             {t("resend")}
           </button>
         </form>
       )}
+      {siteKey && (
+        <Turnstile
+          siteKey={siteKey}
+          locale={locale}
+          label={t("captchaLabel")}
+          resetSignal={captchaReset}
+          onToken={setCaptchaToken}
+          onError={() => setError(t("captchaFailed"))}
+        />
+      )}
+      {siteKey && needsCaptcha && <p className="text-xs text-muted">{t("captchaRequired")}</p>}
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
     </div>
   );
