@@ -52,6 +52,9 @@ export function primaryContract(contracts: Contract[], asOf: IsoDate): Contract 
 /** Guard facts that mean "input unknown": a rule failing only on one of these is skipped, not satisfied. */
 const UNKNOWN_GUARDS = new Set(["fixedTermGroundKnown", "srcRegisteredKnown", "hasLeaveRecords"]);
 
+/** A rule that stops firing because another rule took over: its open finding must not auto-resolve (key: superseded, value: successor rule). */
+const SUPERSEDED_BY: Record<string, string> = { "fixed-term-ending": "fixed-term-expired" };
+
 export interface Evaluation {
   findings: Finding[];
   /** Keys `rule|employee|contract` of rules that did not fire because an input was unknown; sync must not auto-resolve them. */
@@ -88,6 +91,8 @@ export async function evaluateCompanyDetailed(rules: RuleDefinition[], data: Com
       if (!fired.has(rule.id) && guardFacts(rule).some((g) => facts[g] === false)) {
         skipped.add(findingKey(rule.id, ctx.employee.id, contractId));
       }
+      const next = SUPERSEDED_BY[rule.id];
+      if (!fired.has(rule.id) && next && fired.has(next)) skipped.add(findingKey(rule.id, ctx.employee.id, contractId));
     }
     for (const ev of events) {
       const rule = byId.get(ev.type)!;

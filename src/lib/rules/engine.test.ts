@@ -30,7 +30,7 @@ async function ruleIds(opts: { e?: Partial<Employee>; c?: Partial<Contract>; l?:
 
 describe("catalog", () => {
   it("loads every rule, all unverified until a lawyer signs off", () => {
-    expect(RULES).toHaveLength(12);
+    expect(RULES).toHaveLength(13);
     for (const r of RULES) expect(r.status).toBe("needs_lawyer_review");
   });
   it("rejects a verified rule without an article", () => {
@@ -131,6 +131,35 @@ describe("fixed-term rules (Art. 95)", () => {
     expect(await ruleIds({ c, asOf: "2026-01-31" })).not.toContain("fixed-term-ending");
     expect(await ruleIds({ c, asOf: "2026-03-03" })).toContain("fixed-term-ending");
     expect(await ruleIds({ c, asOf: "2026-03-04" })).not.toContain("fixed-term-ending");
+  });
+});
+
+describe("fixed-term-expired (advisory, no article)", () => {
+  const ft = { type: "fixed_term" as const, endDate: "2026-03-03", fixedTermGround: "x" };
+  const detailed = (contracts: Contract[], asOf: string) => evaluateCompanyDetailed(RULES, { employees: [emp()], contracts, leave: [] }, asOf);
+  it("fires after the end date when not terminated and no successor; carries no article", async () => {
+    const { findings } = await detailed([con(ft)], "2026-03-04");
+    const f = findings.find((x) => x.ruleId === "fixed-term-expired");
+    expect(f).toMatchObject({ article: null, severity: "advisory", ruleStatus: "needs_lawyer_review", dueDate: "2026-03-03", overdue: true });
+    expect(await ruleIds({ c: ft, asOf: "2026-03-03" })).not.toContain("fixed-term-expired");
+  });
+  it("does not fire with a successor (later or open-ended active) or when terminated", async () => {
+    const later = con({ id: "c2", type: "fixed_term", startDate: "2026-03-04", endDate: "2026-09-01", fixedTermGround: "x" });
+    const open = con({ id: "c3", startDate: "2026-03-01" });
+    expect((await detailed([con(ft), later], "2026-03-10")).findings.filter((f) => f.contractId === "c1").map((f) => f.ruleId)).not.toContain("fixed-term-expired");
+    expect((await detailed([con(ft), open], "2026-03-10")).findings.filter((f) => f.contractId === "c1").map((f) => f.ruleId)).not.toContain("fixed-term-expired");
+    expect(await ruleIds({ c: { ...ft, terminatedOn: "2026-03-03", terminationInitiator: "employee" }, asOf: "2026-03-10" })).not.toContain("fixed-term-expired");
+  });
+  it("an open ending-soon finding is not auto-resolved when the contract expires", async () => {
+    const open = { id: "f1", rule_id: "fixed-term-ending", rule_version: 1, employee_id: "e1", contract_id: "c1", severity: "info" as const, due_date: "2026-03-03", status: "open" as const };
+    const expired = await detailed([con(ft)], "2026-03-10");
+    expect(expired.skipped).toContain("fixed-term-ending|e1|c1");
+    const plan = planSync("org", expired.findings, [open], expired.skipped);
+    expect(plan.autoResolve).toEqual([]);
+    expect(plan.inserts.map((i) => i.rule_id)).toContain("fixed-term-expired");
+    // Once the contract is terminated or renewed, nothing supersedes it and it resolves.
+    const terminated = await detailed([con({ ...ft, terminatedOn: "2026-03-03", terminationInitiator: "employer", terminationGround: "x" })], "2026-03-10");
+    expect(planSync("org", terminated.findings, [open], terminated.skipped).autoResolve).toEqual(["f1"]);
   });
 });
 

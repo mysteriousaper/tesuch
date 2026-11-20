@@ -1,6 +1,7 @@
 // Static imports so the catalog works in serverless and edge runtimes without fs access.
 import annualLeaveMin from "../../../rules/annual-leave-min.json";
 import fixedTermEnding from "../../../rules/fixed-term-ending.json";
+import fixedTermExpired from "../../../rules/fixed-term-expired.json";
 import fixedTermGround from "../../../rules/fixed-term-ground.json";
 import leaveCashSwap from "../../../rules/leave-cash-swap.json";
 import maternityMin from "../../../rules/maternity-min.json";
@@ -20,6 +21,7 @@ const RAW = [
   probationEnding,
   fixedTermGround,
   fixedTermEnding,
+  fixedTermExpired,
   terminationGround,
   annualLeaveMin,
   leaveCashSwap,

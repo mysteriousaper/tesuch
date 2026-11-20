@@ -28,6 +28,13 @@ export function isActive(c: Contract, asOf: IsoDate): boolean {
   return !isTerminated(c, asOf) && c.startDate <= asOf && (c.endDate === null || c.endDate >= asOf);
 }
 
+/** Another contract of the same employee continues the work: starts on/after this one's end, or is open-ended and active. */
+export function hasSuccessorContract(c: Contract, contracts: Contract[], asOf: IsoDate): boolean {
+  if (!c.endDate) return false;
+  const end = c.endDate;
+  return contracts.some((o) => o.id !== c.id && (o.startDate >= end || (o.endDate === null && isActive(o, asOf))));
+}
+
 /** Days past the last allowed probation day. Last allowed day = start + maxMonths - 1 day. */
 export function probationOverrunDays(c: Contract, maxMonths: number): number {
   if (!c.probationEnd) return 0;
@@ -89,6 +96,7 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
     fixedTermGroundKnown: c.fixedTermGround !== null,
     hasFixedTermGround: (c.fixedTermGround ?? "").trim().length > 0,
     daysUntilContractEnd: c.endDate ? days(c.endDate, ctx.asOf) : Number.NEGATIVE_INFINITY,
+    hasSuccessorContract: hasSuccessorContract(c, ctx.contracts, ctx.asOf),
     isTerminated: terminated,
     hasTerminationGround: (c.terminationGround ?? "").trim().length > 0,
     isEmployerTermination: terminated && c.terminationInitiator === "employer",
