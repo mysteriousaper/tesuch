@@ -4,7 +4,7 @@ import { RULES } from "../../src/lib/rules/catalog";
 import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
 import { a11yIssues, expectNoHorizontalScroll, trackErrors } from "./helpers/page-checks";
-import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser } from "./helpers/supabase";
+import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser, keepNames } from "./helpers/supabase";
 
 const iso = (offsetDays: number) => new Date(Date.now() + offsetDays * 86_400_000).toISOString().slice(0, 10);
 
@@ -42,6 +42,7 @@ test.describe("deadline inbox (F1)", () => {
     const { data, error } = await asOwner.rpc("create_org", { p_name: "QA Inbox Firm" });
     expect(error).toBeNull();
     orgId = data as string;
+    await keepNames(orgId);
     await db.from("memberships").insert({ user_id: viewer.id, org_id: orgId, role: "viewer" });
     const cos = await db.from("companies").insert([{ org_id: orgId, name: "QA Inbox Alpha" }, { org_id: orgId, name: "QA Inbox Beta" }]).select("id, name").order("name");
     expect(cos.error).toBeNull();

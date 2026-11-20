@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
 import { CompanyList } from "@/components/dashboard/company-list";
 import { AddCompanyForm, LoadDemoButton } from "@/components/dashboard/dashboard-forms";
+import { CodesNotice } from "@/components/dashboard/codes-notice";
+import { codesNoticePending } from "@/components/dashboard/privacy";
 import { OrgSwitcher } from "@/components/dashboard/org-switcher";
 import { currentOrg, firmOverview, userOrgs } from "@/components/dashboard/queries";
 import { redirect } from "@/i18n/navigation";
@@ -35,10 +37,12 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
   const t = await getTranslations("dashboard");
   const [{ rows, firm }, orgs] = await Promise.all([firmOverview(supabase, org.id), userOrgs(supabase, user.id)]);
   const canEdit = org.role !== "viewer";
+  const showCodesNotice = org.role === "owner" && (await codesNoticePending(supabase, org.id));
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <section className="flex flex-col gap-4">
+        {showCodesNotice && <CodesNotice locale={locale} />}
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-theme-lg border border-line bg-surface p-4">
           <div className="flex flex-col gap-2">
             <OrgSwitcher locale={locale} orgs={orgs} current={org.id} />

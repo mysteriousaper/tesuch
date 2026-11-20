@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { toRuleRow } from "../../../src/lib/jobs/mappers";
 import { RULES } from "../../../src/lib/rules/catalog";
-import { admin, clientAs, type TestUser } from "./supabase";
+import { admin, clientAs, keepNames, type TestUser } from "./supabase";
 
 export interface DocsFixture {
   orgId: string;
@@ -18,6 +18,7 @@ export async function seedDocsFixture(user: TestUser, label: string): Promise<Do
   const org = await db.rpc("create_org", { p_name: `QA ${label}` });
   expect(org.error).toBeNull();
   const orgId = org.data as string;
+  await keepNames(orgId);
   const co = await db.from("companies").insert({ org_id: orgId, name: "Դեմո Լոգիստիկ ՍՊԸ" }).select("id").single();
   expect(co.error).toBeNull();
   const companyId = co.data!.id as string;

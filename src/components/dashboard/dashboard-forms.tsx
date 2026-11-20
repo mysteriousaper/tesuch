@@ -52,7 +52,7 @@ export function AddEmployeeForm({ locale, companyId, privacy = false }: { locale
       {privacy ? (
         <label className={`${labelCls} sm:col-span-2`}>
           {t("fields.employeeCode")}
-          <input name="employee_code" required maxLength={40} autoComplete="off" placeholder={t("fields.employeeCodeHint")} className={inputCls} />
+          <input name="employee_code" maxLength={40} autoComplete="off" placeholder={t("fields.employeeCodeAuto")} className={inputCls} />
         </label>
       ) : (
         <label className={`${labelCls} sm:col-span-2`}>

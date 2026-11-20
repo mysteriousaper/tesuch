@@ -288,20 +288,32 @@ describe("privacy mode import", () => {
     expect(autoMap(["Code"])[0].field).toBeNull();
     expect(autoMap(["Employee code"]).map((g) => g.field)).not.toContain("employee_code");
   });
-  it("requires the code instead of a name", () => {
-    expect(missingRequiredFields({ 0: "start_date" }, { privacy: true })).toEqual(["employee_code"]);
+  it("does not require a code (missing codes are generated), only the start date", () => {
+    expect(missingRequiredFields({ 0: "start_date" }, { privacy: true })).toEqual([]);
+    expect(missingRequiredFields({ 1: "full_name" }, { privacy: true })).toEqual(["start_date"]);
     expect(missingRequiredFields({ 0: "employee_code", 1: "start_date" }, { privacy: true })).toEqual([]);
     expect(missingRequiredFields({ 0: "employee_code", 1: "start_date" })).toEqual(["full_name"]);
   });
-  it("stores full_name = code, ignores names in the file, reports missing / long / repeated codes", () => {
+  it("stores full_name = code, ignores names in the file, generates missing codes, reports long / repeated codes", () => {
     const r = buildImport(table, { 0: "employee_code", 1: "full_name", 2: "start_date" }, { orgId: "o", companyId: "c", privacy: true });
-    expect(r.employees.map((e) => [e.full_name, e.employee_code])).toEqual([["EMP-001", "EMP-001"], ["EMP-002", "EMP-002"]]);
+    // row 5 has no code: it gets the first free one (EMP-001 and EMP-002 are taken by the file)
+    expect(r.employees.map((e) => [e.full_name, e.employee_code])).toEqual([["EMP-001", "EMP-001"], ["EMP-002", "EMP-002"], ["EMP-003", "EMP-003"]]);
     expect(JSON.stringify(r.employees)).not.toMatch(/Иван|Другой|Без кода/);
     expect(r.errors.map((e) => [e.row, e.field, e.key])).toEqual([
       [4, "employee_code", "import.error.duplicateCode"],
-      [5, "employee_code", "import.error.required"],
       [6, "employee_code", "import.error.tooLong"],
     ]);
+  });
+  it("generated codes skip codes already in the company and ones typed further down the file", () => {
+    const t = toTable(parseCsv(["Code;Start", ";15.01.2026", "EMP-002;16.01.2026", ";17.01.2026"].join("\n")));
+    const r = buildImport(t, { 0: "employee_code", 1: "start_date" }, { orgId: "o", companyId: "c", privacy: true, existingCodes: ["emp-001"] });
+    expect(r.errors).toEqual([]);
+    expect(r.employees.map((e) => e.employee_code)).toEqual(["EMP-003", "EMP-002", "EMP-004"]);
+  });
+  it("works with no code column at all", () => {
+    const t = toTable(parseCsv(["Start;Name", "15.01.2026;Anna", "16.01.2026;Boris"].join("\n")));
+    const r = buildImport(t, { 0: "start_date", 1: "full_name" }, { orgId: "o", companyId: "c", privacy: true });
+    expect(r.employees.map((e) => [e.full_name, e.employee_code])).toEqual([["EMP-001", "EMP-001"], ["EMP-002", "EMP-002"]]);
   });
   it("outside privacy mode the code column is ignored and no employee_code key is written", () => {
     const r = buildImport(table, { 0: "employee_code", 1: "full_name", 2: "start_date" }, { orgId: "o", companyId: "c" });

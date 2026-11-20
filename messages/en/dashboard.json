@@ -34,6 +34,7 @@
       "fullName": "Full name",
       "employeeCode": "Employee code",
       "employeeCodeHint": "e.g. EMP-014",
+      "employeeCodeAuto": "Leave empty to generate automatically",
       "birthDate": "Date of birth",
       "sixDayWeek": "Six-day working week",
       "contractType": "Contract type",
@@ -113,7 +114,8 @@
       "members": "Members",
       "you": "you",
       "roles": { "owner": "Owner", "accountant": "Accountant", "viewer": "Viewer" },
-      "privacy": { "title": "Privacy mode", "intro": "When on, employees are stored with a code (for example EMP-014) instead of a name. Tesuch no longer asks for or stores names, and lists, documents, notifications and emails show the code.", "table": "Your firm keeps the table that matches codes to names. Tesuch holds no names, so a code cannot be tied to a real person here.", "existing": "Names of employees already added are not deleted. To replace one with a code, open the employee and save a code. Name columns in imported files are ignored.", "toggle": "Store employees by code instead of name", "save": "Save" }
+      "privacy": { "title": "Privacy mode", "intro": "When on, employees are stored with a code (for example EMP-014) instead of a name. Tesuch no longer asks for or stores names, and lists, documents, notifications and emails show the code.", "table": "Your firm keeps the table that matches codes to names. Tesuch holds no names, so a code cannot be tied to a real person here.", "existing": "Names of employees already added are not deleted. To replace one with a code, open the employee and save a code. Name columns in imported files are ignored.", "toggle": "Store employees by code instead of name", "save": "Save" },
+      "codesNotice": {"title": "Store employees by code, not by name", "body": "Tesuch can keep employees under a code (for example EMP-014) with no names. Lists, documents and notifications then show only the code. Names you already added are not deleted.", "enable": "Switch to codes", "dismiss": "Keep names"}
     }
   }
 }

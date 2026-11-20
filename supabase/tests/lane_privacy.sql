@@ -40,9 +40,11 @@ insert into public.companies (id, org_id, name) values
   ('f3000000-0000-0000-0000-0000000000c1', :'org_a', 'Co One'),
   ('f3000000-0000-0000-0000-0000000000c2', :'org_a', 'Co Two');
 
--- default is off
-select pg_temp.expect_rows(format($q$select 1 from public.orgs where id = %L and privacy_mode = false$q$, :'org_a'), 1, 'privacy mode defaults to off');
+-- codes are the default for new orgs; the toggle tests below start from "names" so they exercise a real change
+select pg_temp.expect_rows(format($q$select 1 from public.orgs where id = %L and privacy_mode = true$q$, :'org_a'), 1, 'privacy mode defaults to on (codes by default)');
 
+reset role;
+update public.orgs set privacy_mode = false where id in (:'org_a', :'org_e');
 set role authenticated;
 -- accountant, viewer and a foreign owner cannot toggle
 select pg_temp.as_user('f3000000-0000-0000-0000-00000000000c');
@@ -68,7 +70,8 @@ select pg_temp.expect_error(format($q$insert into public.employees (org_id, comp
 select pg_temp.expect_rows(format($q$insert into public.employees (org_id, company_id, full_name, employee_code) values (%L, 'f3000000-0000-0000-0000-0000000000c2', 'EMP-014', 'EMP-014') returning id$q$, :'org_a'), 1, 'same code in another company is allowed');
 select pg_temp.expect_rows(format($q$insert into public.employees (org_id, company_id, full_name) values (%L, 'f3000000-0000-0000-0000-0000000000c1', 'Name A') returning id$q$, :'org_a'), 1, 'employees without a code stay valid');
 select pg_temp.expect_rows(format($q$insert into public.employees (org_id, company_id, full_name) values (%L, 'f3000000-0000-0000-0000-0000000000c1', 'Name B') returning id$q$, :'org_a'), 1, 'several employees may have no code');
-select pg_temp.expect_error(format($q$insert into public.employees (org_id, company_id, full_name, employee_code) values (%L, 'f3000000-0000-0000-0000-0000000000c1', 'X', '   ')$q$, :'org_a'), '23514', 'blank code is refused');
+-- codes by default: in a firm that hides names a blank code is treated as missing and generated
+select pg_temp.expect_rows(format($q$insert into public.employees (org_id, company_id, full_name, employee_code) values (%L, 'f3000000-0000-0000-0000-0000000000c1', 'X', '   ') returning id$q$, :'org_a'), 1, 'blank code in a codes firm is generated, not stored');
 select pg_temp.expect_error(format($q$insert into public.employees (org_id, company_id, full_name, employee_code) values (%L, 'f3000000-0000-0000-0000-0000000000c1', 'X', %L)$q$, :'org_a', repeat('x', 41)), '23514', 'code over 40 characters is refused');
 select pg_temp.expect_rows(format($q$insert into public.employees (org_id, company_id, full_name, employee_code) values (%L, 'f3000000-0000-0000-0000-0000000000c1', 'Y', %L) returning id$q$, :'org_a', repeat('y', 40)), 1, 'code of exactly 40 characters is allowed');
 -- a viewer cannot add employees with codes; a foreign owner cannot see them

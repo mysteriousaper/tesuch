@@ -8,10 +8,10 @@ import { ActionForm } from "./action-form";
 export function PrivacyModeForm({ locale, enabled }: { locale: string; enabled: boolean }) {
   const t = useTranslations("dashboard");
   return (
-    <ActionForm action={setPrivacyMode.bind(null, locale)} submitLabel={t("privacy.save")} resetOnSuccess={false}>
+    <ActionForm action={setPrivacyMode.bind(null, locale)} submitLabel={t("settings.privacy.save")} resetOnSuccess={false}>
       <label className="flex items-start gap-3 text-sm font-medium">
         <input type="checkbox" name="enabled" defaultChecked={enabled} className="mt-0.5 h-5 w-5 shrink-0" />
-        <span>{t("privacy.toggle")}</span>
+        <span>{t("settings.privacy.toggle")}</span>
       </label>
     </ActionForm>
   );

@@ -74,6 +74,8 @@ export interface ImportOptions {
   newId?: () => string;
   /** Privacy mode: the code replaces the name. Name columns are ignored and never stored; the code is required and unique in the file. */
   privacy?: boolean;
+  /** Privacy mode: codes already used in the company, so generated codes never collide with them. */
+  existingCodes?: Iterable<string>;
 }
 
 /** Mirrors employees.employee_code check (1-40 characters). */
@@ -81,6 +83,15 @@ export const MAX_CODE_LENGTH = 40;
 
 /** Codes compare case-insensitively inside the app (the database index is exact, so this is stricter). */
 export const codeKey = (code: string) => code.normalize("NFC").trim().toLocaleLowerCase();
+
+/** Next free code like EMP-001, EMP-002 ... (case-insensitive against `used`; the new code is added to it). */
+export function nextCode(used: Set<string>): string {
+  let n = 1;
+  while (used.has(codeKey(`EMP-${String(n).padStart(3, "0")}`))) n += 1;
+  const code = `EMP-${String(n).padStart(3, "0")}`;
+  used.add(codeKey(code));
+  return code;
+}
 
 const DATE_FIELDS = ["birth_date", "start_date", "end_date", "probation_end", "terminated_on", "notice_given_on"] as const;
 const BOOL_FIELDS = ["six_day_week", "probation_special_case", "hired_by_transfer", "workforce_reduction"] as const;
@@ -121,6 +132,16 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
   const result: ImportResult = { employees: [], contracts: [], errors: [], rowCount: table.rows.length };
   const privacy = opts.privacy === true;
   const seenCodes = new Set<string>();
+  const usedCodes = new Set<string>([...(opts.existingCodes ?? [])].map(codeKey));
+
+  // Codes typed in the file are reserved first, so a generated code never takes one that appears further down.
+  const codeCol = columnOf.get("employee_code");
+  if (privacy && codeCol !== undefined) {
+    for (const { cells } of table.rows) {
+      const p = parseText(cells[codeCol]);
+      if (p.ok && p.value) usedCodes.add(codeKey(p.value));
+    }
+  }
 
   for (const { rowNumber, cells } of table.rows) {
     const errors: ImportError[] = [];
@@ -145,13 +166,16 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
     const contractType = take("contract_type", parseContractType(cell("contract_type")), "import.error.invalidContractType", null);
     const initiator = take("termination_initiator", parseInitiator(cell("termination_initiator")), "import.error.invalidInitiator", null);
 
-    const code = privacy ? texts.employee_code : null;
+    let code = privacy ? texts.employee_code : null;
+    // Codes by default: a row without a code gets one generated after the row passes validation.
+    const needsCode = privacy && !code;
     if (privacy) {
-      if (!code) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.required" });
-      else if (code.length > MAX_CODE_LENGTH) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.tooLong" });
+      if (!code) {
+        // generated below
+      } else if (code.length > MAX_CODE_LENGTH) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.tooLong" });
       else if (seenCodes.has(codeKey(code))) errors.push({ row: rowNumber, field: "employee_code", key: "import.error.duplicateCode" });
     }
-    const fullName = privacy ? (code ?? "") : texts.full_name ?? [texts.last_name, texts.first_name, texts.patronymic].filter(Boolean).join(" ");
+    let fullName = privacy ? (code ?? "EMP") : texts.full_name ?? [texts.last_name, texts.first_name, texts.patronymic].filter(Boolean).join(" ");
 
     const check = rowSchema.safeParse({
       full_name: fullName,
@@ -175,7 +199,14 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
       continue;
     }
 
-    if (code) seenCodes.add(codeKey(code));
+    if (needsCode) {
+      code = nextCode(usedCodes);
+      fullName = code;
+    }
+    if (code) {
+      seenCodes.add(codeKey(code));
+      usedCodes.add(codeKey(code));
+    }
     const employeeId = newId();
     result.employees.push({
       id: employeeId,

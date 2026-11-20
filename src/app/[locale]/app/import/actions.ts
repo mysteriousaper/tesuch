@@ -74,7 +74,10 @@ export async function commitImport(locale: Locale, input: ImportPayload): Promis
   const privacy = await orgPrivacyMode(supabase, company.org_id);
   if (missingRequiredFields(mapping, { privacy }).length) return { ok: false, error: "invalid" };
 
-  const result = buildImport({ headers, rows }, mapping, { orgId: company.org_id, companyId: company.id, privacy });
+  // Codes by default: existing codes are read first so generated ones never collide with them.
+  const { data: codeRows } = privacy ? await supabase.from("employees").select("employee_code").eq("company_id", company.id) : { data: [] };
+  const existingCodes = ((codeRows ?? []) as { employee_code?: string | null }[]).map((r) => r.employee_code).filter((c): c is string => Boolean(c));
+  const result = buildImport({ headers, rows }, mapping, { orgId: company.org_id, companyId: company.id, privacy, existingCodes });
   const skippedErrors = new Set(result.errors.map((e) => e.row)).size;
 
   // Duplicates: same employee ID, or same name + birth date. A shared name alone is flagged, never dropped.

@@ -193,7 +193,7 @@ export async function addEmployee(locale: string, companyId: string, _prev: Acti
   const co = await editableCompany(supabase, user.id, companyId);
   if (!co) return FAIL("forbidden");
   // Privacy mode comes from the firm's row, never from the form: with it on, the code replaces the name.
-  const identity = applyPrivacyIdentity(Object.fromEntries(form), await orgPrivacyMode(supabase, co.org_id));
+  const identity = applyPrivacyIdentity(Object.fromEntries(form), await orgPrivacyMode(supabase, co.org_id), { generate: true });
   if (!identity.ok) return FAIL("invalid");
   const parsed = employeeSchema.safeParse(identity.raw);
   if (!parsed.success) return FAIL("invalid");

@@ -95,3 +95,11 @@ export async function deleteAllTestUsers(staleMinutes = 120): Promise<number> {
   await deleteTestUsers(ids);
   return ids.length;
 }
+
+/**
+ * New orgs store employees by code (privacy mode is the default). Specs that look employees up by name keep the old
+ * behaviour for their throwaway firm. Ignores errors so it is harmless before the migration is applied.
+ */
+export async function keepNames(orgId: string): Promise<void> {
+  await admin().from("orgs").update({ privacy_mode: false }).eq("id", orgId);
+}

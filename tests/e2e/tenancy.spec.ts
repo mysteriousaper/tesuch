@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { toRuleRow } from "../../src/lib/jobs/mappers";
 import { RULES } from "../../src/lib/rules/catalog";
 import { hasSupabase } from "./helpers/env";
-import { admin, anon, clientAs, createTestUser, deleteTestUsers, type TestUser } from "./helpers/supabase";
+import { admin, anon, clientAs, createTestUser, deleteTestUsers, type TestUser, keepNames } from "./helpers/supabase";
 
 /**
  * Cross-tenant attacks through the real Supabase REST API (PostgREST + RLS), as signed-in users.
@@ -24,6 +24,7 @@ test.describe("cross-tenant isolation (live Supabase)", () => {
     const { data: org, error } = await asA.rpc("create_org", { p_name: "QA Tenant A" });
     expect(error).toBeNull();
     orgA = org as string;
+    await keepNames(orgA);
     const co = await asA.from("companies").insert({ org_id: orgA, name: "A Co" }).select("id").single();
     expect(co.error).toBeNull();
     companyA = co.data!.id;

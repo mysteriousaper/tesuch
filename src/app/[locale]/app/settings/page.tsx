@@ -76,10 +76,10 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
 
       {org?.role === "owner" && (
         <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="privacy-h">
-          <h2 id="privacy-h" className="text-lg font-semibold">{t("privacy.title")}</h2>
-          <p className="text-sm text-muted">{t("privacy.intro")}</p>
-          <p className="text-sm text-muted">{t("privacy.table")}</p>
-          <p className="text-sm text-muted">{t("privacy.existing")}</p>
+          <h2 id="privacy-h" className="text-lg font-semibold">{t("settings.privacy.title")}</h2>
+          <p className="text-sm text-muted">{t("settings.privacy.intro")}</p>
+          <p className="text-sm text-muted">{t("settings.privacy.table")}</p>
+          <p className="text-sm text-muted">{t("settings.privacy.existing")}</p>
           <PrivacyModeForm locale={locale} enabled={privacy} />
         </section>
       )}

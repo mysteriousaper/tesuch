@@ -21,7 +21,7 @@ export interface ImportCompany {
 type Step = "upload" | "map" | "preview" | "done";
 const STEPS: Step[] = ["upload", "map", "preview", "done"];
 const REQUIRED: TargetField[] = ["full_name", "start_date"];
-const REQUIRED_PRIVACY: TargetField[] = ["employee_code", "start_date"];
+const REQUIRED_PRIVACY: TargetField[] = ["start_date"];
 const PREVIEW_ROWS = 10;
 const ERRORS_SHOWN = 50;
 

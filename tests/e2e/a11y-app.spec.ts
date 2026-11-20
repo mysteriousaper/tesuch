@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { expectNoAxeViolations } from "./helpers/a11y";
 import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
-import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser } from "./helpers/supabase";
+import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser, keepNames } from "./helpers/supabase";
 
 // axe (WCAG 2a/2aa/21a/21aa) on the signed-in app pages. One test per page so a failure names the page.
 test.describe("app accessibility (axe)", () => {
@@ -21,6 +21,7 @@ test.describe("app accessibility (axe)", () => {
     const { data: org, error } = await asUser.rpc("create_org", { p_name: "QA Axe Firm" });
     expect(error).toBeNull();
     orgId = org as string;
+    await keepNames(orgId);
     const co = await asUser.from("companies").insert({ org_id: org, name: "QA Axe Co" }).select("id").single();
     expect(co.error).toBeNull();
     companyId = co.data!.id;

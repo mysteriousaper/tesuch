@@ -23,3 +23,11 @@ export async function employeeCodeOf(supabase: UserClient, employeeId: string): 
   const { data, error } = await supabase.from("employees").select("employee_code").eq("id", employeeId).maybeSingle();
   return error ? "" : ((data as { employee_code?: string | null } | null)?.employee_code ?? "");
 }
+
+/** True while an owner of a firm that still stores names has not answered the "switch to codes" notice. Defensive like the reads above. */
+export async function codesNoticePending(supabase: UserClient, orgId: string): Promise<boolean> {
+  const { data, error } = await supabase.from("orgs").select("privacy_mode, codes_notice_dismissed").eq("id", orgId).maybeSingle();
+  if (error || !data) return false;
+  const row = data as { privacy_mode?: boolean; codes_notice_dismissed?: boolean };
+  return row.privacy_mode === false && row.codes_notice_dismissed === false;
+}

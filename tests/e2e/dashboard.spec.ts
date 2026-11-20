@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
 import { a11yIssues, expectNoHorizontalScroll, trackErrors } from "./helpers/page-checks";
-import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser } from "./helpers/supabase";
+import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser, keepNames } from "./helpers/supabase";
 
 const FIRM = "QA Dashboard Firm";
 
@@ -24,6 +24,7 @@ test.describe("dashboard (lane A)", () => {
     const { data, error } = await (await clientAs(user)).rpc("create_org", { p_name: FIRM });
     expect(error).toBeNull();
     orgId = data as string;
+    await keepNames(orgId);
   });
   test.afterAll(async () => deleteTestUsers([user?.id].filter(Boolean)));
 

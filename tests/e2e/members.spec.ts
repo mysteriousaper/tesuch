@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
 import { a11yIssues, expectNoHorizontalScroll, trackErrors } from "./helpers/page-checks";
-import { admin, clientAs, createTestUser, deleteTestUsers, emailOtp, type TestUser } from "./helpers/supabase";
+import { admin, clientAs, createTestUser, deleteTestUsers, emailOtp, type TestUser, keepNames } from "./helpers/supabase";
 
 /**
  * Engineering: team page, invitations, audit viewer, data export/delete.
@@ -40,6 +40,7 @@ test.describe("team, audit and data rights", () => {
     ]);
     [asOwner, asOutsider] = await Promise.all([clientAs(owner), clientAs(outsider)]);
     org = (await asOwner.rpc("create_org", { p_name: "QA Eng Firm" })).data as string;
+    await keepNames(org);
     // Clients cannot insert memberships (C-1); invitations are covered below, so seed these two as setup.
     const ins = await admin().from("memberships").insert([
       { user_id: viewer.id, org_id: org, role: "viewer" },

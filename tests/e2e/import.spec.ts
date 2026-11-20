@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { signInViaUi } from "./helpers/auth";
 import { hasSupabase } from "./helpers/env";
 import { trackErrors } from "./helpers/page-checks";
-import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser } from "./helpers/supabase";
+import { admin, clientAs, createTestUser, deleteTestUsers, type TestUser, keepNames } from "./helpers/supabase";
 
 // Armenian headers, DD.MM.YYYY dates, one invalid row. The minor on probation must produce a finding.
 const CSV = [
@@ -25,6 +25,7 @@ test.describe("staff import (lane B)", () => {
     const asUser = await clientAs(user);
     const { data: org, error } = await asUser.rpc("create_org", { p_name: "QA Import Firm" });
     expect(error).toBeNull();
+    await keepNames(org as string);
     const co = await asUser.from("companies").insert({ org_id: org, name: "QA Import Co" }).select("id").single();
     expect(co.error).toBeNull();
     companyId = co.data!.id;
@@ -112,5 +113,32 @@ test.describe("staff import (lane B)", () => {
     await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
     await page.getByLabel("Header row").fill("3");
     await expect(page.getByRole("button", { name: "Next" })).toBeEnabled();
+  });
+
+  test("codes by default: a file without a code column gets generated codes and no name is stored", async ({ page }) => {
+    const db = admin();
+    const { data: co } = await db.from("companies").select("org_id").eq("id", companyId).single();
+    await db.from("orgs").update({ privacy_mode: true }).eq("id", co!.org_id);
+    const fresh = await db.from("companies").insert({ org_id: co!.org_id, name: "QA Codes Co" }).select("id").single();
+    expect(fresh.error).toBeNull();
+    const csv = ["Name,Start date", "Secret Person One,01.09.2026", "Secret Person Two,01.10.2026"].join("\n");
+
+    await signInViaUi(page, user, "en");
+    await page.goto("/en/app/import");
+    await page.getByLabel("Company").selectOption(fresh.data!.id);
+    await page.getByLabel("File (.csv, .xlsx)").setInputFiles({ name: "codes.csv", mimeType: "text/csv", buffer: Buffer.from(csv, "utf8") });
+    await expect(page.getByRole("heading", { name: "Match the columns" })).toBeVisible();
+    await page.getByRole("button", { name: "Next" }).click();
+    await page.getByRole("button", { name: "Import (2)" }).click();
+    await expect(page.getByRole("heading", { name: "Import complete" })).toBeVisible({ timeout: 30_000 });
+
+    const { data: emps } = await db.from("employees").select("full_name, employee_code").eq("company_id", fresh.data!.id).order("employee_code");
+    expect(emps).toEqual([
+      { full_name: "EMP-001", employee_code: "EMP-001" },
+      { full_name: "EMP-002", employee_code: "EMP-002" },
+    ]);
+    await page.goto(`/en/app/companies/${fresh.data!.id}`);
+    await expect(page.getByText("EMP-001")).toBeVisible();
+    await expect(page.getByText("Secret Person One")).toHaveCount(0);
   });
 });

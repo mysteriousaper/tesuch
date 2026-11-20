@@ -24,3 +24,17 @@ export async function setPrivacyMode(locale: string, _prev: ActionState, form: F
   revalidatePath(`/${locale}/app`, "layout");
   return { ok: true };
 }
+
+/**
+ * Answer the one-time "store employees by code" notice (owners only). `enable` also turns privacy mode on;
+ * either way the notice is dismissed. Same checks as setPrivacyMode: org from the membership row, orgs_update as second lock.
+ */
+export async function answerCodesNotice(locale: string, enable: boolean): Promise<void> {
+  const supabase = await supabaseForUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const org = await currentOrg(supabase, user.id);
+  if (!org || !isOwnerRole(org.role)) return;
+  await supabase.from("orgs").update(enable ? { privacy_mode: true, codes_notice_dismissed: true } : { codes_notice_dismissed: true }).eq("id", org.id);
+  revalidatePath(`/${locale}/app`, "layout");
+}

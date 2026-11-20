@@ -58,8 +58,9 @@ export function toMapping(guesses: ColumnGuess[]): ColumnMapping {
 export function missingRequiredFields(mapping: ColumnMapping, opts: { privacy?: boolean } = {}): TargetField[] {
   const mapped = new Set(Object.values(mapping).filter((f): f is TargetField => f !== null));
   const missing: TargetField[] = [];
+  // Privacy mode: the code column is optional, missing codes are generated.
   if (opts.privacy) {
-    if (!mapped.has("employee_code")) missing.push("employee_code");
+    // nothing to require
   } else if (!mapped.has("full_name") && !(mapped.has("first_name") && mapped.has("last_name"))) missing.push("full_name");
   if (!mapped.has("start_date")) missing.push("start_date");
   return missing;
