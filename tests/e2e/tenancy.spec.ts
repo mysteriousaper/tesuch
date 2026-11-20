@@ -93,7 +93,7 @@ test.describe("cross-tenant isolation (live Supabase)", () => {
 
   test("A cannot rewrite a finding's severity, only its status", async () => {
     const bad = await asA.from("findings").update({ severity: "info" }).eq("id", findingA);
-    expect(bad.error?.message).toMatch(/only status can be changed/);
+    expect(bad.error?.message).toMatch(/only status( and assignee)? can be changed/);
     const ok = await asA.from("findings").update({ status: "fixed" }).eq("id", findingA).select("status, resolved_by").single();
     expect(ok.data).toEqual({ status: "fixed", resolved_by: a.id });
   });
