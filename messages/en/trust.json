@@ -1,0 +1,127 @@
+{
+  "trust": {
+    "meta": {
+      "title": "Is my data safe? Tesuch security and data",
+      "description": "Where Tesuch keeps your data, who can see it, which services process it and how to start without risk. Only statements that can be checked."
+    },
+    "hero": {
+      "eyebrow": "Security and privacy",
+      "title": "Is my data safe?",
+      "subtitle": "This page says only what can be checked: where the data lives, who can see it and how to start without risk. No big promises."
+    },
+    "nav": {
+      "facts": "What we do",
+      "processors": "Who processes data",
+      "limits": "What we do not claim",
+      "start": "Start without risk"
+    },
+    "facts": {
+      "title": "What we do to protect data",
+      "items": [
+        {
+          "t": "Data is stored in the EU",
+          "d": "The database runs on Supabase in Ireland."
+        },
+        {
+          "t": "Each firm sees only its own data",
+          "d": "Isolation is enforced inside the database (row-level security), not only in the app. Automated attack tests try to reach one firm’s data from another firm’s account, and they run in our test suite."
+        },
+        {
+          "t": "Minimal data only",
+          "d": "We store the employee name, date of birth, contract type and dates, probation end and leave records. We do not store salaries, passport data, addresses or phone numbers."
+        },
+        {
+          "t": "Roles: owner, accountant, viewer",
+          "d": "The owner manages everything, including the team and the change history. The accountant edits data. The viewer can only read."
+        },
+        {
+          "t": "An audit log of every change",
+          "d": "Every change to your data is recorded. Only owners can read the log, and nobody can edit it by hand."
+        },
+        {
+          "t": "Export and deletion on request",
+          "d": "Ask us and we export or delete your data."
+        },
+        {
+          "t": "Encrypted connections",
+          "d": "All connections to Tesuch use HTTPS, so data is encrypted in transit."
+        }
+      ],
+      "regionLabel": "Supabase region"
+    },
+    "processors": {
+      "title": "Who processes the data",
+      "intro": "Four services take part in processing. The same list is in the data processing agreement template.",
+      "dataLabel": "What it receives",
+      "items": [
+        {
+          "name": "Supabase",
+          "role": "Database and sign-in",
+          "data": "Everything you enter: accounts, companies, employees and contracts. Stored in Ireland."
+        },
+        {
+          "name": "Vercel",
+          "role": "Hosting of the application",
+          "data": "Serves the website and runs the application code. Requests from your browser pass through it."
+        },
+        {
+          "name": "Resend",
+          "role": "Sending email",
+          "data": "The recipient’s email address and the text of the alert or weekly digest."
+        },
+        {
+          "name": "Telegram",
+          "role": "Alerts in Telegram (optional)",
+          "data": "Your Telegram chat ID and short summaries of issues, not full employee records."
+        }
+      ],
+      "note": "The question of transferring data across borders, including for Telegram, is still to be reviewed by a lawyer.",
+      "dpa": "Read the data processing agreement template"
+    },
+    "limits": {
+      "title": "What we do not claim",
+      "items": [
+        {
+          "t": "No certificates or audits",
+          "d": "We do not claim ISO or SOC 2 certification, an independent audit or insurance."
+        },
+        {
+          "t": "Rules are advisory",
+          "d": "The rules have not yet been reviewed by a lawyer, so every issue is marked “Advisory” until they are."
+        },
+        {
+          "t": "The agreement is a draft",
+          "d": "The data processing agreement template is a draft that still needs a lawyer’s review."
+        }
+      ]
+    },
+    "start": {
+      "title": "How to start without risk",
+      "intro": "You can try everything before you enter any real data.",
+      "soon": "Coming soon — being built now",
+      "items": [
+        {
+          "t": "Take the free self-check",
+          "d": "No account and no employee data are needed."
+        },
+        {
+          "t": "Load the demo data",
+          "d": "Sign in and load fictional companies to see how Tesuch works."
+        },
+        {
+          "t": "Pilot with employee codes",
+          "d": "Use employee codes instead of names for the first trial."
+        },
+        {
+          "t": "Sign the agreement before real data",
+          "d": "Before you load real data, sign the data processing agreement (DPA). A non-disclosure agreement (NDA) is available on request."
+        }
+      ],
+      "ctaCheck": "Take the free self-check",
+      "ctaDpa": "Data processing agreement",
+      "ctaLogin": "Sign in",
+      "guide": "See how Tesuch works"
+    },
+    "footerLink": "Security"
+  }
+}
