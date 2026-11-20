@@ -1,5 +1,9 @@
 {
   "dashboard": {
+    "noScore": "No data yet",
+    "noScoreHint": "Add or import employees to see the score.",
+    "importEmployees": "Import employees",
+    "scoreDisclaimer": "Indicative score, not a legal opinion or a guarantee of the inspection outcome.",
     "firmScore": "Firm average score",
     "companies": "Companies",
     "sortedByScore": "riskiest first",

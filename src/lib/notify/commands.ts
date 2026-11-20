@@ -151,6 +151,8 @@ export interface CompanyRow {
   id: string;
   org_id: string;
   name: string;
+  /** Active head count; when absent the count is unknown and the score is computed as usual. */
+  staff?: number;
 }
 export interface FindingRow {
   org_id: string;
@@ -172,7 +174,8 @@ export interface CompanyView {
   /** 1-based, stable across /status and /issues. */
   no: number;
   name: string;
-  score: number;
+  /** null = no staff yet (nothing to score). */
+  score: number | null;
   open: number;
   overdue: number;
   issues: Issue[];
@@ -239,7 +242,7 @@ export function buildAccount(orgs: OrgRow[], companies: CompanyRow[], findings: 
         return {
           no: ++no,
           name: c.name,
-          score: inspectionReadyScore(issues),
+          score: c.staff === 0 ? null : inspectionReadyScore(issues),
           open: issues.length,
           overdue: issues.filter((i) => i.overdue).length,
           issues,
@@ -272,7 +275,8 @@ export function fit(header: string, entries: Entry[], footer: string, locale: Lo
   return header + body + more + footer;
 }
 
-const scoreIcon = (s: number) => (s >= 80 ? "🟢" : s >= 50 ? "🟠" : "🔴");
+const scoreIcon = (s: number | null) => (s === null ? "⚪" : s >= 80 ? "🟢" : s >= 50 ? "🟠" : "🔴");
+const scoreText = (s: number | null, locale: Locale) => (s === null ? `<b>${e(T.noScore[locale])}</b>` : `<b>${s}</b>/100`);
 const ICON: Record<EffectiveSeverity, string> = { red: "🔴", amber: "🟠", advisory: "🟡", info: "🔵" };
 
 export function statusReply(orgs: OrgView[], locale: Locale): string {
@@ -287,7 +291,7 @@ export function statusReply(orgs: OrgView[], locale: Locale): string {
     for (const c of o.companies) {
       const overdue = c.overdue ? ` (⏰ ${c.overdue} ${e(T.overdue[locale])})` : "";
       entries.push({
-        text: `\n${c.no}. ${scoreIcon(c.score)} ${e(c.name)} — <b>${c.score}</b>/100 · ${e(T.openFindings[locale])}: ${c.open}${overdue}`,
+        text: `\n${c.no}. ${scoreIcon(c.score)} ${e(c.name)} — ${scoreText(c.score, locale)} · ${e(T.openFindings[locale])}: ${c.open}${overdue}`,
         countable: true,
       });
     }
@@ -312,7 +316,7 @@ export function issuesReply(orgs: OrgView[], companyNo: number | null, locale: L
   if (companyNo !== null) {
     const c = all.find((x) => x.no === companyNo);
     if (!c) return e(S.badCompany[locale](companyNo));
-    title = `${e(T.openFindings[locale])} · ${e(c.name)} — <b>${c.score}</b>/100`;
+    title = `${e(T.openFindings[locale])} · ${e(c.name)} — ${scoreText(c.score, locale)}`;
     issues = c.issues;
   } else {
     if (!all.length) return e(S.noCompanies[locale]);

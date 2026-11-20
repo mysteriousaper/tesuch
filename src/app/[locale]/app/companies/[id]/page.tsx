@@ -54,7 +54,19 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
           </p>
           {canEdit && <div className="mt-2"><RecheckButton locale={locale} companyId={company.id} /></div>}
         </div>
-        <ScoreGauge value={score} label={c("score")} size={160} />
+        {score === null ? (
+          <div className="flex max-w-[220px] flex-col items-center gap-2 text-center">
+            <p className="text-lg font-semibold">{t("noScore")}</p>
+            <p className="text-sm text-muted">{t("noScoreHint")}</p>
+            {canEdit && <Link href="/app/import" className="rounded-theme bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t("importEmployees")}</Link>}
+          </div>
+        ) : (
+          <div className="flex max-w-[220px] flex-col items-center gap-1">
+            <ScoreGauge value={score} label={c("score")} size={160} />
+            <p className="text-sm font-semibold text-danger">{t("openFindings", { count: stats.open })}</p>
+            <p className="text-center text-xs text-muted">{t("scoreDisclaimer")}</p>
+          </div>
+        )}
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">

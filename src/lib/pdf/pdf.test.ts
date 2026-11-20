@@ -63,6 +63,9 @@ describe("PDF rendering", { timeout: 60_000 }, () => {
     expect(isPdf(b)).toBe(true);
     save(`checklist-${locale}.pdf`, b);
   });
+  it("renders a checklist without a score (no staff yet)", async () => {
+    expect(isPdf(await renderChecklist({ locale: "en", company, asOf: "2026-11-18", score: null, items: [] }))).toBe(true);
+  });
   it("renders an empty checklist", async () => {
     expect(isPdf(await renderChecklist({ locale: "hy", company, asOf: "2026-11-18", score: 100, items: [] }))).toBe(true);
   });

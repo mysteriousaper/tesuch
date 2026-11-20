@@ -42,6 +42,7 @@ export const T = {
   employee: { hy: "Աշխատող", ru: "Сотрудник", en: "Employee" },
   company: { hy: "Ընկերություն", ru: "Компания", en: "Company" },
   score: { hy: "Պատրաստվածության միավոր", ru: "Балл готовности", en: "Inspection-Ready Score" },
+  noScore: { hy: "Տվյալներ դեռ չկան", ru: "Данных пока нет", en: "No data yet" },
   alertSubject: { hy: "Նոր ահազանգ", ru: "Новое оповещение", en: "New alert" },
   digestTitle: { hy: "Շաբաթական ամփոփում", ru: "Еженедельная сводка", en: "Weekly digest" },
   openFindings: { hy: "Բաց հարցեր", ru: "Открытые замечания", en: "Open findings" },

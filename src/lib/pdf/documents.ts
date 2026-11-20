@@ -223,7 +223,8 @@ export interface ChecklistData {
   locale: Locale;
   company: CompanyInfo;
   asOf: IsoDate;
-  score: number;
+  /** null = company has no staff yet; the PDF prints "No data yet" instead of a number. */
+  score: number | null;
   items: { finding: Finding; employeeName: string }[];
 }
 
@@ -262,7 +263,7 @@ export function readinessChecklist({ locale, company, asOf, score, items }: Chec
         txt(s.subtitle, company.name),
         meta([
           [`${CL.date[locale]}:`, formatDate(asOf)],
-          [`${T.score[locale]}:`, `${score}/100`],
+          [`${T.score[locale]}:`, score === null ? T.noScore[locale] : `${score}/100`],
           [`${T.openFindings[locale]}:`, String(items.length)],
         ]),
         items.length === 0 ? txt(s.para, T.noFindings[locale]) : h(View, null, header, ...rows),

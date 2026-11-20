@@ -21,7 +21,7 @@ function fakeDb(tables: Tables, opts: { failOn?: string } = {}) {
       log.push(entry);
       const rows = () =>
         (tables[table] ?? []).filter((r) =>
-          filters.every(([kind, col, v]) => (kind === "eq" ? r[col] === v : (v as unknown[]).includes(r[col]))),
+          filters.every(([kind, col, v]) => (kind === "eq" ? r[col] === v : kind === "is" ? (r[col] ?? null) === v : (v as unknown[]).includes(r[col]))),
         );
       const run = () => {
         entry.op = op;
@@ -47,6 +47,9 @@ function fakeDb(tables: Tables, opts: { failOn?: string } = {}) {
         upsert: (p: Row) => ((op = "upsert"), (payload = p), Promise.resolve(run())),
         eq: (col: string, v: unknown) => (filters.push(["eq", col, v]), q),
         in: (col: string, v: unknown[]) => (filters.push(["in", col, v]), q),
+        is: (col: string, v: unknown) => (filters.push(["is", col, v]), q),
+        order: () => q,
+        range: () => q,
         limit: () => q,
         maybeSingle: () => {
           const r = run();
@@ -74,7 +77,7 @@ beforeEach(() => {
     memberships: [{ user_id: "userA", org_id: "orgA", role: "viewer" }, { user_id: "userB", org_id: "orgB", role: "owner" }],
     orgs: [{ id: "orgA", name: "Alpha Firm", kind: "accounting_firm" }, { id: "orgB", name: "Bravo Secret Org", kind: "company" }],
     companies: [{ id: "cA", org_id: "orgA", name: "Alpha Co" }, { id: "cB", org_id: "orgB", name: "Bravo Secret Co" }],
-    employees: [{ id: "eA", full_name: "Anna" }, { id: "eB", full_name: "Bravo Secret Person" }],
+    employees: [{ id: "eA", org_id: "orgA", company_id: "cA", full_name: "Anna" }, { id: "eB", org_id: "orgB", company_id: "cB", full_name: "Bravo Secret Person" }],
     findings: [
       { org_id: "orgA", company_id: "cA", employee_id: "eA", rule_id: "probation-max", due_date: "2020-01-01", status: "open" },
       { org_id: "orgA", company_id: "cA", employee_id: "eA", rule_id: "probation-max", due_date: "2020-01-02", status: "fixed" },

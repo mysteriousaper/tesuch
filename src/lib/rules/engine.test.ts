@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { parseRules, RULES } from "./catalog";
-import { evaluateCompany, evaluateCompanyDetailed } from "./engine";
+import { effectiveSeverity, evaluateCompany, evaluateCompanyDetailed } from "./engine";
 import { planSync } from "../jobs/sync";
 import { probationOverrunDays } from "./facts";
-import { firmScore, inspectionReadyScore } from "./score";
+import { firmScore, inspectionReadyScore, scoreFrom } from "./score";
 import type { Contract, Employee, LeaveRecord } from "./types";
 
 const emp = (o: Partial<Employee> = {}): Employee => ({
@@ -225,6 +225,21 @@ describe("maternity-min and src-registration", () => {
   });
 });
 
+describe("effectiveSeverity", () => {
+  const base = RULES[0];
+  it("downgrades unverified red/amber to advisory", () => {
+    expect(effectiveSeverity({ ...base, status: "needs_lawyer_review", severity: "red" })).toBe("advisory");
+    expect(effectiveSeverity({ ...base, status: "needs_lawyer_review", severity: "amber" })).toBe("advisory");
+  });
+  it("keeps info as info whatever the status", () => {
+    expect(effectiveSeverity({ ...base, status: "needs_lawyer_review", severity: "info" })).toBe("info");
+    expect(effectiveSeverity({ ...base, status: "verified", severity: "info" })).toBe("info");
+  });
+  it("keeps verified severity", () => {
+    expect(effectiveSeverity({ ...base, status: "verified", severity: "red" })).toBe("red");
+  });
+});
+
 describe("determinism and score", () => {
   it("a clean employee has no findings and scores 100", async () => {
     const f = await evaluateCompany(RULES, { employees: [emp()], contracts: [con()], leave: [] }, "2026-02-01");
@@ -238,6 +253,16 @@ describe("determinism and score", () => {
   it("scores penalties, doubles overdue and clamps at 0", () => {
     expect(inspectionReadyScore([{ severity: "advisory", overdue: false }, { severity: "red", overdue: true }])).toBe(56);
     expect(inspectionReadyScore(Array(10).fill({ severity: "red", overdue: false }))).toBe(0);
+  });
+  it("an open scoring finding caps the score at 99; info never scores", () => {
+    expect(inspectionReadyScore([{ severity: "info", overdue: true }])).toBe(100);
+    expect(scoreFrom(0, true)).toBe(99);
+    expect(scoreFrom(0, false)).toBe(100);
+    expect(inspectionReadyScore([{ severity: "advisory", overdue: false }])).toBeLessThanOrEqual(99);
+  });
+  it("firm score skips companies without data", () => {
+    expect(firmScore([80, null, 60])).toBe(70);
+    expect(firmScore([null, null])).toBeNull();
   });
   it("firm score is the mean of companies", () => {
     expect(firmScore([100, 50, 75])).toBe(75);

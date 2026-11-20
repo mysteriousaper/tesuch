@@ -58,9 +58,37 @@ export async function loadAccount(db: SupabaseClient, userId: string, locale: Lo
     due_date: f.due_date as string,
     employee_name: (f.employees as unknown as { full_name: string } | null)?.full_name ?? null,
   }));
+  const companyRows = (companies.data ?? []) as CompanyRow[];
+  const staffed = await companiesWithStaff(db, orgIds, companyRows.length);
+  if (staffed) for (const c of companyRows) c.staff = staffed.has(c.id) ? 1 : 0;
   const allowed = new Set(orgIds);
   const orgRows = ((orgs.data ?? []) as OrgRow[]).filter((o) => allowed.has(o.id));
-  return buildAccount(orgRows, (companies.data ?? []) as CompanyRow[], findingRows, asOf, locale);
+  return buildAccount(orgRows, companyRows, findingRows, asOf, locale);
+}
+
+const PAGE = 1000;
+const MAX_STAFF_PAGES = 50;
+
+/**
+ * Ids of companies with at least one active employee (a company with none has no score). Pages through the
+ * REST row cap and stops once every company is seen; null when the scan was cut short, so nobody is wrongly
+ * shown as "no data".
+ */
+async function companiesWithStaff(db: SupabaseClient, orgIds: string[], companyCount: number): Promise<Set<string> | null> {
+  const seen = new Set<string>();
+  for (let page = 0; page < MAX_STAFF_PAGES; page++) {
+    const { data, error } = await db
+      .from("employees")
+      .select("company_id")
+      .in("org_id", orgIds)
+      .is("archived_at", null)
+      .order("id")
+      .range(page * PAGE, page * PAGE + PAGE - 1);
+    if (error) throw new Error(error.message);
+    for (const r of data ?? []) seen.add(r.company_id as string);
+    if (seen.size >= companyCount || (data ?? []).length < PAGE) return seen;
+  }
+  return null;
 }
 
 /** Handles one Telegram update. Returns the reply to send (or null). Service-role client only. */

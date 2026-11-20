@@ -25,7 +25,7 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <form action={createOrg.bind(null, locale)} className="flex flex-col gap-3">
           <label htmlFor="name" className="text-sm font-medium">{t("name")}</label>
-          <input id="name" name="name" required maxLength={200} className="rounded-theme border border-line bg-surface px-3 py-2.5 text-base" />
+          <input id="name" name="name" required maxLength={200} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
           <button className="rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink">{t("create")}</button>
         </form>
       </section>
@@ -45,7 +45,12 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
             <h1 className="text-2xl font-bold">{org.name}</h1>
             <p className="text-sm text-muted">{t("employeesCount", { count: rows.reduce((s, r) => s + r.staff, 0) })} · {t("openFindings", { count: rows.reduce((s, r) => s + r.open, 0) })}</p>
           </div>
-          {firm !== null && <ScoreGauge value={firm} label={t("firmScore")} size={160} />}
+          {firm !== null && (
+            <div className="flex max-w-[220px] flex-col items-center gap-1">
+              <ScoreGauge value={firm} label={t("firmScore")} size={160} />
+              <p className="text-center text-xs text-muted">{t("scoreDisclaimer")}</p>
+            </div>
+          )}
         </div>
 
         <div className="rounded-theme-lg border border-line bg-surface">

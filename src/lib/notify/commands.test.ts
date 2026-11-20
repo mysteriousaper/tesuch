@@ -111,6 +111,15 @@ describe("buildAccount", () => {
     expect(view[0].companies[0].issues[0].title).toBe(ruleById("probation-max").title.ru);
   });
 
+  it("a company with 0 staff has a null score, left out of the org average, and says so in /status", () => {
+    const view = buildAccount([orgA], [{ ...co("c1", "orgA", "Empty"), staff: 0 }, { ...co("c2", "orgA", "Full"), staff: 4 }], [fd("c2", "orgA", "2026-12-01")], ASOF, "en");
+    expect(view[0].companies.find((c) => c.name === "Empty")?.score).toBeNull();
+    expect(view[0].companies.find((c) => c.name === "Full")?.score).toBe(96);
+    expect(view[0].score).toBe(96);
+    expect(statusReply(view, "en")).toContain("No data yet");
+    expect(statusReply(view, "en")).not.toContain("Empty</b>/100");
+  });
+
   it("org without companies has a null score", () => {
     expect(buildAccount([orgA], [], [], ASOF, "en")[0].score).toBeNull();
   });

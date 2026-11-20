@@ -11,6 +11,8 @@ export interface CompanyData {
 }
 
 export function effectiveSeverity(rule: RuleDefinition): EffectiveSeverity {
+  // Unverified rules downgrade red/amber to advisory only; info stays info (0 points, no alert).
+  if (rule.severity === "info") return "info";
   return rule.status === "verified" ? rule.severity : "advisory";
 }
 

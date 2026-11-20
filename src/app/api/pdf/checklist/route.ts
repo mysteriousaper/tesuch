@@ -54,11 +54,18 @@ export async function GET(req: Request) {
     return [{ finding, employeeName: emp?.full_name ?? "" }];
   });
 
+  const { count: staff, error: staffErr } = await db
+    .from("employees")
+    .select("id", { count: "exact", head: true })
+    .eq("company_id", company.id)
+    .is("archived_at", null);
+
   const pdf = await renderChecklist({
     locale: loc.data,
     company: { name: company.name, taxId: company.tax_id },
     asOf,
-    score: inspectionReadyScore(items.map((i) => i.finding)),
+    // Unknown head count (query error) falls back to scoring; zero staff has no score.
+    score: !staffErr && staff === 0 ? null : inspectionReadyScore(items.map((i) => i.finding)),
     items,
   });
   return pdfResponse(pdf, `checklist-${loc.data}`, company.id);
