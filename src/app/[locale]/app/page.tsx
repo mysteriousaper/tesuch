@@ -68,9 +68,11 @@ export default async function AppHome({ params }: { params: Promise<{ locale: st
               <h2 className="mb-3 font-semibold">{t("addCompany")}</h2>
               <AddCompanyForm locale={locale} />
             </section>
-            <section className="rounded-theme-lg border border-line bg-surface p-4">
-              <LoadDemoButton locale={locale} />
-            </section>
+            {rows.every((r) => r.staff === 0) && (
+              <section className="rounded-theme-lg border border-line bg-surface p-4">
+                <LoadDemoButton locale={locale} />
+              </section>
+            )}
           </>
         ) : (
           <p className="rounded-theme border border-line bg-surface p-4 text-sm text-muted">{t("viewerNote")}</p>

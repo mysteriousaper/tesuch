@@ -7,9 +7,10 @@ import { z } from "zod";
 import { currentOrg, ORG_COOKIE, userOrgs } from "@/components/dashboard/queries";
 import { ensureRules, runRulesForCompany } from "@/lib/jobs/run";
 import type { Locale } from "@/lib/notify/i18n";
+import { redirect } from "@/i18n/navigation";
 import { supabaseForUser, supabaseService } from "@/lib/supabase/server";
 import {
-  canEditRole, companySchema, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, FAIL, findingStatusSchema, insertDemo, insertEmployeeWithContract,
   leaveSchema, splitEmployee, uuid, type ActionState,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
@@ -137,7 +138,9 @@ export async function loadDemoData(locale: string): Promise<ActionState> {
       if (error) throw error;
     },
     deleteCompanies: async (ids) => {
-      await supabase.from("companies").delete().in("id", ids);
+      // Delete is owner-only under RLS, so an accountant's rollback runs with the service role. The role was checked above
+      // (editableOrg) and the delete is pinned to this org and to the ids just created here.
+      await supabaseService().from("companies").delete().eq("org_id", org.id).in("id", ids);
     },
   }, demo);
   if (!result.ok) return FAIL("generic");
@@ -259,4 +262,43 @@ export async function updateEmployee(
   await recheckQuietly(co);
   revalidatePath(`/${locale}/app/companies/${companyId}`, "layout");
   return { ok: true };
+}
+
+/** The company as the user sees it (RLS), only when they are an owner of its org. org_id comes from the row, never the client. */
+async function ownedCompany(supabase: UserClient, userId: string, companyId: string) {
+  const { data: co } = await supabase.from("companies").select("id, org_id, name").eq("id", companyId).maybeSingle();
+  if (!co) return null;
+  const { data: m } = await supabase.from("memberships").select("role").eq("user_id", userId).eq("org_id", co.org_id).maybeSingle();
+  return isOwnerRole(m?.role) ? { id: co.id as string, org_id: co.org_id as string, name: co.name as string } : null;
+}
+
+/** Owner-only rename / tax id change. Plain RLS client; the companies_update policy is owner-only as well. */
+export async function updateCompany(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
+  const parsed = companySchema.safeParse({ name: form.get("name"), tax_id: form.get("tax_id") });
+  if (!parsed.success || !uuid.safeParse(companyId).success) return FAIL("invalid");
+  const { supabase, user } = await session();
+  if (!user) return FAIL("forbidden");
+  const co = await ownedCompany(supabase, user.id, companyId);
+  if (!co) return FAIL("forbidden");
+  const { data, error } = await supabase.from("companies").update(parsed.data).eq("id", co.id).eq("org_id", co.org_id).select("id");
+  if (error) return FAIL("generic");
+  if (!data?.length) return FAIL("forbidden");
+  revalidatePath(`/${locale}/app`);
+  revalidatePath(`/${locale}/app/companies/${companyId}`);
+  return { ok: true };
+}
+
+/** Owner-only delete, confirmed by typing the company name. Employees, contracts, leave and findings cascade; audit rows stay. */
+export async function deleteCompany(locale: string, companyId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
+  if (!uuid.safeParse(companyId).success) return FAIL("invalid");
+  const { supabase, user } = await session();
+  if (!user) return FAIL("forbidden");
+  const co = await ownedCompany(supabase, user.id, companyId);
+  if (!co) return FAIL("forbidden");
+  if (!confirmsCompanyName(co.name, form.get("confirm"))) return FAIL("invalid");
+  const { data, error } = await supabase.from("companies").delete().eq("id", co.id).eq("org_id", co.org_id).select("id");
+  if (error) return FAIL("generic");
+  if (!data?.length) return FAIL("forbidden");
+  revalidatePath(`/${locale}/app`);
+  return redirect({ href: "/app", locale });
 }

@@ -26,6 +26,13 @@ export const companySchema = z.object({
   tax_id: z.preprocess((v) => (v === "" || v == null ? null : v), z.string().regex(/^\d{8}$/).nullable()),
 });
 
+/** Typed-name confirmation for deleting a company: exact match after trimming, never empty. */
+export const confirmsCompanyName = (name: string, typed: unknown): boolean =>
+  typeof typed === "string" && typed.trim().length > 0 && typed.trim() === name.trim();
+
+/** Only owners may change or remove a company (stricter than canEditRole). */
+export const isOwnerRole = (role: string | null | undefined): boolean => role === "owner";
+
 const employeeFields = z.object({
   full_name: z.string().trim().min(1).max(200),
   birth_date: optDate,

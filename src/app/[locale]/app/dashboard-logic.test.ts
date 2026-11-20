@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  canEditRole, companySchema, editSchema, employeeSchema, findingStatusSchema, insertDemo, insertEmployeeWithContract,
+  canEditRole, companySchema, confirmsCompanyName, isOwnerRole, editSchema, employeeSchema, findingStatusSchema, insertDemo, insertEmployeeWithContract,
   latestContract, leaveSchema, splitEmployee, type DemoWriter, type EmployeeWriter,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
@@ -202,5 +202,24 @@ describe("latestContract", () => {
   it("handles no contracts", () => {
     expect(latestContract([])).toBeUndefined();
     expect(latestContract(null)).toBeUndefined();
+  });
+});
+
+describe("isOwnerRole", () => {
+  it("is true for owners only", () => {
+    expect(isOwnerRole("owner")).toBe(true);
+    expect(isOwnerRole("accountant")).toBe(false);
+    expect(isOwnerRole("viewer")).toBe(false);
+    expect(isOwnerRole(null)).toBe(false);
+    expect(isOwnerRole(undefined)).toBe(false);
+  });
+});
+
+describe("confirmsCompanyName", () => {
+  it("needs the exact company name, ignoring outer whitespace", () => {
+    expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", " Դեմո 1 ՍՊԸ ")).toBe(true);
+    expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", "դեմո 1 սպը")).toBe(false);
+    expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", "")).toBe(false);
+    expect(confirmsCompanyName("Դեմո 1 ՍՊԸ", null)).toBe(false);
   });
 });

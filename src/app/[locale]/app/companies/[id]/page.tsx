@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
+import { CompanySettings } from "@/components/dashboard/company-settings";
 import { AddEmployeeForm, RecheckButton } from "@/components/dashboard/dashboard-forms";
 import { FindingList, fmtDate, type FindingView } from "@/components/dashboard/finding-list";
 import { statsFor } from "@/components/dashboard/stats";
@@ -29,6 +30,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
   ]);
   const { data: membership } = await supabase.from("memberships").select("role").eq("user_id", user.id).eq("org_id", company.org_id).maybeSingle();
   const canEdit = membership?.role === "owner" || membership?.role === "accountant";
+  const isOwner = membership?.role === "owner";
 
   const t = await getTranslations("dashboard");
   const c = await getTranslations("common");
@@ -111,6 +113,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ locale
               <div className="border-t border-line p-4"><AddEmployeeForm locale={locale} companyId={company.id} /></div>
             </details>
           )}
+          {isOwner && <CompanySettings locale={locale} companyId={company.id} name={company.name} taxId={company.tax_id} />}
         </section>
       </div>
     </div>
