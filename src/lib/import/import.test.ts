@@ -310,6 +310,11 @@ describe("privacy mode import", () => {
     expect(r.errors).toEqual([]);
     expect(r.employees.map((e) => e.employee_code)).toEqual(["EMP-003", "EMP-002", "EMP-004"]);
   });
+  it("generated-code rows are flagged so re-imports can match them by employee ID", () => {
+    const t = toTable(parseCsv(["ID;Start", "A1;15.01.2026", "A2;16.01.2026"].join("\n")));
+    const r = buildImport(t, { 0: "external_ref", 1: "start_date" }, { orgId: "o", companyId: "c", privacy: true });
+    expect(r.generatedCodeIds).toEqual(r.employees.map((e) => e.id));
+  });
   it("works with no code column at all", () => {
     const t = toTable(parseCsv(["Start;Name", "15.01.2026;Anna", "16.01.2026;Boris"].join("\n")));
     const r = buildImport(t, { 0: "start_date", 1: "full_name" }, { orgId: "o", companyId: "c", privacy: true });

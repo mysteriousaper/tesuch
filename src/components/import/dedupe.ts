@@ -21,12 +21,14 @@ const norm = (s: string) => s.normalize("NFC").replace(/\s+/g, " ").trim().toLoc
 /**
  * Decide which imported employees are already known, against the company's existing staff and earlier rows of the same file.
  * - Same employee_code (privacy mode) → same person (skip).
+ * - A generated code says nothing about identity (the file had no code): such rows are compared by employee ID only,
+ *   because in codes mode the name is the code. Without an employee ID they are imported as new.
  * - Same external_ref → same person (skip).
  * - Same name AND same birth date (both present) → same person (skip).
  * - Same name but nothing else to compare → could be two different people: import, but flag for the user.
  * A shared name alone never causes a row to be dropped.
  */
-export function dedupeEmployees(candidates: EmployeeInsert[], existing: ExistingEmployee[]): DedupeResult {
+export function dedupeEmployees(candidates: EmployeeInsert[], existing: ExistingEmployee[], generated: ReadonlySet<string> = new Set()): DedupeResult {
   const refs = new Set<string>();
   const nameBirth = new Set<string>();
   const names = new Set<string>();
@@ -43,6 +45,11 @@ export function dedupeEmployees(candidates: EmployeeInsert[], existing: Existing
   for (const e of candidates) {
     const ref = e.external_ref?.trim() ? norm(e.external_ref) : null;
     const name = norm(e.full_name);
+    if (generated.has(e.id)) {
+      if (ref && refs.has(ref)) result.skipped++;
+      else { result.keep.push(e); remember(e); }
+      continue;
+    }
     if (e.employee_code) {
       // A code is unique per company: a known code is the same person, and a new code is never a name-only guess.
       if (codes.has(codeKey(e.employee_code))) result.skipped++;

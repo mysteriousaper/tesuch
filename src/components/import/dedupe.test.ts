@@ -65,3 +65,12 @@ describe("dedupe by employee code (privacy mode)", () => {
     expect(r.possibleDuplicates).toEqual([]);
   });
 });
+
+describe("generated codes (codes mode, file without a code column)", () => {
+  const row = (id: string, code: string, ref: string | null) => ({ id, org_id: "o", company_id: "c", full_name: code, employee_code: code, birth_date: null, six_day_week: false, external_ref: ref });
+  it("skips a re-imported row by employee ID even though its generated code is new", () => {
+    const r = dedupeEmployees([row("n1", "EMP-003", "A1"), row("n2", "EMP-004", "A9")], [{ full_name: "EMP-001", birth_date: null, external_ref: "A1", employee_code: "EMP-001" }], new Set(["n1", "n2"]));
+    expect(r.skipped).toBe(1);
+    expect(r.keep.map((e) => e.id)).toEqual(["n2"]);
+  });
+});

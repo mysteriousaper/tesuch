@@ -85,7 +85,7 @@ export async function commitImport(locale: Locale, input: ImportPayload): Promis
   const { data: existing, error: exErr } = await supabase
     .from("employees").select(privacy ? "full_name, birth_date, external_ref, employee_code" : "full_name, birth_date, external_ref").eq("company_id", company.id);
   if (exErr) return { ok: false, error: "failed" };
-  const dedupe = dedupeEmployees(result.employees, (existing ?? []) as unknown as ExistingEmployee[]);
+  const dedupe = dedupeEmployees(result.employees, (existing ?? []) as unknown as ExistingEmployee[], new Set(result.generatedCodeIds));
   const employees = dedupe.keep;
   const keepIds = new Set(employees.map((e) => e.id));
   const contracts = result.contracts.filter((c) => keepIds.has(c.employee_id));

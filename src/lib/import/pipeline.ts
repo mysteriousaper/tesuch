@@ -65,6 +65,8 @@ export interface ImportResult {
   errors: ImportError[];
   /** Data rows seen (blank rows excluded). */
   rowCount: number;
+  /** Ids of employees whose code was generated (the file had none): their identity is the employee ID, not the code. */
+  generatedCodeIds: string[];
 }
 
 export interface ImportOptions {
@@ -129,7 +131,7 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
   const columnOf = new Map<TargetField, number>();
   for (const [col, field] of Object.entries(mapping)) if (field) columnOf.set(field, Number(col));
 
-  const result: ImportResult = { employees: [], contracts: [], errors: [], rowCount: table.rows.length };
+  const result: ImportResult = { employees: [], contracts: [], errors: [], rowCount: table.rows.length, generatedCodeIds: [] };
   const privacy = opts.privacy === true;
   const seenCodes = new Set<string>();
   const usedCodes = new Set<string>([...(opts.existingCodes ?? [])].map(codeKey));
@@ -208,6 +210,7 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
       usedCodes.add(codeKey(code));
     }
     const employeeId = newId();
+    if (needsCode) result.generatedCodeIds.push(employeeId);
     result.employees.push({
       id: employeeId,
       org_id: opts.orgId,

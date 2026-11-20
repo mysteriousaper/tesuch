@@ -16,6 +16,8 @@ create table private.company_code_counters (
   company_id uuid primary key references public.companies (id) on delete cascade,
   last_number integer not null default 0
 );
+-- No policy and no grant: only the security definer trigger below touches it.
+alter table private.company_code_counters enable row level security;
 
 create function private.employee_code_default()
 returns trigger language plpgsql security definer set search_path = '' as $$
@@ -37,7 +39,7 @@ begin
       new.employee_code := 'EMP-' || case when v_number < 100 then lpad(v_number::text, 3, '0') else v_number::text end;
       -- skip numbers already taken by codes typed or imported by hand
       exit when not exists (
-        select 1 from public.employees e where e.company_id = new.company_id and e.employee_code = new.employee_code
+        select 1 from public.employees e where e.company_id = new.company_id and lower(e.employee_code) = lower(new.employee_code)
       );
     end loop;
   end if;
@@ -49,4 +51,3 @@ $$;
 create trigger employees_code_default before insert on public.employees
   for each row execute function private.employee_code_default();
 
-grant execute on function private.employee_code_default() to service_role;
