@@ -34,7 +34,8 @@ test.describe("dashboard (lane A)", () => {
     await expect(page.getByText(/No companies yet/)).toBeVisible();
 
     await page.getByRole("button", { name: "Load demo data" }).click();
-    await expect(page.getByText("Demo data loaded.")).toBeVisible({ timeout: 45_000 });
+    // The demo card unmounts once the firm has staff (M-10), so wait for the loaded companies instead of its message.
+    await expect(page.getByText(/No companies yet/)).toHaveCount(0, { timeout: 60_000 });
 
     const { count } = await admin().from("companies").select("id", { count: "exact", head: true }).eq("org_id", orgId);
     expect(count).toBe(5);

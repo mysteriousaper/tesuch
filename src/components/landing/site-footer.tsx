@@ -8,6 +8,7 @@ export async function SiteFooter() {
   const t = await getTranslations("landing");
   const c = await getTranslations("common");
   const lg = await getTranslations("legal.related");
+  const g = await getTranslations("guide");
   return (
     <footer className="border-t border-line">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto]">
@@ -24,6 +25,7 @@ export async function SiteFooter() {
             <ModeToggle />
             <LocaleSwitcher />
           </div>
+          <Link href="/guide" className="text-muted hover:text-ink">{g("footerLink")}</Link>
           <Link href="/check" className="text-muted hover:text-ink">{t("nav.check")}</Link>
           <Link href="/login" className="text-muted hover:text-ink">{t("nav.login")}</Link>
           <Link href="/privacy" className="text-muted hover:text-ink">{lg("privacy")}</Link>

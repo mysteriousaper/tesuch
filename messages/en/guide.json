@@ -28,11 +28,26 @@
       "problemsTitle": "Where employers usually slip",
       "problemsNote": "These are the typical areas that Tesuch checks. They are examples of where deadlines hide, not statistics.",
       "problems": [
-        { "t": "Probation", "d": "The probation end date is missing, unclear or has already passed without a decision." },
-        { "t": "Fixed-term contracts", "d": "The end date comes and goes, or the ground for a fixed term is not recorded." },
-        { "t": "Notice periods", "d": "A dismissal is prepared without the notice period being counted correctly." },
-        { "t": "Leave", "d": "Annual leave is not tracked, so entitlements and balances drift." },
-        { "t": "SRC registration", "d": "Employment contracts are not yet entered in the State Revenue Committee electronic system, and nobody sees which ones are missing." }
+        {
+          "t": "Probation",
+          "d": "The probation end date is missing, unclear or has already passed without a decision."
+        },
+        {
+          "t": "Fixed-term contracts",
+          "d": "The end date comes and goes, or the ground for a fixed term is not recorded."
+        },
+        {
+          "t": "Notice periods",
+          "d": "A dismissal is prepared without the notice period being counted correctly."
+        },
+        {
+          "t": "Leave",
+          "d": "Annual leave is not tracked, so entitlements and balances drift."
+        },
+        {
+          "t": "SRC registration",
+          "d": "Employment contracts are not yet entered in the State Revenue Committee electronic system, and nobody sees which ones are missing."
+        }
       ],
       "costTitle": "What waiting costs",
       "cost": "During an inspection you can only explain. A week earlier you can still fix the data, sign the right order and close the gap. What follows from a violation is set by law and by the inspector’s decision, so Tesuch quotes no fine amounts. The point is simple: it is cheaper to know today than to find out during the visit."
@@ -42,21 +57,54 @@
       "firmTitle": "For an accounting firm",
       "firmIntro": "You carry the HR paperwork of many clients. Tesuch gives you one place to see all of them.",
       "firm": [
-        { "t": "One dashboard for all clients", "d": "Every company in one list, the riskiest on top, so you know where to start this week." },
-        { "t": "A score per company", "d": "The inspection-readiness score from 0 to 100 answers one question: would this company pass today?" },
-        { "t": "Nightly checks", "d": "Every night the rules go through every contract, so nobody has to remember the dates." },
-        { "t": "Alerts before deadlines", "d": "A new issue reaches you on Telegram and by email, and every Monday you get a weekly digest." },
-        { "t": "Ready PDF orders", "d": "Draft orders and notices in Armenian, plus a checklist of all open issues in one PDF." },
-        { "t": "Team roles", "d": "Owner, accountant and viewer: everyone sees and edits exactly what they should." },
-        { "t": "Audit log", "d": "A record of who changed what and when, for your own peace of mind." }
+        {
+          "t": "One dashboard for all clients",
+          "d": "Every company in one list, the riskiest on top, so you know where to start this week."
+        },
+        {
+          "t": "A score per company",
+          "d": "The inspection-readiness score from 0 to 100 answers one question: would this company pass today?"
+        },
+        {
+          "t": "Nightly checks",
+          "d": "Every night the rules go through every contract, so nobody has to remember the dates."
+        },
+        {
+          "t": "Alerts before deadlines",
+          "d": "A new issue reaches you on Telegram and by email, and every Monday you get a weekly digest."
+        },
+        {
+          "t": "Ready PDF orders",
+          "d": "Draft orders and notices in Armenian, plus a checklist of all open issues in one PDF."
+        },
+        {
+          "t": "Team roles",
+          "d": "Owner, accountant and viewer: everyone sees and edits exactly what they should."
+        },
+        {
+          "t": "Audit log",
+          "d": "A record of who changed what and when, for your own peace of mind."
+        }
       ],
       "ownerTitle": "For an employer (SME owner)",
       "ownerIntro": "You do not read the Labour Code and you live in Telegram. Tesuch meets you there.",
       "owner": [
-        { "t": "A weekly Telegram digest", "d": "One message on Monday: do I have a problem, and what are the one to three things to fix." },
-        { "t": "Plain-language fixes", "d": "Each issue says what is wrong and what to do about it, with the Labour Code article and an arlis.am link where the article is verified." },
-        { "t": "Ask the bot any time", "d": "Message the bot to get your score or the list of open problems whenever you want." },
-        { "t": "A free self-check", "d": "Ten questions, two minutes, no sign-up: a first picture before you decide anything." }
+        {
+          "t": "A weekly Telegram digest",
+          "d": "One message on Monday: do I have a problem, and what are the one to three things to fix."
+        },
+        {
+          "t": "Plain-language fixes",
+          "d": "Each issue says what is wrong and what to do about it, with the Labour Code article and an arlis.am link where the article is verified."
+        },
+        {
+          "t": "Ask the bot any time",
+          "d": "Message the bot to get your score or the list of open problems whenever you want."
+        },
+        {
+          "t": "A free self-check",
+          "d": "Ten questions, two minutes, no sign-up: a first picture before you decide anything."
+        }
       ]
     },
     "how": {
@@ -67,22 +115,30 @@
         {
           "t": "Sign in with an email code",
           "d": "Open Tesuch, press Sign in, enter your email and press “Send sign-in code”. Type the code from the email and press “Sign in”. No password is needed. If the code has expired, ask for a new one.",
-          "alts": ["The sign-in page: an email field and a field for the code from the email."]
+          "alts": [
+            "The sign-in page: an email field and a field for the code from the email."
+          ]
         },
         {
           "t": "Accept the terms",
           "d": "On the first sign-in you see the Terms of Service and the Privacy Policy. Read them and tick both boxes to continue. This happens once, and again only if the texts change.",
-          "alts": ["The consent page with the Terms of Service and the Privacy Policy and two checkboxes."]
+          "alts": [
+            "The consent page with the Terms of Service and the Privacy Policy and two checkboxes."
+          ]
         },
         {
           "t": "Create your firm",
           "d": "Type the name of your firm and press “Create”. The firm is your workspace. All your client companies live in it, and other firms never see your data. An employer can simply create a firm for their own company.",
-          "alts": ["The firm creation form with one name field."]
+          "alts": [
+            "The firm creation form with one name field."
+          ]
         },
         {
           "t": "Add a company or import staff",
           "d": "On the dashboard press “Add company”, or press “Load demo data” to try Tesuch on five fictional companies first. To load real staff, open Import, pick the company and upload a CSV or Excel file. Tesuch recognises headers in Armenian, Russian and English, and an ArmSoft export works too. Check the column mapping, look at the rows with errors in the preview and press “Import”.",
-          "alts": ["The import wizard: company selection, file upload and a button to download a CSV template."]
+          "alts": [
+            "The import wizard: company selection, file upload and a button to download a CSV template."
+          ]
         },
         {
           "t": "Read the score and the issues",
@@ -95,27 +151,37 @@
         {
           "t": "Fix the data",
           "d": "Press “Fix data”, correct the employee or contract data (for example the probation end or the ground for a fixed term) and save. At the next check the issue closes by itself, and “Re-check now” runs it at once. Use “Dismiss” only when you are sure the issue does not apply to you.",
-          "alts": ["The employee edit form with contract fields such as probation end and fixed-term ground."]
+          "alts": [
+            "The employee edit form with contract fields such as probation end and fixed-term ground."
+          ]
         },
         {
           "t": "Connect Telegram",
           "d": "Open Settings, then Notifications, and press “Connect Telegram”. The Tesuch bot opens in Telegram: press Start. Press “Send test alert” to check that it works. From then on you get alerts on new issues and a digest every Monday, and you can write to the bot:",
-          "alts": ["The notifications settings with the Connect Telegram button and a test alert button."]
+          "alts": [
+            "The notifications settings with the Connect Telegram button and a test alert button."
+          ]
         },
         {
           "t": "Download the PDF documents",
           "d": "In Documents choose a company. You can download a checklist with all open issues in one PDF, and draft orders and notices for the end of probation, the end of a fixed-term contract and dismissal. All templates are drafts: show them to a lawyer before use.",
-          "alts": ["The documents page with a company and buttons to download the checklist and the drafts."]
+          "alts": [
+            "The documents page with a company and buttons to download the checklist and the drafts."
+          ]
         },
         {
           "t": "Invite colleagues",
           "d": "Open Team and invite a colleague by email. Pick a role: an owner manages the firm, an accountant edits data, a viewer only looks. Every change is recorded in the audit log.",
-          "alts": ["The team page with the list of members, their roles and an invitation form."]
+          "alts": [
+            "The team page with the list of members, their roles and an invitation form."
+          ]
         },
         {
           "t": "Take the weekly quiz",
           "d": "Every week the Quiz section offers five questions on the Labour Code. A week counts as clean if you took the quiz and there are no overdue violations at the end of it. A streak of clean weeks earns badges.",
-          "alts": ["The quiz page with a question and a panel of streaks and badges."]
+          "alts": [
+            "The quiz page with a question and a panel of streaks and badges."
+          ]
         }
       ]
     },
@@ -123,20 +189,47 @@
       "title": "Honest limits",
       "intro": "Tesuch is an information tool. It is built to be careful about what it claims.",
       "items": [
-        { "t": "Not legal advice", "d": "Tesuch does not replace a lawyer. Before you decide anything, talk to a lawyer and check the current text of the law on arlis.am." },
-        { "t": "Rules are advisory for now", "d": "The rules have not yet been reviewed by a lawyer. Until they are, every issue is marked “Advisory: not yet verified by a lawyer”, and an unverified rule never shows as a violation." },
-        { "t": "Templates are drafts", "d": "Orders and notices are drafts to be reviewed, not final legal documents." },
-        { "t": "A defined scope", "d": "No payroll, overtime or working-time checks yet, and no direct connection to the State Revenue Committee system: registration is a flag you set by hand." }
+        {
+          "t": "Not legal advice",
+          "d": "Tesuch does not replace a lawyer. Before you decide anything, talk to a lawyer and check the current text of the law on arlis.am."
+        },
+        {
+          "t": "Rules are advisory for now",
+          "d": "The rules have not yet been reviewed by a lawyer. Until they are, every issue is marked “Advisory: not yet verified by a lawyer”, and an unverified rule never shows as a violation."
+        },
+        {
+          "t": "Templates are drafts",
+          "d": "Orders and notices are drafts to be reviewed, not final legal documents."
+        },
+        {
+          "t": "A defined scope",
+          "d": "No payroll, overtime or working-time checks yet, and no direct connection to the State Revenue Committee system: registration is a flag you set by hand."
+        }
       ]
     },
     "faq": {
       "title": "Frequently asked questions",
       "items": [
-        { "q": "Is this legal advice?", "a": "No. Tesuch is an information tool. Rules marked “Advisory” are not yet verified by a lawyer. Consult a lawyer and check the current law on arlis.am before you decide." },
-        { "q": "What data do I have to upload?", "a": "A staff list with the contract dates: names, contract type, start and end, probation end and similar. Tesuch does not need salaries or passport data for its checks." },
-        { "q": "Do I need to be an accounting firm?", "a": "No. A firm is just a workspace. An employer can create one for their own company, or take the free self-check first without signing up." },
-        { "q": "What does it cost?", "a": "The self-check is free and needs no account. The terms for firms are not published on this page, so ask us before you plan around a price." },
-        { "q": "Where is the data stored and who can see it?", "a": "In a data centre in the EU. Every firm sees only its own companies, and access inside a firm depends on the role of the person." }
+        {
+          "q": "Is this legal advice?",
+          "a": "No. Tesuch is an information tool. Rules marked “Advisory” are not yet verified by a lawyer. Consult a lawyer and check the current law on arlis.am before you decide."
+        },
+        {
+          "q": "What data do I have to upload?",
+          "a": "A staff list with the contract dates: names, contract type, start and end, probation end and similar. Tesuch does not need salaries or passport data for its checks."
+        },
+        {
+          "q": "Do I need to be an accounting firm?",
+          "a": "No. A firm is just a workspace. An employer can create one for their own company, or take the free self-check first without signing up."
+        },
+        {
+          "q": "What does it cost?",
+          "a": "The self-check is free and needs no account. The terms for firms are not published on this page, so ask us before you plan around a price."
+        },
+        {
+          "q": "Where is the data stored and who can see it?",
+          "a": "In a data centre in the EU. Every firm sees only its own companies, and access inside a firm depends on the role of the person."
+        }
       ]
     },
     "cta": {
@@ -152,6 +245,7 @@
       "issuesN": "the issues of the company with that number from the status list",
       "help": "the list of commands",
       "stop": "turn Telegram off"
-    }
+    },
+    "footerLink": "How it works"
   }
 }

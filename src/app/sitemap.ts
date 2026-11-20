@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteUrl } from "@/components/landing/site";
 import { routing } from "@/i18n/routing";
 
-const PUBLIC_PATHS = ["", "/check"];
+const PUBLIC_PATHS = ["", "/check", "/guide"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();
