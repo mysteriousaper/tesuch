@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useId, useRef, useState } from "react";
 import type { MembersState } from "@/app/[locale]/app/members/actions";
-import { ROLES, type Role } from "./lib";
+import { Link } from "@/i18n/navigation";
+import { ROLES, SUPPORT_INVITE_ROLE, type Role } from "./lib";
 
 type Action = (prev: MembersState, form: FormData) => Promise<MembersState>;
 
@@ -76,6 +77,35 @@ export function InviteForm({ action }: { action: Action }) {
         </div>
       )}
     </div>
+  );
+}
+
+/** Owner-only shortcut: pre-fills the existing invite action; nothing is sent until the owner confirms. */
+export function AssistedInviteCard({ action, email }: { action: Action; email: string }) {
+  const t = useTranslations("members");
+  const [state, formAction, pending] = useActionState(action, null);
+  return (
+    <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="assisted-h" data-testid="assisted-invite">
+      <h2 id="assisted-h" className="text-lg font-semibold">{t("assisted.title")}</h2>
+      <p className="text-sm text-muted">{t("assisted.intro")}</p>
+      <p className="text-sm font-medium">{t("assisted.target", { email })}</p>
+      <p className="text-sm text-muted">
+        {t("assisted.removable")} {t("assisted.audited")}{" "}
+        <Link href="/app/audit" className="text-accent underline">{t("assisted.auditLink")}</Link>
+      </p>
+      <form action={formAction} aria-busy={pending} className="flex flex-col gap-3">
+        <input type="hidden" name="email" value={email} />
+        <input type="hidden" name="role" value={SUPPORT_INVITE_ROLE} />
+        <div><button type="submit" disabled={pending} className={primaryBtn}>{pending ? "…" : t("assisted.confirm")}</button></div>
+      </form>
+      <Status state={state} />
+      {state?.ok && state.link && (
+        <div className="flex flex-col gap-2 rounded-theme border border-line bg-surface-2 p-3 text-sm">
+          <p className="text-ok">{state.emailed ? t("invite.emailed", { email: state.email ?? "" }) : t("invite.notEmailed")}</p>
+          <CopyLink link={state.link} />
+        </div>
+      )}
+    </section>
   );
 }
 

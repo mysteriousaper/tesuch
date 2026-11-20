@@ -39,6 +39,15 @@
       "removeBody": "{email} will lose access to {org}. You can invite them again later.",
       "lastOwner": "only owner"
     },
+    "assisted": {
+      "title": "Invite Tesuch to set you up",
+      "intro": "Want help getting started? Invite the Tesuch team as an accountant and we will help set up your firm, employees and documents.",
+      "target": "The invitation goes to {email} with the role Accountant.",
+      "removable": "You can remove this access at any time: Team page, then Remove next to the member.",
+      "audited": "Every action is recorded in the audit log.",
+      "auditLink": "Open the audit log",
+      "confirm": "Confirm and invite Tesuch"
+    },
     "pending": {
       "title": "Pending invitations",
       "empty": "No pending invitations.",

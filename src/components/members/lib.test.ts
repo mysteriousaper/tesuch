@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  acceptErrorKey, auditHref, auditRange, envelope, exportFilename, inviteSchema, inviteUrl, jsonDownload, memberErrorKey, parseAuditQuery, TOKEN_RE,
+  acceptErrorKey, auditHref, auditRange, envelope, exportFilename, inviteSchema, inviteUrl, jsonDownload, memberErrorKey, parseAuditQuery, supportInviteEmail, SUPPORT_INVITE_ROLE, TOKEN_RE,
 } from "./lib";
 
 describe("inviteSchema", () => {
@@ -70,5 +70,18 @@ describe("exports", () => {
     expect(r.headers.get("content-disposition")).toBe('attachment; filename="f.json"');
     expect(r.headers.get("cache-control")).toBe("no-store");
     expect(JSON.parse(await r.text())).toEqual({ a: 1 });
+  });
+});
+
+describe("supportInviteEmail", () => {
+  it("is hidden when unset, empty, blank or invalid", () => {
+    for (const v of [undefined, "", "   ", "nope"]) expect(supportInviteEmail(v, true)).toBeNull();
+  });
+  it("is hidden for non-owners even when set", () => {
+    expect(supportInviteEmail("help@tesuch.am", false)).toBeNull();
+  });
+  it("returns the normalised address for owners and pre-fills accountant", () => {
+    expect(supportInviteEmail(" Help@Tesuch.AM ", true)).toBe("help@tesuch.am");
+    expect(SUPPORT_INVITE_ROLE).toBe("accountant");
   });
 });

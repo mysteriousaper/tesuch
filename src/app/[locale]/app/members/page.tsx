@@ -1,6 +1,6 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
-import { ConfirmForm, CopyLink, InviteForm, RoleForm } from "@/components/members/forms";
-import { inviteUrl, type Role } from "@/components/members/lib";
+import { AssistedInviteCard, ConfirmForm, CopyLink, InviteForm, RoleForm } from "@/components/members/forms";
+import { inviteUrl, supportInviteEmail, type Role } from "@/components/members/lib";
 import { baseUrl, emailsFor, orgSession } from "@/components/members/server";
 import { Link, redirect } from "@/i18n/navigation";
 import { changeRole, inviteMember, removeMember, revokeInvite } from "./actions";
@@ -38,6 +38,7 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
   const owners = members.filter((m) => m.role === "owner").length;
   const now = new Date();
   const base = await baseUrl();
+  const supportEmail = supportInviteEmail(process.env.NEXT_PUBLIC_SUPPORT_EMAIL, isOwner);
 
   return (
     <div className="flex max-w-3xl flex-col gap-6">
@@ -59,6 +60,8 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
           <InviteForm action={inviteMember.bind(null, locale)} />
         </section>
       )}
+
+      {supportEmail && <AssistedInviteCard action={inviteMember.bind(null, locale)} email={supportEmail} />}
 
       <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="members-h">
         <h2 id="members-h" className="text-lg font-semibold">{t("members.title", { count: members.length })}</h2>

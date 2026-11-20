@@ -11,6 +11,19 @@ export const inviteSchema = z.object({
 
 export const roleChangeSchema = z.object({ user_id: z.string().uuid(), role: z.enum(ROLES) });
 
+/**
+ * Assisted onboarding: the support address for the owner-only "Invite Tesuch" card.
+ * Returns null (card hidden) when unset, blank or not a valid email; never trusts client input.
+ */
+export function supportInviteEmail(raw: string | undefined, isOwner: boolean): string | null {
+  if (!isOwner) return null;
+  const parsed = inviteSchema.shape.email.safeParse(raw ?? "");
+  return parsed.success ? parsed.data : null;
+}
+
+/** Role pre-filled for assisted onboarding. */
+export const SUPPORT_INVITE_ROLE: Role = "accountant";
+
 /** Invite tokens are 64 lowercase hex characters (see the migration). */
 export const TOKEN_RE = /^[0-9a-f]{64}$/;
 

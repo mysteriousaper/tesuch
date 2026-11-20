@@ -72,6 +72,11 @@ test.describe("team, audit and data rights", () => {
     const list = page.getByTestId("member-list");
     for (const u of [owner, viewer, accountant]) await expect(list.locator("li", { hasText: u.email })).toBeVisible();
     await expect(list.getByText("only owner")).toBeVisible();
+    // Assisted-onboarding card stays hidden while NEXT_PUBLIC_SUPPORT_EMAIL is unset (visible case: unit-tested in lib.test.ts).
+    if (!process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim()) {
+      await expect(page.getByTestId("assisted-invite")).toHaveCount(0);
+      await expect(page.getByText("Invite Tesuch to set you up")).toHaveCount(0);
+    }
     expect(await a11yIssues(page)).toEqual([]);
     await shoot(page, "members");
 
