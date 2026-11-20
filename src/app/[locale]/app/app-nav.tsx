@@ -6,6 +6,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 // Shared navigation. Each feature team owns its page under src/app/[locale]/app/<section>/.
 const ITEMS = [
   { href: "/app", key: "dashboard" },
+  { href: "/app/inbox", key: "inbox" },
   { href: "/app/import", key: "import" },
   { href: "/app/documents", key: "documents" },
   { href: "/app/quiz", key: "quiz" },

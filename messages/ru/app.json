@@ -2,6 +2,7 @@
   "app": {
     "nav": {
       "dashboard": "Панель",
+      "inbox": "Сроки",
       "import": "Импорт",
       "documents": "Документы",
       "quiz": "Викторина",

@@ -24,7 +24,7 @@ Source: `docs/qa/RESULTS.md` (judged 2026-11-19). Owned by the program manager (
 | M-14 | major | ux | `src/components/dashboard/finding-list.tsx`, `src/app/[locale]/app/actions.ts:169`, new migration | Bulk fix/dismiss; required `dismissed_reason` | open |
 | M-15 | major | ux | `src/app/[locale]/app/audit/page.tsx` | Hide system findings rows by default; entity names; changed keys | open |
 | M-16 | major | ux | `src/components/documents/contract-docs.tsx`, `src/app/api/pdf/_lib/load.ts` | Show probation orders only when relevant; name filter; employee slug in filename | open |
-| M-17 | major | product | new `src/app/[locale]/app/inbox/**`, migration `findings.assignee_id` | Firm deadline inbox (feature F1) | open |
+| M-17 | major | product | new `src/app/[locale]/app/inbox/**`, migration `findings.assignee_id` | Firm deadline inbox (feature F1) | fixed in branch as F1 (inbox page, filters, paging, assign; migration `20261121100000_inbox_assignee.sql` + `lane_inbox.sql`). Page tolerates a missing assignee_id column until the lead applies the migration. Not done: per-row fix/dismiss, employee search, dashboard "due in 7 days" card; assignee losing a role is not auto-cleared |
 | M-18 | major | product | `src/lib/pdf/documents.ts`, new `src/app/api/export/**` | Client report PDF (F2), XLSX findings export, sorted checklist with summary | open |
 | M-19 | major | security | `supabase/migrations/20261118000000_init.sql`, `supabase/migrations/20261119020000_members.sql` | `company_members` + `private.can_see_company()` RLS; company-scoped invitations (F4) | open |
 | M-20 | major | product | `src/app/api/jobs/nightly/route.ts`, new migration | `score_snapshots` from nightly job; trend UI (F2) | open |
@@ -65,7 +65,7 @@ Source: `docs/qa/RESULTS.md` (judged 2026-11-19). Owned by the program manager (
 | m-29 | minor | i18n | `src/lib/pdf/documents.ts:264-266` | hy PDF punctuation and column widths | open |
 | m-30 | minor | i18n | `messages/hy/members.json`, `messages/hy/errors.json`, `messages/*/auth.json` | Lower-case «ձեր/դուք»; «ֆիրմա»; drop "Supabase" | open |
 | m-31 | minor | product | `src/app/[locale]/app/companies/[id]/page.tsx`, contracts migration | Optional `position` on contracts | open |
-| F1 | feature | product | new `src/app/[locale]/app/inbox/**`, migration | Firm deadline inbox with filters and assignee (spec in `product.md` §5 F1); after C-2 | open |
+| F1 | feature | product | new `src/app/[locale]/app/inbox/**`, migration | Firm deadline inbox with filters and assignee (spec in `product.md` §5 F1); after C-2 | shipped in branch (see M-17). Apply migration, then rerun `inbox.spec.ts` (assign test skips until then) and check 4 viewports by eye |
 | F2 | feature | product | new migration `score_snapshots`, `src/app/api/jobs/nightly/route.ts`, `src/lib/pdf/**` | Score history + monthly client report PDF; after M-6/M-7 | open |
 | F3 | feature | owner | `rules/src-registration.json`, contracts migration, company page | SRC e-contract tracker; rule date needs the lawyer | open |
 | F4 | feature | security | RLS migrations, members/invitations, `src/lib/notify/**` | Company-scoped client access + owner digest; after C-1, with cross-tenant tests | open |

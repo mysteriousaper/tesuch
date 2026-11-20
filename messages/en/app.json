@@ -2,6 +2,7 @@
   "app": {
     "nav": {
       "dashboard": "Dashboard",
+      "inbox": "Inbox",
       "import": "Import",
       "documents": "Documents",
       "quiz": "Quiz",

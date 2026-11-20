@@ -1,0 +1,54 @@
+{
+  "inbox": {
+    "title": "Deadline inbox",
+    "intro": "Open findings across all companies of {org}, soonest first.",
+    "noOrg": "Create a firm first in Settings.",
+    "caption": "Open findings across all companies, soonest due date first",
+    "filters": "Filters",
+    "window": "Due within",
+    "windows": {
+      "7": "7 days",
+      "30": "30 days",
+      "all": "All"
+    },
+    "company": "Company",
+    "allCompanies": "All companies",
+    "severity": "Status",
+    "allSeverities": "All statuses",
+    "assignee": "Assignee",
+    "assignees": {
+      "any": "Anyone",
+      "me": "Assigned to me",
+      "unassigned": "Unassigned"
+    },
+    "reset": "Clear filters",
+    "total": "{count, plural, one {# open finding} other {# open findings}}",
+    "overdueGroup": "Overdue",
+    "upcomingGroup": "Upcoming",
+    "overdueCount": "{count} on this page",
+    "cols": {
+      "due": "Due",
+      "company": "Company",
+      "employee": "Employee",
+      "rule": "Rule",
+      "status": "Status",
+      "assignee": "Assignee"
+    },
+    "unassigned": "Unassigned",
+    "assignLabel": "Assignee for {rule}, {employee}",
+    "saving": "Saving…",
+    "empty": "Nothing needs action. No open findings in your companies.",
+    "emptyFiltered": "No open findings match these filters.",
+    "error": "Could not load the inbox. Please try again.",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "invalid": "Check the choice and try again.",
+      "forbidden": "Only owners and accountants of this firm can assign findings.",
+      "notMember": "The assignee must be an owner or accountant of this firm."
+    },
+    "pagination": "Pages",
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page {page} of {pages}"
+  }
+}
