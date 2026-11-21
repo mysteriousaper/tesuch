@@ -98,3 +98,9 @@ The 6-round limit of `docs/MANAGER.md` was reached; these were queued by the lea
 2. **[shipped, round 1]** S-2 (`src/lib/readiness.ts` thresholds: Ready >= 90 and nothing overdue, Risk < 60; `OwnerHome`; `/api/pdf/checklist?pack=1` adds the documents-to-have-ready page; `?view=firm` = advanced view; tests/e2e/owner-home.spec.ts). Original brief: Owner home for a single business: when the org has one company, `/app` shows one big readiness status (Ready / Needs attention / Risk, thresholds in code with tests), max 3 plain-language tasks this week, and an "Inspector is here" button that downloads the inspection pack (checklist PDF + documents to have ready). Firm dashboard stays for 2+ companies.
 3. **[shipped, round 1]** S-3 (createOrg auto-creates the company; `OnboardingSteps`; tests/e2e/onboarding.spec.ts; also covers M-23 for the single-business path). Original brief: 3-step onboarding for new businesses: upload staff Excel (or "let Tesuch do it" invite), confirm, connect Telegram; auto-create the company from the firm name; plain language hy/ru/en.
 Then the remaining majors.
+
+
+## Owner: design overhaul (before public launch)
+| id | severity | area | files | fix summary | status |
+|---|---|---|---|---|---|
+| D-1 | major | design | whole UI | Redesign to look natural and human-made (not AI-generic) before making production public; direction and references from the owner | waiting for owner direction |
