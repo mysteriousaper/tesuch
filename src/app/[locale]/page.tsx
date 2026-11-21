@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HeroMock } from "@/components/landing/hero-mock";
 import {
-  IconArrow, IconBell, IconCheck, IconCheckDoc, IconCode, IconGlobe, IconLock, IconMoon, IconScale, IconShieldCheck, IconTelegram, IconUpload,
+  IconArrow, IconCheck, IconCheckDoc, IconCode, IconGlobe, IconLock, IconMoon, IconScale, IconShieldCheck, IconTelegram, IconUpload,
 } from "@/components/landing/icons";
 import { Reveal } from "@/components/landing/reveal";
 import { pageSeo } from "@/components/landing/site";
@@ -20,17 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 type Step = { t: string; d: string };
 type Faq = { q: string; a: string };
 
-const STEP_ICONS = [IconUpload, IconMoon, IconBell, IconCheckDoc];
+const STEP_ICONS = [IconUpload, IconMoon, IconCheckDoc];
 const TRUST_ICONS = [IconCode, IconScale, IconShieldCheck, IconGlobe, IconLock];
-const DEMO_CLIENTS = [
-  { name: "Դեմո Ավտոսպասարկում ՍՊԸ", staff: 23, score: 44 },
-  { name: "Դեմո Հացատուն ՍՊԸ", staff: 14, score: 52 },
-  { name: "Դեմո Շինարար ՍՊԸ", staff: 41, score: 68 },
-  { name: "Դեմո Սրճարան ՍՊԸ", staff: 9, score: 84 },
-  { name: "Դեմո Ատամնաբուժարան ՍՊԸ", staff: 12, score: 96 },
-];
-
-const tone = (s: number) => (s >= 80 ? "var(--ok)" : s >= 50 ? "var(--warn)" : "var(--danger)");
+const STATUS_TONES = ["var(--ok)", "var(--warn)", "var(--danger)"];
 
 function SectionHead({ eyebrow, title, id }: { eyebrow: string; title: string; id: string }) {
   return (
@@ -48,7 +40,9 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
   const steps = t.raw("how.steps") as Step[];
   const trust = t.raw("trust.items") as Step[];
   const faq = t.raw("faq.items") as Faq[];
-  const firmPoints = t.raw("firms.points") as string[];
+  const statuses = t.raw("home.statuses") as Step[];
+  const doneItems = t.raw("done.points") as string[];
+  const codePoints = t.raw("codes.points") as string[];
   const tgLines = t.raw("owners.tgLines") as string[];
   const ruleCount = RULES.length;
 
@@ -81,14 +75,14 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
               <p className="max-w-xl text-lg leading-relaxed text-muted">{t("hero.subtitle")}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <Link
-                  href="/check"
+                  href="/check-file"
                   className="group inline-flex items-center gap-2 rounded-theme bg-accent px-5 py-3.5 font-semibold text-accent-ink shadow-[0_12px_30px_-12px_var(--accent)] transition-transform hover:-translate-y-0.5"
                 >
                   {t("hero.ctaCheck")}
                   <IconArrow width={18} height={18} className="transition-transform group-hover:translate-x-0.5" />
                 </Link>
-                <Link href="/login" className="rounded-theme border border-control bg-surface px-5 py-3.5 font-semibold transition-colors hover:bg-surface-2">
-                  {t("hero.ctaLogin")}
+                <Link href="/check" className="rounded-theme border border-control bg-surface px-5 py-3.5 font-semibold transition-colors hover:bg-surface-2">
+                  {t("hero.ctaQuiz")}
                 </Link>
               </div>
               <p className="text-sm text-muted">{t("hero.note")}</p>
@@ -117,7 +111,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
         {/* How it works */}
         <section id="how" aria-labelledby="how-title" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 md:py-28">
           <SectionHead id="how-title" eyebrow={t("how.eyebrow")} title={t("how.title")} />
-          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ol className="grid gap-4 sm:grid-cols-3">
             {steps.map((s, i) => {
               const Icon = STEP_ICONS[i];
               return (
@@ -140,45 +134,70 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
           </ol>
         </section>
 
-        {/* For firms */}
-        <section id="firms" aria-labelledby="firms-title" className="scroll-mt-20 border-y border-line bg-surface">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 py-20 sm:px-6 md:py-28 lg:grid-cols-2">
-            <Reveal>
-              <SectionHead id="firms-title" eyebrow={t("firms.eyebrow")} title={t("firms.title")} />
-              <p className="-mt-4 mb-6 max-w-xl text-lg leading-relaxed text-muted">{t("firms.desc")}</p>
-              <ul className="flex flex-col gap-3">
-                {firmPoints.map((p) => (
-                  <li key={p} className="flex items-start gap-3">
-                    <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent text-accent-ink">
-                      <IconCheck width={14} height={14} />
-                    </span>
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-            <Reveal delay={120}>
-              <figure aria-hidden className="rounded-theme-lg border border-line bg-bg p-2 shadow-[0_30px_70px_-35px_color-mix(in_oklab,var(--ink)_40%,transparent)]">
-                <div className="rounded-theme border border-line bg-surface">
-                  <div className="flex items-baseline justify-between border-b border-line px-4 py-3">
-                    <span className="text-sm font-semibold">{t("firms.mockTitle")}</span>
-                    <span className="text-xs text-muted">{t("firms.mockSort")}</span>
-                  </div>
-                  <ul>
-                    {DEMO_CLIENTS.map((co) => (
-                      <li key={co.name} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1.5 border-b border-line px-4 py-3 last:border-0">
-                        <span className="truncate text-sm font-medium">{co.name}</span>
-                        <span className="text-sm font-bold tabular-nums" style={{ color: tone(co.score) }}>{co.score}</span>
-                        <span className="text-xs text-muted">{t("firms.mockStaff", { n: co.staff })}</span>
-                        <span className="h-1.5 w-24 overflow-hidden rounded-full bg-surface-2">
-                          <span className="block h-full rounded-full" style={{ width: `${co.score}%`, background: tone(co.score) }} />
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </figure>
-            </Reveal>
+        {/* Owner home */}
+        <section id="home" aria-labelledby="home-title" className="scroll-mt-20 border-y border-line bg-surface">
+          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
+            <SectionHead id="home-title" eyebrow={t("home.eyebrow")} title={t("home.title")} />
+            <p className="-mt-6 mb-8 max-w-2xl text-lg leading-relaxed text-muted">{t("home.desc")}</p>
+            <ul className="grid gap-4 sm:grid-cols-3">
+              {statuses.map((st, i) => (
+                <li key={st.t}>
+                  <Reveal delay={i * 80} className="h-full">
+                    <div className="h-full rounded-theme-lg border-2 bg-bg p-6" style={{ borderColor: STATUS_TONES[i] }}>
+                      <p className="flex items-center gap-2 text-xl font-bold">
+                        <span aria-hidden className="h-3 w-3 rounded-full" style={{ background: STATUS_TONES[i] }} />
+                        {st.t}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-muted">{st.d}</p>
+                    </div>
+                  </Reveal>
+                </li>
+              ))}
+            </ul>
+            <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+              {(["tasks", "pack"] as const).map((k) => (
+                <li key={k} className="rounded-theme-lg border border-line bg-bg p-6">
+                  <h3 className="text-lg font-semibold">{t(`home.${k}.t`)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">{t(`home.${k}.d`)}</p>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 max-w-3xl text-sm leading-relaxed text-muted">{t("home.note")}</p>
+          </div>
+        </section>
+
+        {/* Done for you */}
+        <section id="done" aria-labelledby="done-title" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 md:py-28">
+          <SectionHead id="done-title" eyebrow={t("done.eyebrow")} title={t("done.title")} />
+          <p className="-mt-6 mb-6 max-w-2xl text-lg leading-relaxed text-muted">{t("done.desc")}</p>
+          <ul className="flex max-w-3xl flex-col gap-3">
+            {doneItems.map((p) => (
+              <li key={p} className="flex items-start gap-3">
+                <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent text-accent-ink"><IconCheck width={14} height={14} /></span>
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+          <Link href="/guide" className="mt-6 inline-flex min-h-11 items-center font-semibold underline underline-offset-4">{t("done.link")}</Link>
+        </section>
+
+        {/* Codes, not names */}
+        <section id="codes" aria-labelledby="codes-title" className="scroll-mt-20 border-y border-line bg-surface">
+          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
+            <SectionHead id="codes-title" eyebrow={t("codes.eyebrow")} title={t("codes.title")} />
+            <p className="-mt-6 mb-6 max-w-2xl text-lg leading-relaxed text-muted">{t("codes.desc")}</p>
+            <ul className="flex max-w-3xl flex-col gap-3">
+              {codePoints.map((p) => (
+                <li key={p} className="flex items-start gap-3">
+                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent text-accent-ink"><IconLock width={14} height={14} /></span>
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 flex flex-wrap gap-x-6">
+              <Link href="/security" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4">{t("codes.link")}</Link>
+              <Link href="/check-file" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4">{t("codes.linkCheck")}</Link>
+            </div>
           </div>
         </section>
 
@@ -211,6 +230,16 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
             <SectionHead id="owners-title" eyebrow={t("owners.eyebrow")} title={t("owners.title")} />
             <p className="-mt-4 max-w-xl text-lg leading-relaxed text-muted">{t("owners.desc")}</p>
           </Reveal>
+        </section>
+
+        {/* For accountants (short note) */}
+        <section id="firms" aria-labelledby="firms-title" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6">
+          <div className="rounded-theme-lg border border-line p-6 sm:p-8">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-highlight">{t("firms.eyebrow")}</p>
+            <h2 id="firms-title" className="text-2xl font-bold">{t("firms.title")}</h2>
+            <p className="mt-3 max-w-3xl leading-relaxed text-muted">{t("firms.desc")}</p>
+            <Link href="/guide" className="mt-3 inline-flex min-h-11 items-center font-semibold underline underline-offset-4">{t("firms.link")}</Link>
+          </div>
         </section>
 
         {/* Trust */}
@@ -269,7 +298,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
               <p className="mt-3 text-lg opacity-85">{t("cta.desc")}</p>
             </div>
             <Link
-              href="/check"
+              href="/check-file"
               className="inline-flex shrink-0 items-center gap-2 rounded-theme px-6 py-3.5 font-semibold transition-transform hover:-translate-y-0.5"
               style={{ background: "var(--accent-ink)", color: "var(--accent)" }}
             >

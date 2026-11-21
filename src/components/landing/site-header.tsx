@@ -4,7 +4,7 @@ import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Link } from "@/i18n/navigation";
 import { LogoMark } from "./icons";
 
-const SECTIONS = ["how", "firms", "trust", "faq"] as const;
+const SECTIONS = ["how", "home", "trust", "faq"] as const;
 
 /** Public site header. `sections` shows in-page anchors (landing only). */
 export async function SiteHeader({ sections = false }: { sections?: boolean }) {

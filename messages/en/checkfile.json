@@ -1,0 +1,63 @@
+{
+  "checkfile": {
+    "meta": {
+      "title": "Check your staff list for free — without uploading it",
+      "description": "Open your staff Excel or CSV file and see how ready you are for a labour inspection. Everything runs in your browser and the file is never sent anywhere."
+    },
+    "eyebrow": "Free file check",
+    "title": "Check your staff list without sending it anywhere",
+    "intro": "Open your Excel or CSV file and Tesuch shows how ready you are for an inspection. Everything runs on this page, in your browser.",
+    "privacy": {
+      "title": "The file is never uploaded.",
+      "body": "The check runs on your device, inside this page. The file does not go to a server and we cannot see what is in it. Names are not used: employees appear as codes."
+    },
+    "pick": "Choose a file",
+    "pickHint": "Excel (.xlsx) or CSV. Dates are enough: start of work, end of probation and end of contract.",
+    "template": "Download the template",
+    "reading": "Reading the file.",
+    "error": {
+      "empty": "We found no employee rows in the file. Make sure the first row has column headings.",
+      "tooMany": "The file has too many rows: 2000 at most.",
+      "unreadable": "We could not read the file. Try saving it as .xlsx or CSV.",
+      "noStart": "We could not find a start-date column. Add one or download the template."
+    },
+    "result": {
+      "title": "Result",
+      "read": "Read {staff} employees from {rows} rows in the file.",
+      "advisory": "The rules are still being reviewed by a lawyer, so every issue is advisory. This is not legal advice."
+    },
+    "status": {
+      "ready": "You are ready",
+      "attention": "Needs attention",
+      "risk": "At risk"
+    },
+    "statusHint": {
+      "ready": "Nothing urgent in the data of this file.",
+      "attention": "There are issues worth fixing soon.",
+      "risk": "There are many issues, or a deadline has already passed. Start with the most important."
+    },
+    "issues": {
+      "title": "What we found",
+      "affected": "Employees ({n}): {codes}",
+      "none": "No issues found in the data of this file."
+    },
+    "errors": {
+      "title": "Rows not checked: {n}",
+      "hint": "A value in these rows is not understood, so they were skipped. Fix them in the file and open it again.",
+      "line": "Row {row}, {field}. {reason}."
+    },
+    "missing": {
+      "title": "These columns are not in the file",
+      "hint": "Rules that depend on them were not checked. That does not mean everything is fine there."
+    },
+    "cta": {
+      "title": "Stay ready",
+      "body": "Sign up and Tesuch checks this list every night, warns you in time and prepares the “Inspector is here” pack.",
+      "button": "Sign up"
+    },
+    "alt": {
+      "quiz": "No file? Take the 2-minute quiz",
+      "security": "How we protect data"
+    }
+  }
+}

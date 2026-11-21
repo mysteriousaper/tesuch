@@ -28,6 +28,7 @@ export async function SiteFooter() {
           </div>
           <Link href="/guide" className="text-muted hover:text-ink">{g("footerLink")}</Link>
           <Link href="/security" className="text-muted hover:text-ink">{tr("footerLink")}</Link>
+          <Link href="/check-file" className="text-muted hover:text-ink">{t("nav.checkFile")}</Link>
           <Link href="/check" className="text-muted hover:text-ink">{t("nav.check")}</Link>
           <Link href="/login" className="text-muted hover:text-ink">{t("nav.login")}</Link>
           <Link href="/privacy" className="text-muted hover:text-ink">{lg("privacy")}</Link>

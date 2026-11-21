@@ -5,9 +5,9 @@
       "description": "A step-by-step guide to Tesuch for accounting firms and employers in Armenia: why to check labour-law deadlines before an inspection, what you gain, and how to set it up in ten steps."
     },
     "hero": {
-      "eyebrow": "Client guide",
-      "title": "Find the gaps before the inspector does",
-      "subtitle": "Tesuch checks your employment contracts every night, scores your inspection readiness and warns you before a legal deadline is missed. This guide shows why it helps and how to start in ten steps.",
+      "eyebrow": "Owner’s guide",
+      "title": "Whenever an inspector comes, you’re ready",
+      "subtitle": "Tesuch checks your staff contracts every night and shows one status: Ready, Needs attention or Risk. You do at most three tasks a week, and an “Inspector is here” button builds the pack you need. Employees are stored as codes, not names. This guide shows why it helps and how to start in ten steps.",
       "ctaCheck": "Take the free self-check",
       "ctaLogin": "Sign in",
       "print": "Save as PDF / print",
@@ -56,7 +56,7 @@
     "gain": {
       "title": "What you gain",
       "firmTitle": "For an accounting firm",
-      "firmIntro": "You carry the HR paperwork of many clients. Tesuch gives you one place to see all of them.",
+      "firmIntro": "A short note for accountants: you carry the HR paperwork of many clients, and Tesuch gives you one place to see all of them.",
       "firm": [
         {
           "t": "One dashboard for all clients",
@@ -87,8 +87,8 @@
           "d": "A record of who changed what and when, for your own peace of mind."
         }
       ],
-      "ownerTitle": "For an employer (SME owner)",
-      "ownerIntro": "You do not read the Labour Code and you live in Telegram. Tesuch meets you there.",
+      "ownerTitle": "For an employer (business owner or director)",
+      "ownerIntro": "Start here. You do not read the Labour Code and you live in Telegram. Tesuch meets you there.",
       "owner": [
         {
           "t": "A weekly Telegram digest",
@@ -262,7 +262,7 @@
         },
         {
           "t": "Only minimal data is needed",
-          "d": "Names or codes, date of birth and contract dates are enough. No salaries, passport data or addresses."
+          "d": "Employee codes (names are optional) and contract dates are enough. No salaries, passport data or addresses."
         }
       ],
       "note": "Pricing is not final yet. Contact us, and we agree the terms before you start.",

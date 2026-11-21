@@ -127,12 +127,12 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
 
         <section id="gain" aria-labelledby="gain-h" className="mt-14 scroll-mt-24">
           <h2 id="gain-h" className="text-2xl font-bold sm:text-3xl">{t("gain.title")}</h2>
-          <h3 className="mt-6 text-lg font-semibold">{t("gain.firmTitle")}</h3>
-          <p className="mt-1 text-muted">{t("gain.firmIntro")}</p>
-          <Cards items={firm} />
-          <h3 className="mt-10 text-lg font-semibold">{t("gain.ownerTitle")}</h3>
+          <h3 className="mt-6 text-lg font-semibold">{t("gain.ownerTitle")}</h3>
           <p className="mt-1 text-muted">{t("gain.ownerIntro")}</p>
           <Cards items={owner} />
+          <h3 className="mt-10 text-lg font-semibold">{t("gain.firmTitle")}</h3>
+          <p className="mt-1 text-muted">{t("gain.firmIntro")}</p>
+          <Cards items={firm} />
         </section>
 
         <section id="how" aria-labelledby="how-h" className="mt-14 scroll-mt-24">

@@ -14,10 +14,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 type Processor = { name: string; role: string; data: string };
 
-const SECTIONS = ["facts", "processors", "limits", "start"] as const;
+const SECTIONS = ["design", "facts", "processors", "limits", "start"] as const;
 // Where each "start without risk" step leads (index matches trust.start.items); null = no link.
 const START_LINKS = ["/check", "/login", null, "/terms/dpa"] as const;
-const SOON_INDEX = 2;
 const REGION = "eu-west-1"; // Supabase project region (docs/DECISIONS.md #16)
 const btn = "inline-flex min-h-11 items-center justify-center rounded-theme px-5 text-sm font-semibold motion-reduce:transition-none";
 
@@ -25,6 +24,7 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("trust");
+  const design = t.raw("design.items") as Item[];
   const facts = t.raw("facts.items") as Item[];
   const processors = t.raw("processors.items") as Processor[];
   const limits = t.raw("limits.items") as Item[];
@@ -36,7 +36,7 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
       <main className="mx-auto max-w-4xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
         <header>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-highlight">{t("hero.eyebrow")}</p>
-          <h1 className="text-3xl font-bold leading-tight sm:text-5xl" style={{ letterSpacing: "var(--heading-tracking)" }}>
+          <h1 className="text-3xl font-bold leading-tight sm:text-4xl" style={{ letterSpacing: "var(--heading-tracking)" }}>
             {t("hero.title")}
           </h1>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{t("hero.subtitle")}</p>
@@ -53,6 +53,16 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
             ))}
           </ul>
         </nav>
+
+        <section id="design" aria-labelledby="design-h" className="mt-14 scroll-mt-24">
+          <h2 id="design-h" className="text-2xl font-bold sm:text-3xl">{t("design.title")}</h2>
+          <p className="mt-3 max-w-3xl text-muted">{t("design.intro")}</p>
+          <Cards items={design} />
+          <p className="mt-4 max-w-3xl rounded-theme-lg border border-advisory bg-surface p-4 leading-relaxed">{t("design.honest")}</p>
+          <p className="mt-3">
+            <Link href="/check-file" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-4">{t("design.link")}</Link>
+          </p>
+        </section>
 
         <section id="facts" aria-labelledby="facts-h" className="mt-14 scroll-mt-24">
           <h2 id="facts-h" className="text-2xl font-bold sm:text-3xl">{t("facts.title")}</h2>
@@ -110,9 +120,6 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
                 </span>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-lg font-bold">{s.t}</h3>
-                  {i === SOON_INDEX && (
-                    <p className="mt-1 inline-block rounded-theme border border-advisory px-2 py-0.5 text-xs font-semibold">{t("start.soon")}</p>
-                  )}
                   <p className="mt-1 max-w-3xl leading-relaxed text-muted">{s.d}</p>
                 </div>
               </li>
