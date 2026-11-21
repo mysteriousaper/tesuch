@@ -15,7 +15,7 @@ export function StreakPanel({
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-theme bg-surface-2 p-3">
           <p className="text-xs text-muted">{labels.streak}</p>
-          <p className="text-2xl font-bold">🔥 {labels.currentWeeks}</p>
+          <p className="text-2xl font-bold"><span aria-hidden="true">🔥</span> {labels.currentWeeks}</p>
         </div>
         <div className="rounded-theme bg-surface-2 p-3">
           <p className="text-xs text-muted">{labels.longest}</p>
@@ -31,10 +31,10 @@ export function StreakPanel({
             return (
               <li
                 key={id}
-                className={`flex min-w-0 flex-col gap-0.5 rounded-theme border p-2.5 [overflow-wrap:anywhere] [hyphens:auto] ${has ? "border-ok" : "border-line opacity-50"}`}
+                className={`flex min-w-0 flex-col gap-0.5 rounded-theme border p-2.5 [overflow-wrap:anywhere] [hyphens:auto] ${has ? "border-ok" : "border-line border-dashed"}`}
                 aria-label={`${BADGES[id].title[locale]}${has ? " ✓" : ""}`}
               >
-                <span className="text-lg" aria-hidden>{ICON[id]}</span>
+                <span className={`text-lg${has ? "" : " grayscale"}`} aria-hidden>{ICON[id]}</span>
                 <span className="text-sm font-semibold">{BADGES[id].title[locale]}</span>
                 <span className="text-xs text-muted">{BADGES[id].description[locale]}</span>
               </li>

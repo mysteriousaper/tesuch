@@ -28,12 +28,12 @@ export function ContractDocs({ contract: c, today, labels }: { contract: Contrac
       <div className="flex flex-wrap gap-2">
         {c.probation_end && (
           <>
-            <a className={link} download href={pdf(`probation?contract=${c.id}&decision=confirm`)}>⬇ {labels.probationConfirm}</a>
-            <a className={link} download href={pdf(`probation?contract=${c.id}&decision=terminate`)}>⬇ {labels.probationTerminate}</a>
+            <a className={link} download href={pdf(`probation?contract=${c.id}&decision=confirm`)}><span aria-hidden="true">⬇</span> {labels.probationConfirm}</a>
+            <a className={link} download href={pdf(`probation?contract=${c.id}&decision=terminate`)}><span aria-hidden="true">⬇</span> {labels.probationTerminate}</a>
           </>
         )}
         {c.type === "fixed_term" && c.end_date && (
-          <a className={link} download href={pdf(`fixed-term-end?contract=${c.id}`)}>⬇ {labels.fixedTermEnd}</a>
+          <a className={link} download href={pdf(`fixed-term-end?contract=${c.id}`)}><span aria-hidden="true">⬇</span> {labels.fixedTermEnd}</a>
         )}
       </div>
       <form method="get" action={pdf("dismissal")} className="flex flex-wrap items-end gap-2">
@@ -42,7 +42,7 @@ export function ContractDocs({ contract: c, today, labels }: { contract: Contrac
           {labels.noticeDate}
           <input type="date" name="date" defaultValue={today} required className="rounded-theme border border-control bg-surface px-2 py-1.5 text-sm text-ink" />
         </label>
-        <button className={link}>⬇ {labels.dismissal}</button>
+        <button className={link}><span aria-hidden="true">⬇</span> {labels.dismissal}</button>
       </form>
     </li>
   );

@@ -238,7 +238,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
           </div>
           {reading && <p role="status" className="text-sm text-muted">{t("reading")}</p>}
           {uploadError && <p role="alert" className="text-sm text-danger">{uploadError}</p>}
-          <button type="button" onClick={downloadTemplate} className={`${btnGhost} self-start`}>⬇ {t("template")}</button>
+          <button type="button" onClick={downloadTemplate} className={`${btnGhost} self-start`}><span aria-hidden="true">⬇</span> {t("template")}</button>
         </section>
       )}
 

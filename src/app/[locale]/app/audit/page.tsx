@@ -89,7 +89,7 @@ export default async function AuditPage({ params, searchParams }: {
           <div className="hidden overflow-x-auto rounded-theme-lg border border-line bg-surface sm:block">
             <table className="w-full text-left text-sm">
               <caption className="sr-only">{t("title")}</caption>
-              <thead className="bg-surface-2 text-xs uppercase text-muted">
+              <thead className={`bg-surface-2 text-xs text-muted${locale === "hy" ? "" : " uppercase"}`}>
                 <tr>
                   <th scope="col" className="px-3 py-2">{t("time")}</th>
                   <th scope="col" className="px-3 py-2">{t("actor")}</th>
