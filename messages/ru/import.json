@@ -94,7 +94,7 @@
       "terminated_on": "Дата увольнения",
       "termination_ground": "Основание увольнения",
       "termination_initiator": "Инициатор увольнения",
-      "notice_given_on": "Дата уведомления",
+      "notice_given_on": "Дата предупреждения",
       "workforce_reduction": "Сокращение штата"
     },
     "error": {
@@ -106,7 +106,7 @@
       "tooLong": "Слишком длинное значение",
       "duplicateCode": "Этот код уже есть в файле",
       "endBeforeStart": "Окончание раньше начала",
-      "probationBeforeStart": "Испытательный срок кончается раньше приёма",
+      "probationBeforeStart": "Испытательный срок заканчивается раньше даты приёма",
       "endDateOnIndefinite": "У бессрочного договора не может быть даты окончания",
       "fixedTermWithoutEnd": "У срочного договора должна быть дата окончания",
       "terminationBeforeStart": "Увольнение раньше приёма"

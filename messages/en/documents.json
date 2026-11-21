@@ -5,7 +5,7 @@
     "company": "Company",
     "choose": "Choose",
     "checklist": "Checklist (PDF)",
-    "checklistHint": "All open findings for the company in one document",
+    "checklistHint": "All open issues for the company in one document",
     "employees": "Employees and contracts",
     "contract": "Contract from {start}",
     "fixedTerm": "fixed-term",

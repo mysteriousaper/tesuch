@@ -27,9 +27,9 @@
       "employees": "Сотрудники",
       "contracts": "Договоры",
       "leave_records": "Отпуска",
-      "findings": "Нарушения",
+      "findings": "Проблемы",
       "templates": "Шаблоны",
-      "quiz_attempts": "Тест"
+      "quiz_attempts": "Викторина"
     }
   }
 }
