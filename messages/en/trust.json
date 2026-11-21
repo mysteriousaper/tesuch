@@ -6,10 +6,11 @@
     },
     "hero": {
       "eyebrow": "Security and privacy",
-      "title": "Is my data safe?",
-      "subtitle": "This page says only what can be checked: where the data lives, who can see it and how to start without risk. No big promises."
+      "title": "We designed Tesuch so that even if it were ever breached, there is almost nothing valuable to steal",
+      "subtitle": "Employees are stored as codes, not names. We keep only dates, never documents, salaries or passport data. Below is exactly what we keep, who processes it and what we do not claim."
     },
     "nav": {
+      "design": "Built to hold little",
       "facts": "What we do",
       "processors": "Who processes data",
       "limits": "What we do not claim",
@@ -28,7 +29,7 @@
         },
         {
           "t": "Minimal data only",
-          "d": "We store the employee name, date of birth, contract type and dates, probation end and leave records. We do not store salaries, passport data, addresses or phone numbers."
+          "d": "We store employee codes (names only if you turn them on), contract type and dates, probation end, leave records and the date of birth for the minors rule. We do not store documents, salaries, passport data, addresses or phone numbers."
         },
         {
           "t": "Roles: owner, accountant, viewer",
@@ -98,7 +99,6 @@
     "start": {
       "title": "How to start without risk",
       "intro": "You can try everything before you enter any real data.",
-      "soon": "Coming soon — being built now",
       "items": [
         {
           "t": "Take the free self-check",
@@ -109,8 +109,8 @@
           "d": "Sign in and load fictional companies to see how Tesuch works."
         },
         {
-          "t": "Pilot with employee codes",
-          "d": "Use employee codes instead of names for the first trial."
+          "t": "Use employee codes, the default",
+          "d": "New businesses start with codes instead of names. Turn names on later, only if you want them."
         },
         {
           "t": "Sign the agreement before real data",
@@ -122,6 +122,30 @@
       "ctaLogin": "Sign in",
       "guide": "See how Tesuch works"
     },
-    "footerLink": "Security"
+    "footerLink": "Security",
+    "design": {
+      "title": "Built so there is little to steal",
+      "intro": "Security starts with what we choose not to store. These are design choices, not promises about the future.",
+      "items": [
+        {
+          "t": "Codes by default, names optional",
+          "d": "Employees are stored as codes such as EMP-014. Real names are optional and switched off for new businesses. You can turn them on later if you want them."
+        },
+        {
+          "t": "Only dates, nothing more",
+          "d": "We keep what the rules need: contract type and dates, probation end, leave records, and the date of birth for the minors rule."
+        },
+        {
+          "t": "No documents, salaries or passports",
+          "d": "We do not store scanned documents, salaries, passport data, addresses or phone numbers. What is not stored cannot be stolen."
+        },
+        {
+          "t": "The free file check never uploads",
+          "d": "When you try the free check with your staff file, it runs in your browser. The file does not leave your device."
+        }
+      ],
+      "honest": "Honest line: no system can promise it will never be hacked. That is why we keep so little. If someone ever got in, they would find codes and dates, not a list of people with their documents and pay.",
+      "link": "Try the free file check"
+    }
   }
 }

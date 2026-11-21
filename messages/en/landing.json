@@ -1,33 +1,35 @@
 {
   "landing": {
     "meta": {
-      "title": "Tesuch — would you pass a labour inspection today?",
-      "description": "Tesuch checks employment contract deadlines every night, scores your inspection readiness and alerts you on Telegram and by email before a legal deadline is missed."
+      "title": "Tesuch — whenever an inspector comes, you’re ready",
+      "description": "Tesuch keeps your business ready for a labour inspection: one status, at most three tasks a week and an “Inspector is here” pack. Employees are stored as codes, not names."
     },
     "nav": {
       "how": "How it works",
-      "firms": "For firms",
-      "owners": "For employers",
-      "trust": "Trust",
+      "home": "Your home page",
+      "firms": "For accountants",
+      "owners": "Weekly digest",
+      "trust": "Security",
       "faq": "FAQ",
       "login": "Sign in",
       "check": "Free check",
+      "checkFile": "Check your file",
       "menu": "Sections"
     },
     "hero": {
-      "eyebrow": "Labour Code compliance for Armenia",
-      "title": "If the inspector came today, would you pass?",
-      "subtitle": "Tesuch checks every employment contract each night, scores your inspection readiness and warns you on Telegram or by email before a legal deadline is missed.",
-      "ctaCheck": "Take the free check",
-      "ctaLogin": "Sign in",
-      "note": "2 minutes · no sign-up",
+      "eyebrow": "For business owners and directors",
+      "title": "Whenever an inspector comes, you’re ready.",
+      "subtitle": "Tesuch checks your staff contracts every night and shows one clear status: Ready, Needs attention or Risk. Each week you get at most three tasks, and one button builds the pack you need when an inspector is at the door.",
+      "ctaCheck": "Check your staff file for free",
+      "note": "No sign-up · the file never leaves your device",
       "mockCompany": "Demo Logistics LLC",
       "mockFixed": "Fixed",
       "mockItems": [
         "Probation longer than 3 months",
         "Fixed-term contract ends in 12 days",
         "Dismissal notice period not respected"
-      ]
+      ],
+      "ctaQuiz": "Or take the 2-minute quiz"
     },
     "stats": {
       "rules": "{n, plural, one {# rule} other {# rules}}",
@@ -40,32 +42,78 @@
       "euHint": "data stored in an EU region"
     },
     "how": {
-      "eyebrow": "Four steps",
-      "title": "How it works",
+      "eyebrow": "Three steps",
+      "title": "Set up in three steps",
       "steps": [
-        { "t": "Import your staff", "d": "A CSV or Excel file with headers in Armenian, Russian or English. Columns are recognised automatically." },
-        { "t": "Nightly check", "d": "Every night the rules check each contract and calculate the deadlines." },
-        { "t": "Alerts in time", "d": "A new issue triggers a Telegram message and an email, and every Monday you get a weekly digest." },
-        { "t": "Fix and tick it off", "d": "Download the order template as a PDF, fix the issue and watch the score go up." }
+        {
+          "t": "Add your staff",
+          "d": "Upload an Excel or CSV file, or enter people by hand. Columns are recognised automatically, and employees are stored as codes such as EMP-014, not names."
+        },
+        {
+          "t": "Tesuch checks every night",
+          "d": "Every night the rules go through each contract and calculate the deadlines. You have nothing to remember."
+        },
+        {
+          "t": "Do your three tasks",
+          "d": "Open your home page, see one status and do at most three tasks a week. A Telegram message and an email warn you when something is due."
+        }
       ]
     },
-    "firms": {
-      "eyebrow": "For accounting firms",
-      "title": "Every client on one dashboard",
-      "desc": "20–50 companies, each with its own score. The riskiest sit at the top, so you know where to start this week.",
-      "points": [
-        "Companies sorted by score",
-        "Employee timeline: contract, probation, leave",
-        "Roles: owner, accountant, viewer"
+    "home": {
+      "eyebrow": "Your home page",
+      "title": "One status. Three tasks. One button.",
+      "desc": "Open Tesuch and in five seconds you know where you stand. No reports to read.",
+      "statuses": [
+        {
+          "t": "Ready",
+          "d": "Nothing urgent. If an inspector came today, you would be in good shape."
+        },
+        {
+          "t": "Needs attention",
+          "d": "A few things should be fixed before an inspector comes."
+        },
+        {
+          "t": "Risk",
+          "d": "Fix these first: an inspector could find serious gaps today."
+        }
       ],
-      "mockTitle": "Clients",
-      "mockSort": "by score ↑",
-      "mockStaff": "{n} staff"
+      "tasks": {
+        "t": "At most 3 tasks a week",
+        "d": "Only the most urgent things, in plain language, with the source of the rule. Not a list of fifty."
+      },
+      "pack": {
+        "t": "The “Inspector is here” button",
+        "d": "One tap builds a checklist and the list of documents to have ready, as a PDF."
+      },
+      "note": "We do not predict when an inspector will come. Nobody can. We keep you ready for whenever it happens."
+    },
+    "done": {
+      "eyebrow": "No time?",
+      "title": "We can do it for you",
+      "desc": "You do not have to set anything up yourself.",
+      "points": [
+        "Send us one staff file and the Tesuch team imports it.",
+        "Or let your accounting firm set it up, and you only read the weekly message.",
+        "Only minimal data is needed: codes and dates."
+      ],
+      "link": "Read the full guide"
+    },
+    "codes": {
+      "eyebrow": "Your data",
+      "title": "Codes instead of names",
+      "desc": "Tesuch stores employees as codes such as EMP-014. Names are optional and switched off for new businesses. We keep only the dates the rules need, and never documents, salaries or passport data.",
+      "points": [
+        "Even if someone broke in, they would find codes and dates, not people.",
+        "The free file check runs in your browser: the file is never uploaded.",
+        "No system can promise it will never be hacked, so we keep as little as possible."
+      ],
+      "link": "How we protect data",
+      "linkCheck": "Check your file now"
     },
     "owners": {
-      "eyebrow": "For employers",
+      "eyebrow": "Weekly digest",
       "title": "One message a week",
-      "desc": "No need to read the whole Labour Code. Every Monday you get a short Telegram digest with 1–3 concrete steps.",
+      "desc": "Every Monday a short Telegram message with one to three concrete steps. No need to read the Labour Code.",
       "tgBot": "Tesuch",
       "tgTitle": "Weekly digest",
       "tgLines": [
@@ -75,32 +123,68 @@
       ],
       "tgFooter": "Advisory: not yet verified by a lawyer"
     },
+    "firms": {
+      "eyebrow": "For accountants",
+      "title": "Do you keep the books for several businesses?",
+      "desc": "Tesuch also has a firm dashboard: every client in one list with its status, the riskiest on top. It is an advanced mode of the same product, and your clients get the same weekly message.",
+      "link": "Read the guide"
+    },
     "trust": {
       "eyebrow": "No magic",
       "title": "Why you can trust it",
       "items": [
-        { "t": "Explicit rules, not AI", "d": "Every check is written as a versioned rule and covered by tests. The same data always gives the same result." },
-        { "t": "Cites the law", "d": "Every alert names its source and links to arlis.am." },
-        { "t": "Honest status", "d": "All rules are still being reviewed by a lawyer, so they show as “Advisory”. We never invent article numbers." },
-        { "t": "Data stays in the EU", "d": "The database runs in a European Union region. We keep only what the rules need." },
-        { "t": "Firms are isolated", "d": "Each firm sees only its own data — enforced in the database itself and verified by automated tests." }
+        {
+          "t": "Explicit rules, not AI",
+          "d": "Every check is written as a versioned rule and covered by tests. The same data always gives the same result."
+        },
+        {
+          "t": "Cites the law",
+          "d": "Every alert names its source and links to arlis.am."
+        },
+        {
+          "t": "Honest status",
+          "d": "All rules are still being reviewed by a lawyer, so they show as “Advisory”. We never invent article numbers."
+        },
+        {
+          "t": "Data stays in the EU",
+          "d": "The database runs in a European Union region. We keep only what the rules need: codes and dates."
+        },
+        {
+          "t": "Businesses are isolated",
+          "d": "Each business sees only its own data. This is enforced in the database itself and verified by automated tests."
+        }
       ],
       "status": "{n, plural, one {# rule} other {# rules}} · all in lawyer review"
     },
     "faq": {
       "title": "Frequently asked questions",
       "items": [
-        { "q": "Is this legal advice?", "a": "No. Tesuch is an information tool. It shows risks and points to the law, but talk to a lawyer before you decide. Rules a lawyer hasn't verified yet are marked “Advisory”." },
-        { "q": "We already use ArmSoft. Why Tesuch?", "a": "ArmSoft stores your HR records; Tesuch checks them against the law and warns you before deadlines. You can import staff from an ArmSoft CSV or Excel export." },
-        { "q": "What employee data do you store?", "a": "Only what the rules need: name, date of birth (for the minors rule), and contract and leave dates. No passport details, addresses or salaries." },
-        { "q": "Which rules do you check?", "a": "Probation, fixed-term contracts, dismissal grounds and notice periods, annual leave, maternity leave and contract registration on the SRC e-platform. The list will grow." },
-        { "q": "How much does it cost?", "a": "Pricing isn't set yet. We're choosing the first pilot firms now — leave your email after the self-check." }
+        {
+          "q": "Is this legal advice?",
+          "a": "No. Tesuch is an information tool. It shows risks and points to the law, but talk to a lawyer before you decide. Rules a lawyer hasn't verified yet are marked “Advisory”."
+        },
+        {
+          "q": "Can you tell me when an inspector will come?",
+          "a": "No. Nobody can predict that, and Tesuch never claims to. It keeps you ready for whenever an inspector comes."
+        },
+        {
+          "q": "What data do you store?",
+          "a": "Employees as codes such as EMP-014, plus the dates the rules need: contract type and dates, probation end, leave, and date of birth for the minors rule. Names are optional and off for new businesses. We do not store documents, salaries, passport data, addresses or phone numbers."
+        },
+        {
+          "q": "We already use ArmSoft. Why Tesuch?",
+          "a": "ArmSoft stores your HR records; Tesuch checks them against the law and warns you before deadlines. You can import staff from an ArmSoft CSV or Excel export."
+        },
+        {
+          "q": "How much does it cost?",
+          "a": "Pricing isn't set yet. We're choosing the first pilot firms now — leave your email after the self-check."
+        }
       ]
     },
     "cta": {
-      "title": "Start with a 2-minute check",
-      "desc": "10 questions about how your company actually works. See your result straight away.",
-      "button": "Start the check"
+      "title": "See where you stand in two minutes",
+      "desc": "Open your staff file here and get a status straight away. Nothing is uploaded.",
+      "button": "Check your staff file"
     },
     "footer": {
       "disclaimer": "Tesuch is an information tool, not legal advice. Rules marked “Advisory” have not yet been verified by a lawyer. Before making a decision, consult a lawyer and check the current text of the law on arlis.am.",

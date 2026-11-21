@@ -83,6 +83,19 @@ test.describe("self-check and lead capture (lane D)", () => {
 });
 
 test.describe("SEO files (lane D)", () => {
+  test("owner-first landing: promise, owner home, codes, check-file CTA", async ({ page }) => {
+    const errors = trackErrors(page);
+    await page.goto("/en");
+    await expect(page.locator("h1")).toHaveText("Whenever an inspector comes, you’re ready.");
+    await expect(page.locator("#home li").filter({ hasText: "Needs attention" })).toBeVisible();
+    await expect(page.locator("#home")).toContainText("Inspector is here");
+    await expect(page.locator("#how ol > li")).toHaveCount(3);
+    await expect(page.locator("#codes")).toContainText("EMP-014");
+    await expect(page.locator("#firms")).toBeVisible();
+    await expect(page.locator('#hero-title ~ div a[href="/en/check-file"]')).toBeVisible();
+    expect(errors, "console errors").toEqual([]);
+  });
+
   test("sitemap.xml lists every public page in every locale with hreflang alternates", async ({ request }) => {
     const res = await request.get("/sitemap.xml");
     expect(res.status()).toBe(200);
