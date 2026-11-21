@@ -38,7 +38,7 @@ export function ThemePreview({ theme, n, findings }: { theme: "official" | "fint
     >
       <header className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-highlight">{t("option", { n })}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted">{t("option", { n })}</p>
           <h2 id={`theme-${theme}`} className="text-xl font-bold">
             {t(`${theme}.name`)}
           </h2>

@@ -38,32 +38,32 @@ Source: `docs/qa/RESULTS.md` (judged 2026-11-19). Owned by the program manager (
 | m-2 | minor | security | `supabase/migrations/20261119020000_members.sql:61-79` | Revoke invitations of demoted/removed owners | open |
 | m-3 | minor | security | `next.config.ts:14-20` | Content-Security-Policy (report-only first) | open |
 | m-4 | minor | owner | Supabase Auth settings | `site_url` = production origin | open |
-| m-5 | minor | ux | `src/app/[locale]/app/app-nav.tsx:21` | Scroll cue / wrap / "More" menu on mobile nav | open |
+| m-5 | minor | ux | `src/app/[locale]/app/app-nav.tsx:21` | Scroll cue / wrap / "More" menu on mobile nav | fixed (minor session): right-edge fade on app nav; scroll-active-tab-into-view not done |
 | m-6 | minor | ux | `src/components/dashboard/company-list.tsx`, import/documents/quiz pages | Dashboard filter; remember last company | open |
 | m-7 | minor | data | `src/app/[locale]/app/actions.ts:102-113`, new migration | Unique `(org_id, tax_id)`; duplicate-name warning | open |
-| m-8 | minor | i18n | `messages/hy/audit.json:4` | Rephrase without `{org}-ի` | open |
-| m-9 | minor | i18n | `messages/*/audit.json`, `messages/*/members.json`, `messages/*/quiz.json` | «Проблемы/Issues» for findings; one quiz name per glossary | open |
-| m-10 | minor | ux | `src/app/[locale]/app/import/page.tsx` | Hide "Add company" CTA for viewers | open |
-| m-11 | minor | ux | `src/app/[locale]/app/actions.ts:152` | Revalidate and refresh after re-check | open |
-| m-12 | minor | ux | `src/app/[locale]/app/quiz/**`, `messages/*/quiz.json` | Explain quiz/streak scope | open |
+| m-8 | minor | i18n | `messages/hy/audit.json:4` | Rephrase without `{org}-ի` | fixed (minor session) |
+| m-9 | minor | i18n | `messages/*/audit.json`, `messages/*/members.json`, `messages/*/quiz.json` | «Проблемы/Issues» for findings; one quiz name per glossary | fixed (minor session): audit, members, quiz (hy/ru/en) |
+| m-10 | minor | ux | `src/app/[locale]/app/import/page.tsx` | Hide "Add company" CTA for viewers | open (minor session: skipped, needs role check in page and server logic) |
+| m-11 | minor | ux | `src/app/[locale]/app/actions.ts:152` | Revalidate and refresh after re-check | open (minor session: skipped, server action logic is off-limits) |
+| m-12 | minor | ux | `src/app/[locale]/app/quiz/**`, `messages/*/quiz.json` | Explain quiz/streak scope | open (minor session: skipped, product copy decision) |
 | m-13 | minor | data | `src/components/dashboard/dashboard-forms.tsx:94` | No default on SRC checkbox (tri-state with C-3) | fixed with C-3 (tri-state select) |
 | m-14 | minor | ux | `src/app/[locale]/check/questions.ts`, `messages/*/check.json` | Positive polarity; split Q4 | open |
 | m-15 | minor | product | `messages/*/check.json`, `src/app/[locale]/check/**` | Softer verdict; sign-up CTA; action per item | open |
 | m-16 | minor | product | `src/components/quiz/streak-panel.tsx`, `src/lib/quiz/**` | Streak pending until week end; mark unverified items advisory | open |
-| m-17 | minor | ux | `src/lib/pdf/documents.ts` | Keep dismissal notice on one page; localized footer | open |
+| m-17 | minor | ux | `src/lib/pdf/documents.ts` | Keep dismissal notice on one page; localized footer | open (minor session: skipped, src/lib/pdf out of scope) |
 | m-18 | minor | product | `src/app/api/jobs/nightly/route.ts:45`, settings page | "All clear" digest; notification toggles | open |
-| m-19 | minor | a11y | `src/components/quiz/streak-panel.tsx:34` | Remove `opacity-50` on locked badges | open |
-| m-20 | minor | a11y | `src/components/theme-preview.tsx:41` | Darker small label colour | open |
-| m-21 | minor | a11y | `src/app/[locale]/app/layout.tsx:33`, `src/components/landing/site-footer.tsx:27` | Targets ≥ 24 px | open |
-| m-22 | minor | a11y | both layouts, `messages/*/common.json` | Skip-to-content link | open |
-| m-23 | minor | i18n | `src/app/[locale]/check/page.tsx:29`, `src/app/[locale]/page.tsx:38`, `src/app/[locale]/app/audit/page.tsx:92`, `src/app/[locale]/not-found.tsx` | No uppercase/tracking for hy | open |
-| m-24 | minor | a11y | `src/components/documents/contract-docs.tsx:31-45`, `src/components/import/import-wizard.tsx:184`, `src/components/quiz/streak-panel.tsx:4,18` | `aria-hidden` decorative glyphs | open |
-| m-25 | minor | ux | `src/components/landing/hero-mock.tsx:69`, `src/app/[locale]/page.tsx:101-106` | `line-clamp-2`; nowrap stat values | open |
-| m-26 | minor | i18n | `src/components/landing/site-footer.tsx:20` | Localized app name in footer | open |
-| m-27 | minor | ux | `src/app/[locale]/login/login-form.tsx`, `messages/*/auth.json` | "Use another e-mail" link | open |
-| m-28 | minor | perf | `src/app/[locale]/login/page.tsx`, `messages/*/auth.json` | Login meta description (SEO) | open |
-| m-29 | minor | i18n | `src/lib/pdf/documents.ts:264-266` | hy PDF punctuation and column widths | open |
-| m-30 | minor | i18n | `messages/hy/members.json`, `messages/hy/errors.json`, `messages/*/auth.json` | Lower-case «ձեր/դուք»; «ֆիրմա»; drop "Supabase" | open |
+| m-19 | minor | a11y | `src/components/quiz/streak-panel.tsx:34` | Remove `opacity-50` on locked badges | fixed (minor session): opacity removed; locked = dashed border + grey icon |
+| m-20 | minor | a11y | `src/components/theme-preview.tsx:41` | Darker small label colour | fixed (minor session): label uses text-muted |
+| m-21 | minor | a11y | `src/app/[locale]/app/layout.tsx:33`, `src/components/landing/site-footer.tsx:27` | Targets ≥ 24 px | fixed (minor session): app sign-out and footer links ≥ 24 px; back links on company/employee pages not in scope |
+| m-22 | minor | a11y | both layouts, `messages/*/common.json` | Skip-to-content link | open (minor session: skipped, needs public layout, out of scope) |
+| m-23 | minor | i18n | `src/app/[locale]/check/page.tsx:29`, `src/app/[locale]/page.tsx:38`, `src/app/[locale]/app/audit/page.tsx:92`, `src/app/[locale]/not-found.tsx` | No uppercase/tracking for hy | partly fixed (minor session): audit table header only; check, landing and not-found pages out of scope |
+| m-24 | minor | a11y | `src/components/documents/contract-docs.tsx:31-45`, `src/components/import/import-wizard.tsx:184`, `src/components/quiz/streak-panel.tsx:4,18` | `aria-hidden` decorative glyphs | fixed (minor session) |
+| m-25 | minor | ux | `src/components/landing/hero-mock.tsx:69`, `src/app/[locale]/page.tsx:101-106` | `line-clamp-2`; nowrap stat values | open (minor session: skipped, landing page owned by another session) |
+| m-26 | minor | i18n | `src/components/landing/site-footer.tsx:20` | Localized app name in footer | fixed (minor session): footer uses common.appName |
+| m-27 | minor | ux | `src/app/[locale]/login/login-form.tsx`, `messages/*/auth.json` | "Use another e-mail" link | open (minor session: skipped, login page out of scope) |
+| m-28 | minor | perf | `src/app/[locale]/login/page.tsx`, `messages/*/auth.json` | Login meta description (SEO) | open (minor session: skipped, login page out of scope) |
+| m-29 | minor | i18n | `src/lib/pdf/documents.ts:264-266` | hy PDF punctuation and column widths | open (minor session: skipped, src/lib/pdf out of scope) |
+| m-30 | minor | i18n | `messages/hy/members.json`, `messages/hy/errors.json`, `messages/*/auth.json` | Lower-case «ձեր/դուք»; «ֆիրմա»; drop "Supabase" | fixed (minor session): members.json lower-case «դուք»/«ձեր» mid-sentence and «ֆիրմա»; vendor name dropped from auth; errors.json boundary left (sentence-initial capital is correct) |
 | m-31 | minor | product | `src/app/[locale]/app/companies/[id]/page.tsx`, contracts migration | Optional `position` on contracts | open |
 | F1 | feature | product | new `src/app/[locale]/app/inbox/**`, migration | Firm deadline inbox with filters and assignee (spec in `product.md` §5 F1); after C-2 | shipped in branch (see M-17). Apply migration, then rerun `inbox.spec.ts` (assign test skips until then) and check 4 viewports by eye |
 | F2 | feature | product | new migration `score_snapshots`, `src/app/api/jobs/nightly/route.ts`, `src/lib/pdf/**` | Score history + monthly client report PDF; after M-6/M-7 | open |

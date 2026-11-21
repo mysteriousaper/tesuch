@@ -19,7 +19,7 @@ export function AppNav() {
   const t = useTranslations("app.nav");
   const pathname = usePathname();
   return (
-    <nav aria-label="App" className="-mx-4 flex gap-1 overflow-x-auto px-4 text-sm sm:mx-0 sm:px-0">
+    <nav aria-label="App" className="-mx-4 flex gap-1 overflow-x-auto px-4 text-sm [mask-image:linear-gradient(to_right,#000_88%,transparent)] sm:mx-0 sm:px-0 sm:[mask-image:none]">
       {ITEMS.map((i) => {
         const active = i.href === "/app" ? pathname === "/app" || pathname.startsWith("/app/companies") : pathname.startsWith(i.href);
         return (

@@ -87,7 +87,7 @@
       "title": "Data export and deletion",
       "intro": "Download what Tesuch stores about an employee, or erase it for good.",
       "orgExport": "Export the whole firm",
-      "orgExportHint": "One JSON file with companies, employees, contracts, leave, findings and members. Owners only.",
+      "orgExportHint": "One JSON file with companies, employees, contracts, leave, issues and members. Owners only.",
       "orgExportButton": "Download firm data (JSON)",
       "employees": "Employees",
       "search": "Search by name",
@@ -100,7 +100,7 @@
       "delete": "Delete",
       "deleteFor": "Delete {name}",
       "deleteTitle": "Delete employee for good?",
-      "deleteBody": "{name} and all their contracts, leave records and findings will be erased. This cannot be undone. Export the data first if you need a copy.",
+      "deleteBody": "{name} and all their contracts, leave records and issues will be erased. This cannot be undone. Export the data first if you need a copy.",
       "deleteConfirm": "Delete for good",
       "more": "Showing the first {count}. Search to narrow the list."
     }

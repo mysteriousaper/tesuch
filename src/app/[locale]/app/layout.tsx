@@ -30,7 +30,7 @@ export default async function AppLayout({ children, params }: { children: React.
           <ModeToggle />
           <LocaleSwitcher />
           <form action={async () => { "use server"; await signOut(); redirect({ href: "/login", locale }); }}>
-            <button className="text-sm text-muted hover:text-ink">{a("signOut")}</button>
+            <button className="py-1 text-sm text-muted hover:text-ink">{a("signOut")}</button>
           </form>
         </div>
       </header>

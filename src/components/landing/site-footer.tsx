@@ -19,21 +19,21 @@ export async function SiteFooter() {
             {c("appName")}
           </div>
           <p className="text-sm leading-relaxed text-muted">{t("footer.disclaimer")}</p>
-          <p className="text-xs text-muted">© {new Date().getFullYear()} Tesuch · {t("footer.made")}</p>
+          <p className="text-xs text-muted">© {new Date().getFullYear()} {c("appName")} · {t("footer.made")}</p>
         </div>
         <div className="flex flex-col items-start gap-3 text-sm md:items-end">
           <div className="flex flex-wrap items-center gap-2">
             <ModeToggle />
             <LocaleSwitcher />
           </div>
-          <Link href="/guide" className="text-muted hover:text-ink">{g("footerLink")}</Link>
-          <Link href="/security" className="text-muted hover:text-ink">{tr("footerLink")}</Link>
-          <Link href="/check-file" className="text-muted hover:text-ink">{t("nav.checkFile")}</Link>
-          <Link href="/check" className="text-muted hover:text-ink">{t("nav.check")}</Link>
-          <Link href="/login" className="text-muted hover:text-ink">{t("nav.login")}</Link>
-          <Link href="/privacy" className="text-muted hover:text-ink">{lg("privacy")}</Link>
-          <Link href="/terms" className="text-muted hover:text-ink">{lg("terms")}</Link>
-          <a href="https://www.arlis.am/" rel="noopener noreferrer" target="_blank" className="text-muted hover:text-ink">arlis.am ↗</a>
+          <Link href="/guide" className="inline-block py-1 text-muted hover:text-ink">{g("footerLink")}</Link>
+          <Link href="/security" className="inline-block py-1 text-muted hover:text-ink">{tr("footerLink")}</Link>
+          <Link href="/check-file" className="inline-block py-1 text-muted hover:text-ink">{t("nav.checkFile")}</Link>
+          <Link href="/check" className="inline-block py-1 text-muted hover:text-ink">{t("nav.check")}</Link>
+          <Link href="/login" className="inline-block py-1 text-muted hover:text-ink">{t("nav.login")}</Link>
+          <Link href="/privacy" className="inline-block py-1 text-muted hover:text-ink">{lg("privacy")}</Link>
+          <Link href="/terms" className="inline-block py-1 text-muted hover:text-ink">{lg("terms")}</Link>
+          <a href="https://www.arlis.am/" rel="noopener noreferrer" target="_blank" className="inline-block py-1 text-muted hover:text-ink">arlis.am ↗</a>
         </div>
       </div>
     </footer>
