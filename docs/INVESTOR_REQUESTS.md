@@ -37,3 +37,5 @@ Nothing here is adopted until approved in writing.
 | ArmSoft adds deadline alerts | Focus on multi-company firm dashboard, score and Telegram; integrate rather than compete |
 | Free-tier limits (Supabase pauses after 7 days idle, 500 MB DB; Vercel Hobby is non-commercial, daily cron only) | Move to paid plans before charging customers; cost model in `docs/gtm/PRICING.md` (later) |
 | Personal data breach | RLS + composite FKs + audit log, tested in CI; minimal data stored |
+
+| Sign-in CAPTCHA (Cloudflare Turnstile, free) | Stops login spam / lockout | ✅ done 2026-11-21 |
