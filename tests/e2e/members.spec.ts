@@ -110,7 +110,7 @@ test.describe("team, audit and data rights", () => {
     await expect(page.getByRole("heading", { name: "Հրավիրել գործընկերոջ" })).toHaveCount(0);
     await expect(page.locator("select")).toHaveCount(0);
     await page.goto("/hy/app/audit");
-    await expect(page.getByText("Մատյանը տեսնում են միայն ընկերության սեփականատերերը։")).toBeVisible();
+    await expect(page.getByText("Մատյանը տեսնում են միայն ֆիրմայի սեփականատերերը։")).toBeVisible();
     await expect(page.getByTestId("audit-rows")).toHaveCount(0);
     expect((await page.request.get("/hy/app/members/data/export")).status()).toBe(403);
   });
