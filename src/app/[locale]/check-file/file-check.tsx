@@ -2,9 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
+import { CoverageNote } from "@/components/coverage-note";
 import { templateCsv } from "@/components/import/template";
 import { Link } from "@/i18n/navigation";
 import type { TargetField } from "@/lib/import";
+import { coverage } from "@/lib/rules/coverage";
 import { checkStaffFile, type FileCheckResult } from "./check-file";
 
 type Locale = "hy" | "ru" | "en";
@@ -47,7 +49,7 @@ export function FileCheck({ locale }: { locale: Locale }) {
   }
 
   const status = result?.status;
-  const tone = status === "ready" ? "var(--ok)" : status === "attention" ? "var(--warn)" : "var(--danger)";
+  const tone = status === "clear" ? "var(--ok)" : status === "attention" ? "var(--warn)" : "var(--danger)";
 
   return (
     <div className="flex flex-col gap-6">
@@ -83,6 +85,7 @@ export function FileCheck({ locale }: { locale: Locale }) {
               <p className="mt-3 text-sm">{t("result.read", { staff: result.staff, rows: result.rowCount })}</p>
               <p className="mt-2 text-xs text-muted">{t("result.advisory")}</p>
             </div>
+            <CoverageNote titles={coverage(locale).titles} summary={t("coverage.summary", { n: coverage(locale).count })} listLabel={t("coverage.list")} note={t("coverage.note")} />
 
             {result.groups.length > 0 ? (
               <section aria-labelledby="cf-issues">

@@ -36,6 +36,16 @@ const UNVERIFIED_SUFFIX: Record<Locale, string> = {
   en: " (subject to lawyer review)",
 };
 
+/** One line for every alert, digest and PDF: what Tesuch covers, and that a clean result is not a guarantee. */
+export function coverageLine(locale: Locale): string {
+  const n = RULES.length;
+  return {
+    hy: `Տեսուչը ստուգում է ${n} ոլորտ։ Սա տեսչության արդյունքի երաշխիք չէ։`,
+    ru: `Тесуч проверяет областей: ${n}. Это не гарантия результата проверки.`,
+    en: `Tesuch checks ${n} areas. Not a guarantee of the inspection result.`,
+  }[locale];
+}
+
 export const T = {
   due: { hy: "Ժամկետ", ru: "Срок", en: "Due" },
   overdue: { hy: "ժամկետանց", ru: "просрочено", en: "overdue" },

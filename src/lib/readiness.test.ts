@@ -7,11 +7,11 @@ describe("readinessStatus thresholds", () => {
     expect(readinessStatus({ score: 100, staff: 0, overdueScoring: 0 })).toBe("none");
   });
   it.each([
-    [100, "ready"], [90, "ready"], [89, "attention"], [60, "attention"], [59, "risk"], [0, "risk"],
+    [100, "clear"], [90, "clear"], [89, "attention"], [60, "attention"], [59, "risk"], [0, "risk"],
   ] as const)("score %i is %s", (score, expected) => {
     expect(readinessStatus({ score, staff: 5, overdueScoring: 0 })).toBe(expected);
   });
-  it("an overdue issue keeps a high score from being Ready", () => {
+  it("an overdue issue keeps a high score from being clear", () => {
     expect(readinessStatus({ score: 92, staff: 5, overdueScoring: 1 })).toBe("attention");
   });
   it("an overdue issue never softens Risk", () => {

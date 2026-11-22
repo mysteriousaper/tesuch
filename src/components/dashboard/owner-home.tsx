@@ -3,10 +3,12 @@ import { Link } from "@/i18n/navigation";
 import { formatDate, ruleById, type Locale } from "@/lib/notify/i18n";
 import type { Readiness } from "@/lib/readiness";
 import type { OwnerSnapshot } from "./owner-home-data";
+import { CoverageNote } from "@/components/coverage-note";
+import { coverage } from "@/lib/rules/coverage";
 import { OnboardingSteps } from "./onboarding-steps";
 
 const TONE: Record<Readiness, { border: string; text: string; icon: string }> = {
-  ready: { border: "border-ok", text: "text-ok", icon: "✓" },
+  clear: { border: "border-ok", text: "text-ok", icon: "✓" },
   attention: { border: "border-warn", text: "text-warn", icon: "!" },
   risk: { border: "border-danger", text: "text-danger", icon: "✕" },
   none: { border: "border-line", text: "text-muted", icon: "＋" },
@@ -19,6 +21,7 @@ const TONE: Record<Readiness, { border: string; text: string; icon: string }> = 
 export async function OwnerHome({ locale, company, snapshot, telegramLinked, assisted }: { locale: string; company: { id: string; name: string }; snapshot: OwnerSnapshot; telegramLinked: boolean; assisted?: React.ReactNode }) {
   const t = await getTranslations("owner");
   const tone = TONE[snapshot.status];
+  const cov = coverage(locale as Locale);
   const pack = `/api/pdf/checklist?company=${company.id}&locale=${locale}&pack=1`;
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -32,6 +35,10 @@ export async function OwnerHome({ locale, company, snapshot, telegramLinked, ass
         <p className="text-base">{t(`hint.${snapshot.status}`)}</p>
         {snapshot.score !== null && <p className="text-sm text-muted">{t("score", { score: snapshot.score })}</p>}
       </section>
+
+      {snapshot.status !== "none" && (
+        <CoverageNote titles={cov.titles} summary={t("coverage.summary", { n: cov.count })} listLabel={t("coverage.list")} note={t("coverage.note")} />
+      )}
 
       {(snapshot.status === "none" || !telegramLinked) && (
         <OnboardingSteps staffAdded={snapshot.status !== "none"} telegramLinked={telegramLinked} assisted={assisted} />

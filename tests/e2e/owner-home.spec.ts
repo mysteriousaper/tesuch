@@ -21,8 +21,10 @@ test.describe("owner home for a single business (S-2)", () => {
   test("status in words, no task for info-only items, and the inspector pack downloads", async ({ page }) => {
     const errors = trackErrors(page);
     await signInViaUi(page, user, "en");
-    await expect(page.getByTestId("readiness-status")).toHaveAttribute("data-status", "ready");
-    await expect(page.getByTestId("readiness-status")).toHaveText("You're ready");
+    await expect(page.getByTestId("readiness-status")).toHaveAttribute("data-status", "clear");
+    await expect(page.getByTestId("readiness-status")).toHaveText("No known issues in what Tesuch checks");
+    await expect(page.getByTestId("coverage-summary")).toHaveText(/^Tesuch checks \d+ areas$/);
+    await expect(page.getByTestId("coverage-disclaimer")).toContainText("Not a guarantee of the inspection result");
     // the only open finding is informational, so there is nothing to do this week
     await expect(page.locator("#tasks-h")).toHaveText("Do this week");
     await expect(page.getByText("Nothing to do this week.")).toBeVisible();

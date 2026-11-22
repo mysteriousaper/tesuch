@@ -4,7 +4,7 @@
 // Written with createElement (no JSX) so the module runs unchanged in Next.js and in vitest.
 import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { createElement as h, type ReactElement, type ReactNode } from "react";
-import { citation, DISCLAIMER, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "../notify/i18n";
+import { citation, coverageLine, DISCLAIMER, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "../notify/i18n";
 import type { Finding, IsoDate } from "../rules/types";
 import { FONT_STACK } from "./fonts";
 import { noticePlan } from "./notice";
@@ -317,6 +317,7 @@ export function readinessChecklist({ locale, company, asOf, score, items, pack =
           [`${T.openFindings[locale]}:`, String(items.length)],
         ]),
         items.length === 0 ? txt(s.para, T.noFindings[locale]) : h(View, null, header, ...rows),
+        txt(s.para, coverageLine(locale)),
       ),
       h(Text, {
         style: s.footerNeutral,

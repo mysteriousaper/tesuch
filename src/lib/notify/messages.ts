@@ -1,6 +1,6 @@
 // Builds Telegram and email messages from findings. Pure: no network, no clock.
 import type { EffectiveSeverity, Finding } from "../rules/types";
-import { citation, DISCLAIMER, escapeHtml, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "./i18n";
+import { citation, coverageLine, DISCLAIMER, escapeHtml, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "./i18n";
 
 export interface AlertItem {
   finding: Finding;
@@ -83,7 +83,7 @@ export function telegramAlert(item: AlertItem, locale: Locale): string {
 
 export function telegramDigest(companies: DigestCompany[], locale: Locale): string {
   const all = companies.flatMap((c) => c.items);
-  const footer = needsDisclaimer(all) ? `\n\n<i>${escapeHtml(DISCLAIMER[locale])}</i>` : "";
+  const footer = (needsDisclaimer(all) ? `\n\n<i>${escapeHtml(DISCLAIMER[locale])}</i>` : "") + `\n\n<i>${escapeHtml(coverageLine(locale))}</i>`;
   const header = `📋 <b>Tesuch · ${escapeHtml(T.digestTitle[locale])}</b>`;
   const blocks = [...companies]
     .sort((a, b) => a.score - b.score)
@@ -156,9 +156,9 @@ export function emailDigest(companies: DigestCompany[], locale: Locale): EmailMe
   return {
     subject: `Tesuch · ${T.digestTitle[locale]} · ${T.openFindings[locale]}: ${all.length}`,
     html: wrap(
-      `<h2>${escapeHtml(T.digestTitle[locale])}</h2>${htmlBlocks.join("")}${disclaimer ? `<p><em>${escapeHtml(DISCLAIMER[locale])}</em></p>` : ""}`,
+      `<h2>${escapeHtml(T.digestTitle[locale])}</h2>${htmlBlocks.join("")}${disclaimer ? `<p><em>${escapeHtml(DISCLAIMER[locale])}</em></p>` : ""}<p><em>${escapeHtml(coverageLine(locale))}</em></p>`,
       locale,
     ),
-    text: [`${T.digestTitle[locale]}`, ...textBlocks, ...(disclaimer ? [DISCLAIMER[locale]] : [])].join("\n\n"),
+    text: [`${T.digestTitle[locale]}`, ...textBlocks, ...(disclaimer ? [DISCLAIMER[locale]] : []), coverageLine(locale)].join("\n\n"),
   };
 }

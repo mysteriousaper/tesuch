@@ -19,7 +19,7 @@
     "hero": {
       "eyebrow": "For business owners and directors",
       "title": "Whenever an inspector comes, you’re ready.",
-      "subtitle": "Tesuch checks your staff contracts every night and shows one clear status: Ready, Needs attention or Risk. Each week you get at most three tasks, and one button builds the pack you need when an inspector is at the door.",
+      "subtitle": "Tesuch checks your staff contracts every night and shows one clear status: No known issues, Needs attention or Risk. Each week you get at most three tasks, and one button builds the pack you need when an inspector is at the door.",
       "ctaCheck": "Check your staff file for free",
       "note": "No sign-up · the file never leaves your device",
       "mockCompany": "Demo Logistics LLC",
@@ -65,8 +65,8 @@
       "desc": "Open Tesuch and in five seconds you know where you stand. No reports to read.",
       "statuses": [
         {
-          "t": "Ready",
-          "d": "Nothing urgent. If an inspector came today, you would be in good shape."
+          "t": "No known issues",
+          "d": "Nothing urgent in what Tesuch checks. Not a guarantee of the inspection result."
         },
         {
           "t": "Needs attention",

@@ -1,13 +1,13 @@
 {
   "owner": {
     "status": {
-      "ready": "You're ready",
+      "clear": "No known issues in what Tesuch checks",
       "attention": "Needs attention",
-      "risk": "At risk",
+      "risk": "Risk",
       "none": "Add your staff to see where you stand"
     },
     "hint": {
-      "ready": "Nothing urgent. If an inspector comes today, you are in good shape.",
+      "clear": "Tesuch found nothing urgent in the areas it checks. This is not a guarantee of the inspection result.",
       "attention": "A few things should be fixed before an inspector comes.",
       "risk": "Fix the items below first. An inspector could find serious gaps today.",
       "none": "Upload your staff list and Tesuch will check it."
@@ -44,6 +44,11 @@
         "connected": "Telegram is connected"
       },
       "nudge": "Get alerts in Telegram"
+    },
+    "coverage": {
+      "summary": "Tesuch checks {n} areas",
+      "list": "What Tesuch checks",
+      "note": "Not a guarantee of the inspection result. A real inspection covers more than these areas."
     }
   }
 }

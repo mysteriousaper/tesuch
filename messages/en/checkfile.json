@@ -27,12 +27,12 @@
       "advisory": "The rules are still being reviewed by a lawyer, so every issue is advisory. This is not legal advice."
     },
     "status": {
-      "ready": "You are ready",
+      "clear": "No known issues in what Tesuch checks",
       "attention": "Needs attention",
-      "risk": "At risk"
+      "risk": "Risk"
     },
     "statusHint": {
-      "ready": "Nothing urgent in the data of this file.",
+      "clear": "Nothing urgent in the data of this file, in the areas Tesuch checks. Not a guarantee of the inspection result.",
       "attention": "There are issues worth fixing soon.",
       "risk": "There are many issues, or a deadline has already passed. Start with the most important."
     },
@@ -58,6 +58,11 @@
     "alt": {
       "quiz": "No file? Take the 2-minute quiz",
       "security": "How we protect data"
+    },
+    "coverage": {
+      "summary": "Tesuch checks {n} areas",
+      "list": "What Tesuch checks",
+      "note": "Not a guarantee of the inspection result. A real inspection covers more than these areas."
     }
   }
 }

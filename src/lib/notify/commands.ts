@@ -3,7 +3,7 @@
 import { effectiveSeverity } from "../rules/engine";
 import { firmScore, inspectionReadyScore } from "../rules/score";
 import type { EffectiveSeverity, IsoDate } from "../rules/types";
-import { DISCLAIMER, escapeHtml, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "./i18n";
+import { coverageLine, DISCLAIMER, escapeHtml, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "./i18n";
 import { TELEGRAM_MAX } from "./messages";
 
 export const BOT_USERNAME = "Tesuch1234_bot";
@@ -297,7 +297,7 @@ export function statusReply(orgs: OrgView[], locale: Locale): string {
     }
   }
   const any = orgs.some((o) => o.companies.length > 0);
-  const footer = any ? `\n\n<i>${e(S.issuesHint[locale])}</i>` : "";
+  const footer = (any ? `\n\n<i>${e(S.issuesHint[locale])}</i>` : "") + `\n\n<i>${e(coverageLine(locale))}</i>`;
   return fit(header, entries, footer, locale);
 }
 
