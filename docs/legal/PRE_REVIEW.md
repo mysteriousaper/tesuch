@@ -23,13 +23,13 @@ Other general notes:
 
 ## 1. Rule-by-rule
 
-Totals: **MATCH 5 · PARTLY 5 · MISMATCH 1 · NOT FOUND 2** (13 rules).
+Totals: **MATCH 6 · PARTLY 5 · MISMATCH 1 · NOT FOUND 1** (13 rules). *Round 2 correction: `fixed-term-expired` was first marked NOT FOUND; the official checklist (item 18) cites Art. 111(2),(3),(5), and Art. 111(5) answers the question, so it is now MATCH.*
 
 | # | Rule | Verdict | Article(s) found |
 |---|---|---|---|
 | 1 | `annual-leave-min` | PARTLY | 159(1), 164, 167(3) |
 | 2 | `fixed-term-ending` | PARTLY | 95, 109(1)(2) |
-| 3 | `fixed-term-expired` | NOT FOUND | related: 95(2.1), 109, 102 |
+| 3 | `fixed-term-expired` | MATCH | 111(5), 111(2) |
 | 4 | `fixed-term-ground` | PARTLY | 95(1), 95(3) |
 | 5 | `leave-cash-swap` | MATCH | 170(1) |
 | 6 | `maternity-min` | MATCH | 172(1) |
@@ -52,16 +52,15 @@ Totals: **MATCH 5 · PARTLY 5 · MISMATCH 1 · NOT FOUND 2** (13 rules).
 
 ### 1.2 `fixed-term-ending` — PARTLY
 - Art. 95 is the right article for fixed-term contracts, but it contains **no 30-day (or any) reminder window or notice duty**. The 30 days is correctly flagged as a product choice.
+- **Art. 111(2):** the employer who ends the contract on expiry must give «առնվազն տասն օր առաջ» written notice (not for replacement workers or contracts for specific works, 111(3)). So the real employer deadline is **10 days**, not 30; 30 stays a product choice.
 - Art. 109(1)(2): «Աշխատանքային պայմանագիրը լուծվում է` ... պայմանագրի գործողության ժամկետը լրանալու դեպքում» and 109(2) says the termination is formalised by the employer's individual legal act. That is the real trigger behind the reminder.
 - **Change:** cite Art. 109(1)(2) and 109(2) (formalise the expiry) plus 95(2.1) (extension warning, see 2.12) instead of implying Art. 95 requires a notice.
 
-### 1.3 `fixed-term-expired` — NOT FOUND (explicit provision)
-- I found **no article** that states the consequence of an employee continuing to work after a fixed-term contract ends (grep for «շարունակում է աշխատել» only hits Art. 93(3), probation).
-- Closest provisions for the lawyer to weigh:
-  - Art. 95(2.1): extension or a second contract for the same work with a gap «չի գերազանցում մեկ ամիսը» → the contract «համարվում է կնքված անորոշ ժամկետով».
-  - Art. 109(1)(2) and 109(2): expiry ends the contract; employer formalises it.
-  - Art. 102(1): «Անօրինական է համարվում այն աշխատանքը, որն իրականացվում է առանց ... գրավոր աշխատանքային պայմանագրի կամ աշխատանքի ընդունման մասին անհատական իրավական ակտի» and 102(3): the employer bears liability and the court may establish actual employment from the day work began. Plausible consequence for work after expiry without a successor contract (**lawyer to confirm**).
-- **Change:** keep the rule advisory with no article until the lawyer names one; consider citing 102 + 95(2.1) once confirmed.
+### 1.3 `fixed-term-expired` — MATCH (corrected in round 2)
+- **Art. 111(5):** «Եթե որոշակի ժամկետով կնքված աշխատանքային պայմանագրի գործողության ժամկետը լրանալուց հետո պայմանագիրը չի լուծվում սույն հոդվածով սահմանված կարգով, և աշխատանքային հարաբերությունները շարունակվում են, ապա պայմանագիրը համարվում է կնքված անորոշ ժամկետով»: continued work after the end date without termination turns the contract into an **indefinite** one. This is exactly the consequence the rule was waiting for. (My first pass searched only for the phrase «շարունակում է աշխատել» and missed it.)
+- Related: Art. 111(2) (employer's 10-day written notice to end on expiry), 111(4) (employee's 10 days), 95(2.1) (extension or re-hire within a month → indefinite), 102 (work without a proper written contract).
+- **Change:** cite Art. 111(5); the finding text can say "the contract is now considered indefinite unless it was terminated under Art. 111". Successor-contract exclusion is consistent with 95(2.1).
+- The rule's severity can stay amber/advisory until the lawyer confirms; the legal basis is no longer missing.
 
 ### 1.4 `fixed-term-ground` — PARTLY
 - **Art. 95(1):** «Որոշակի ժամկետով աշխատանքային պայմանագիր է կնքվում, եթե աշխատանքային հարաբերությունները չեն կարող որոշվել անորոշ ժամկետով` հաշվի առնելով կատարվելիք աշխատանքի բնույթը կամ կատարման պայմանները, եթե սույն օրենսգրքով կամ օրենքներով այլ բան նախատեսված չէ»; Art. 94: otherwise indefinite. Art. 95(3) lists permitted categories (elected posts, seasonal, temporary up to two months, replacing an absent employee, foreigners on residence permit, pension-age persons, etc.).
@@ -189,7 +188,7 @@ What we can say in the product (each statement must be re-checked against the cu
 - **Scope of the law:** it regulates inspections of businesses (companies, branches, sole entrepreneurs, municipalities) by state bodies; the Labour Ministry is listed among them (Art. 2(1): «Հայաստանի Հանրապետության աշխատանքի և սոցիալական հարցերի նախարարությունը»); inspections may only be based on law and within the body's powers (2(2)); interference in ongoing business is banned (2(3)).
 - **Planning:** Art. 2.1 risk-based planning: businesses are put in high / medium / low risk groups (2.1(2)(3)); an annual programme is approved by 1 December of the previous year (2.1(6)) and the list of businesses and periods is published on the body's website, in force one month after adoption (2.1(7)). Inspection frequency by risk (Art. 4(3)): high ≤ once a year, medium ≤ once in 3 years, low ≤ once in 5 years. Exceptions (4(3.1)) include a follow-up to an unfulfilled order, a PM's instruction, a complaint about danger, and checks aimed at unregistered workers. **Individual risk is computed from the business's own past violations (2.1(2)(1)).**
 - **Notice:** Art. 3(2),(3): an order (հրաման) or assignment naming the body, the business, the inspectors, the checklist questions, period, purpose, term and legal basis; two copies handed to the manager **at least 3 working days before** the start, against signature. **Exception:** the 3-day notice does not apply to a list of cases including Labour Ministry or tax-body checks aimed at finding workers without a contract or contracts missing Art. 84(1) items 1, 4, 5, 6, 7 (Labour Code), and checks "ըստ անհրաժեշտության" by the Labour Ministry. So a labour inspection can legally come **unannounced** in those cases.
-- **Checklists:** Art. 3(1.1): most inspections run only on government-approved checklists (ստուգաթերթեր) published on the body's website; questions cover an exhaustive list of requirements whose breach may harm life, health or property rights; inspectors must answer only checklist questions (3(4)). The labour inspection checklist is **not** in our sources (still missing).
+- **Checklists:** Art. 3(1.1): most inspections run only on government-approved checklists (ստուգաթերթեր) published on the body's website; questions cover an exhaustive list of requirements whose breach may harm life, health or property rights; inspectors must answer only checklist questions (3(4)). The labour inspection checklist (N 5.1) was added in round 2: see section 7.
 - **Duration:** Art. 4(1): a single inspection ≤ 15 consecutive working days per year, extendable by 10 days (up to 75 for firms above a turnover threshold), actual start = entry in the business's inspection log (ստուգման մատյան); total cap 30 working days (4(2)).
 - **Rights of the business** (Art. 9): to forbid the inspection if the inspectors broke Arts. 3 and 4 (notify the body in writing the same day), to see inspection acts, to give explanations and appeal, to refuse requests outside the inspector's powers and the order, to bring lawyers or experts at any stage. **Duties** (Art. 10): do not obstruct, hand over requested documents, fix violations in the act by the stated deadline.
 - **Appeal:** Art. 11(2)–(4): within **two months** to the inspector's superior body or court; superior body decides within 30 calendar days, silence means the arguments are accepted. Art. 12: compensation for unlawful acts.
@@ -215,7 +214,7 @@ What we can say in the product (each statement must be re-checked against the cu
 
 **P1: before paying customers**
 7. `notice-period`: please confirm the ground-to-notice mapping we read from Art. 115 and 113 (tiers for 113(1)(3),(7),(11) and 105(2); 2 months for (1),(2); 3 days for (12),(13) and probation; none for fault grounds) and whether notice days are calendar days (Art. 29(7)).
-8. `fixed-term-expired`: what is the legal consequence of continued work after expiry (indefinite contract under 95(2.1)? unlawful work under Art. 102? other)? Which article should we cite?
+8. `fixed-term-expired`: please confirm Art. 111(5) (continued work after expiry without termination → indefinite contract) is still in force and is the article to cite.
 9. `fixed-term-ground`: must the ground be written in the contract? Is a missing/invalid ground void so the contract is indefinite?
 10. `annual-leave-min`: may we flag only after the 18-month deferral window (Art. 167(3)), or is a flag per working year acceptable?
 11. `maternity-min`: confirm that the adoption and surrogacy cases (Art. 172(2),(2.1)) are excluded from the 140-day floor.
@@ -228,3 +227,187 @@ What we can say in the product (each statement must be re-checked against the cu
 16. Which additional rules from section 2 do you consider most often cited by inspectors (2.12, 2.13, 2.11, 2.15, 2.6)? Any sanction amounts per violation that we can show as information?
 17. Retention periods for personnel records and consent records; Data Protection Officer or internal policy duties under the current law.
 18. Wording check of every Armenian label for the rules above (R17).
+
+## 7. Inspection checklists (added in round 2)
+
+Source: `docs/legal/sources/inspection/` (28 `.txt` + originals; index in its `README.md`). All numbers below were computed from the `.docx` table of `299_1`, not estimated.
+
+### 7.1 Which checklist covers labour law
+
+| Checklist | File | Decision | Scope |
+|---|---|---|---|
+| **N 5.1 «Աշխատանքային իրավունքի բնագավառում վերահսկողություն»** | `299_1` | Annex 5 to Government decision N 718-Ն (30.04.2020), **version of decision N 299-Ն of 10.03.2022** | **Labour law** (explicitly «բացառությամբ աշխատողների առողջության պահպանման և անվտանգության ապահովման բնագավառի»), 102 scored questions plus 11 informational ones |
+| N 4.3 (OSH, risk-based) | `239_1` | Decision N 239-Ն of 03.03.2022 | Workers' health and safety in construction and mining; **not HR data** |
+| N 1, 2, 3 (functional assessment) | `1`, `2`, `3` | – | Disability / functional assessment procedures |
+| N 1.2–1.25 | `1.4`, `1492.1-2`, `1528.1-1`, `1648.1`, `167.1`, `2026_n1371hav.1-3` | N 2001-Ն (2023), 1492-Ն (2024), 1528-Ն (2025), 1648-Ն (2025), 167-Ն (2026), 1371-Ն (2026) | Sanitary-hygiene and anti-epidemic control in schools, kindergartens, salons, dentistry, etc. |
+| N 3.1–3.16 | `1528.2`, `1650.*` | N 1528-Ն (2025), 1650-Ն (17.10.2024) | Medical services / hospitals (health-care licensing control) |
+
+**Only N 5.1 is a labour-law checklist.** It is the document the Inspections law (Art. 3(1.1)) says an inspector must follow; its basis list names the 2004 Labour Code, the foreigners law, the minimum-wage law and nine government decisions (201-Ն, 1223-Ն, 1384-Ն, 1599-Ն, 1698-Ն, 1460-Ն, 2335-Ն, 2308-Ն). **The holidays law is not in its basis list.** Each question has a weight (Կշիռ, total 50.0) and a method; all 102 questions are «Փաստաթղթային» (document check). Answers are Yes / No / Not required.
+
+**Version warning:** N 5.1 is the March 2022 text. The later decisions in the folder amend other annexes (1, 3) of N 718-Ն, not Annex 5, so N 5.1 may still be current, but nothing in the folder proves it: ask the owner or lawyer whether a later decision amended Annex 5 or replaced N 718-Ն.
+
+### 7.2 N 5.1: every scored question and Tesuch coverage
+
+Legend: **Partly** = a Tesuch rule covers part of the question (rule id given). **Not covered, automatable** = could become a rule once data exists; effort S (data we hold), M (new field), L (timesheets or payroll). **Document / on-site** = an inspector checks a paper or the workplace; Tesuch can at most list it in an "inspection pack". Basis = Labour Code article numbers cited by the checklist ("+" shows other acts).
+
+| No. | Question (short, Armenian) | Basis in checklist | Weight | Tesuch coverage |
+|---|---|---|---|---|
+| 1 | Յուրաքանչյուր աշխատող աշխատանքի է ընդունվել կնքված գրավոր աշխատանքային պայմանագրի… | 14 | 1 | Not covered, automatable: S: employee with no contract row |
+| 2 | Աշխատանքի ընդունման մասին անհատական իրավական ակտի կամ աշխատանքային պայմանագրի մեկ… | 5, 85 | 0.3 | Document / on-site |
+| 3.1 | անհատական իրավական ակտն ընդունելու, աշխատանքային պայմանագիրը կնքելու տարին, ամիսը,… | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.2 | աշխատողի անունը, ազգանունը | 84 | 0.2 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.3 | կազմակերպության անվանումը կամ ֆիզիկական անձ գործատուի անունը, ազգանունը | 84 | 0.2 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.4 | կառուցվածքային ստորաբաժանումը (դրա առկայության դեպքում) | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.5 | աշխատանքը սկսելու տարին, ամիսը, ամսաթիվը | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.6 | պաշտոնի անվանումը և (կամ) աշխատանքային գործառույթները | 84 | 0.5 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.7 | հիմնական աշխատավարձի չափը և (կամ) այն որոշելու ձևը | 84 | 0.5 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.8 | աշխատողներին սահմանված կարգով տրվող հավելումները, հավելավճարները, լրավճարները | 84 | 0.5 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.9 | անհատական իրավական ակտի կամ աշխատանքային պայմանագրի գործողության ժամկետը… | 84 | 0.2 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.10 | փորձաշրջան սահմանելու դեպքում` փորձաշրջանի տևողությունը և պայմանները | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.11 | աշխատաժամանակի ռեժիմը՝ աշխատաժամանակի նորմալ տևողություն կամ ոչ լրիվ աշխատաժամանակ… | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.12 | ամենամյա արձակուրդի տեսակը (նվազագույն, լրացուցիչ, երկարացված) և տևողությունը | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.13 | իրավական ակտը ստորագրող անձի պաշտոնը, անունը, ազգանունը | 84 | 0.3 | Not covered, automatable: S–M: missing-field check on fields we import |
+| 3.14 | Համատեղությամբ աշխատանքի դեպքում աշխատանքային պայմանագրում նշված է, որ աշխատանքը… | 99 | 0.3 | Document / on-site |
+| 4 | Պահպանվել է փորձաշրջան սահմանելու արգելքը կամ ժամկետը | 7, 91, 92 | 0.3 | Partly: probation-max, probation-minor, probation-transfer |
+| 5 | Աշխատանքի անցնելուց առաջ գործատուն կամ նրա լիազորած անձը աշխատանքի ընդունվող անձին… | 85 | 0.3 | Document / on-site |
+| 6.1 | անձը հաստատող փաստաթուղթ | 89 | 0.2 | Document / on-site |
+| 6.2 | սոցիալական ապահովության քարտ կամ սոցիալական ապահովության քարտ չունենալու մասին… | 89 | 0.2 | Document / on-site |
+| 6.3 | կրթության կամ անհրաժեշտ որակավորման մասին վկայական, եթե աշխատանքային օրենսդրությանը… | 89 | 0.2 | Document / on-site |
+| 6.4 | տեղեկանք առողջական վիճակի մասին (սանիտարական գրքույկ), եթե աշխատանքային պայմանագիրը… | 89 | 0.5 | Document / on-site |
+| 6.5 | ծնողներից մեկի, որդեգրողի կամ հոգաբարձուի կամ խնամակալի գրավոր համաձայնությունը, եթե… | 89 | 0.3 | Document / on-site |
+| 6.6 | կացության կարգավիճակի և (կամ) աշխատանքի թույլտվության վերաբերյալ փաստաթուղթ | 89, 22 (+other laws) | 0.5 | Document / on-site |
+| 7 | Աշխատանքի ընդունման հայտարարություններում (մրցույթներում) և աշխատանքային… | 3.1, 89 | 0.3 | Document / on-site |
+| 8 | Գործատուն աշխատողին չի թույլատրել կատարել իր աշխատանքային պարտականությունները և չի… | 7, 108 | 0.2 | Document / on-site |
+| 9 | Որոշակի ժամկետով աշխատանքային պայմանագիր կնքվել է, եթե աշխատանքային… | 7, 95 | 0.5 | Partly: fixed-term-ground |
+| 10 | Մինչև 16 տարեկան անձանց հետ կնքվել է ժամանակավոր աշխատանքային պայմանագիր | 17 | 0.3 | Not covered, automatable: S |
+| 11 | Նույն աշխատողի հետ նույն աշխատանքի համար որոշակի ժամկետով կնքված աշխատանքային… | 7, 95 | 0.5 | Not covered, automatable: S |
+| 12 | Գործատուն աշխատանքի էական պայմանները փոփոխել է արտադրության ծավալների և (կամ)… | 105 | 0.8 | Document / on-site |
+| 13 | Երեխային փաստացի խնամող՝ արձակուրդում չգտնվող անձի՝ մինչև մեկ տարեկան երեխա խնամելու… | 105 | 0.3 | Document / on-site |
+| 14 | Գործատուն, առանց աշխատողի գրավոր համաձայնության, աշխատանքի վարձատրության չափը և… | 105 | 0.3 | Document / on-site |
+| 15 | Աշխատանքի էական պայմանները փոփոխելիս աշխատողը տեղափոխվել է այնպիսի աշխատանքի, որն… | 105 | 0.3 | Document / on-site |
+| 16 | Աշխատանքի էական պայմանների փոփոխման դեպքում գործատուն իր մոտ մինչև մեկ տարի… | 105 | 0.3 | Not covered, automatable: M |
+| 17 | Կողմերի համաձայնությամբ աշխատանքային պայմանագիրը լուծելիս պահպանվել է աշխատանքային… | 110 | 0.3 | Document / on-site |
+| 18 | Պահպանվել է գործողության ժամկետը լրանալու պատճառով աշխատանքային պայմանագրի լուծման… | 111 | 0.3 | Partly: fixed-term-expired, fixed-term-ending |
+| 19 | Պահպանվել է աշխատողի նախաձեռնությամբ աշխատանքային պայմանագրի լուծման կարգը | 7, 112 | 0.3 | Document / on-site |
+| 20 | Գործատուի նախաձեռնությամբ աշխատանքային պայմանագիրը լուծվել է գործատուի… | 7, 120-122 | 1 | Partly: termination-ground |
+| 21 | ՀՀ աշխատանքային օրենսգրքի 113-րդ հոդվածի 1-ին մասի 2-րդ, 3-րդ և 4-րդ կետերով… | 113 | 0.3 | Document / on-site |
+| 22 | Գործատուի նախաձեռնությամբ աշխատանքային պայմանագիրը լուծելիս պահպանվել են ծանուցման… | 115 | 0.4 | Partly: notice-period |
+| 23 | Աշխատանքի էական պայմանների փոփոխման կամ աշխատանքային պայմանագրի լուծման ծանուցման… | 115, 195 | 1 | Not covered, automatable: L: needs timesheets / payroll |
+| 24 | Աշխատանքային պայմանագրի լուծումը ձևակերպվել է գործատուի ընդունած անհատական իրավական… | 109, 5 | 0.3 | Document / on-site |
+| 25 | Պահպանվել է գործատուի նախաձեռնությամբ աշխատանքային պայմանագիրը լուծելու, ինչպես նաև… | 105, 114 | 0.6 | Not covered, automatable: S–M |
+| 26 | Պահպանվել են աշխատողների ներկայացուցչի աշխատանքից ազատման կարգը և երաշխիքները | 119 | 0.3 | Document / on-site |
+| 27 | Գործատուի նախաձեռնությամբ աշխատանքի էական պայմանները փոփոխվելու, ինչպես նաեւ… | 129, 195 | 0.3 | Not covered, automatable: L: needs timesheets / payroll |
+| 28 | Վերջնահաշվարկի օրը գործատուն աշխատողին վճարել է աշխատավարձը և դրան հավասարեցված այլ… | 111, 112, 130, 170, 195 | 1.1 | Not covered, automatable: M–L: needs paid date |
+| 29 | Աշխատողի ցանկությամբ գործատուն տրամադրել է տեղեկանք աշխատանքային գործառույթների… | 130 | 0.1 | Document / on-site |
+| 30.1 | Պահպանվել է շաբաթվա ընթացքում աշխատողների աշխատաժամանակի նորմալ տևողությունը | 139 (+gov. decisions) | 0.4 | Not covered, automatable: M: weekly hours / schedule field |
+| 30.2 | Պահպանվել է աշխատողների ամենօրյա աշխատաժամանակի նորմալ տևողությունը | 139 (+gov. decisions) | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 30.3 | Պահպանվել է աշխատաժամանակի կրճատ տևողությունը | 140 | 0.8 | Not covered, automatable: M: weekly hours / schedule field |
+| 30.4 | Օրենքով նախատեսված դեպքերում սահմանվել է ոչ լրիվ աշխատաժամանակ | 141 | 0.8 | Document / on-site |
+| 30.5 | Սահմանվել է յուրաքանչյուր աշխատողի աշխատաժամանակի և հանգստի ժամանակի բաշխումը… | 142 | 1 | Document / on-site |
+| 30.6 | Ստույգ հաշվառվել է յուրաքանչյուր աշխատողի օրական և (կամ) շաբաթական աշխատաժամանակը | 142 | 1.3 | Document / on-site |
+| 30.7 | Պահպանվել են աշխատաժամանակի գումարային հաշվարկի կիրառման կարգը և սահմանափակումները | 143, 154, 155 | 0.5 | Document / on-site |
+| 30.8 | Աշխատողներն արտաժամյա աշխատանքի են ներգրավվել բացառիկ դեպքերում | 145 | 0.5 | Document / on-site |
+| 30.9 | Պահպանվել են արտաժամյա աշխատանքի ներգրավվման սահմանափակումները | 144 | 0.5 | Not covered, automatable: L: needs timesheets / payroll |
+| 30.10 | Պահպանվել է օրական, շաբաթական աշխատաժամանակի առավելագույն տևողությունը` ներառյալ… | 139 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 30.11 | Յուրաքանչյուր աշխատողի համար իրար հաջորդող երկու օրվա ընթացքում արտաժամյա աշխատանքի… | 146 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 30.12 | Յուրաքանչյուր աշխատողի համար գործատուի պահանջով արտաժամյա աշխատանքի տևողությունը… | 146 | 0.5 | Not covered, automatable: L: needs timesheets / payroll |
+| 30.13 | Ոչ աշխատանքային` տոնական և հիշատակի օրերի նախօրյակին աշխատանքային օրվա տևողությունը… | 147 | 0.5 | Document / on-site |
+| 30.14 | Պահպանվել է մինչև տասնութ տարեկան անձանց, ինչպես նաև այն աշխատողներին գիշերային… | 148 | 0.4 | Not covered, automatable: M: weekly hours / schedule field |
+| 30.15 | Հղի կանայք և մինչև երեք տարեկան երեխա խնամող աշխատողները գիշերային աշխատանքի են… | 148 | 0.4 | Document / on-site |
+| 31.1 | Պահպանվել են հանգստի և սնվելու համար ընդմիջման տրամադրման կարգը և պայմաններ | 152 | 0.3 | Document / on-site |
+| 31.2 | Պահպանվել է տասնչորսից մինչև տասնութ տարեկան անձանց հանգստյան, ոչ աշխատանքային`… | 17 | 0.4 | Document / on-site |
+| 31.3 | Մինչև տասնութ տարեկան աշխատողներին, որոնց աշխատաժամանակի տևողությունը գերազանցում է… | 153 | 0.3 | Document / on-site |
+| 31.4 | Տրամադրվել են հատուկ ընդմիջումներ, երբ աշխատանքը կատարվում է պլյուս 40 աստիճան… | 153 | 0.3 | Document / on-site |
+| 31.5 | Պահպանվել է աշխատանքային օրերի (հերթափոխերի) միջև ամենօրյա անընդմեջ հանգստի… | 154 | 0.6 | Not covered, automatable: L: needs timesheets / payroll |
+| 31.6 | Պահպանվել է ամենշաբաթյա անընդմեջ հանգստի տևողությունը | 155 | 0.6 | Not covered, automatable: L: needs timesheets / payroll |
+| 31.7 | Պահպանվել են աշխատողներին հանգստյան օրերին աշխատանքի ներգրավելու արգելքը և կարգը | 155 | 0.4 | Document / on-site |
+| 31.8 | Պահպանվել է աշխատողներին ոչ աշխատանքային` տոնական և հիշատակի օրերին աշխատանքի… | 156 | 0.4 | Document / on-site |
+| 31.9 | Պահպանվել են ամենամյա արձակուրդի (նվազագույն, լրացուցիչ, երկարացված, տեղափոխված,… | 7, 159, 160, 161, 168 (+gov. decisions) | 0.3 | Partly: annual-leave-min |
+| 31.10 | Սահմանված կարգով աշխատողներին տրամադրվել է նպատակային արձակուրդ | 172-176.1, 195 | 0.1 | Partly: maternity-min |
+| 32.1 | Աշխատողների համար սահմանվել և վճարվել է նվազագույն աշխատավարձի չափից ոչ պակաս… | 7, 179, 180, 189 (+other laws) | 1.3 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.2 | Պահպանվել են աշխատավարձի վճարման ժամկետները և կարգը | 7, 192 | 1.3 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.3 | Արտաժամյա աշխատանքի յուրաքանչյուր ժամի համար ժամային դրույքաչափից բացի աշխատողին… | 7, 84.1, 184 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.4 | Գիշերային աշխատանքի յուրաքանչյուր ժամի համար ժամային դրույքաչափից բացի աշխատողներին… | 7, 84.1, 184 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.5 | Ծանր, վնասակար, առանձնապես ծանր և առանձնապես վնասակար աշխատանքները կատարելու համար… | 7, 183 (+gov. decisions) | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.6 | Հանգստյան և օրենքով սահմանված ոչ աշխատանքային` տոնական և հիշատակի օրերին աշխատանքի… | 7, 185 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.7 | Աշխատանքի ժամանակացույցով՝ օրենքով սահմանված ոչ աշխատանքային` տոնական և հիշատակի… | 7, 185 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.8 | Պահպանվել է ոչ աշխատողի մեղքով առաջացած պարապուրդի ընթացքում աշխատավարձի վճարման… | 186 | 0.8 | Document / on-site |
+| 32.9 | Պահպանվել է ուսումնական (այդ թվում՝ նախադպրոցական) հաստատությունների համար… | 187.1 | 0.2 | Document / on-site |
+| 32.10 | Աշխատողի աշխատանքի ծավալի ավելացման դեպքում աշխատանքը վարձատրվում է կատարված… | 7, 188 | 0.4 | Document / on-site |
+| 32.11 | Ամենամյա արձակուրդի համար հաշվարկվել և աշխատողին է վճարվել միջին աշխատավարձ՝… | 7, 169, 195 | 0.8 | Not covered, automatable: M: leave pay date |
+| 32.12 | Վճարված, սակայն չօգտագործված ամենամյա արձակուրդի օրերը հետագայում օգտագործելու… | 169, 195 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.13 | Գործատուի մեղքով աշխատավարձի վճարումը օրենսգրքով, կոլեկտիվ պայմանագրով կամ կողմերի… | 198 | 0.8 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.14 | Գործատուի կողմից սովորելու գործուղված աշխատողին ուսումնական արձակուրդի յուրաքանչյուր… | 7, 195, 200 | 0.8 | Document / on-site |
+| 32.15 | Պահպանվել է աշակերտների կամ աշխատանքի ընդունվող անձի մասնագիտական ուսուցման… | 7, 201.1 | 0.3 | Document / on-site |
+| 32.16 | Լրացուցիչ և հատուկ ընդմիջումների համար վճարվել է միջին աշխատավարձ | 195, 203 | 0.3 | Document / on-site |
+| 32.17 | Դաշտային պայմաններում կամ տեղափոխման (տեղաշարժման) բնույթ կրող աշխատանքների համար… | 205 (+gov. decisions) | 0.3 | Document / on-site |
+| 32.18 | Պահպանվել են գործուղման մեկնած աշխատողների երաշխիքները և վճարվել են հատուցումները | 7, 209 (+gov. decisions) | 0.4 | Document / on-site |
+| 32.19 | Աշխատավարձից պահումները կատարվել են օրենքով նախատեսված դեպքերում | 213 | 0.8 | Document / on-site |
+| 32.20 | Աշխատավարձը վճարելիս պահումների և գանձումների ընդհանուր չափը չի գերազանցել աշխատողի… | 214 | 0.3 | Not covered, automatable: L: needs timesheets / payroll |
+| 32.21 | Պահումներն ու գանձումները կատարելուց հետո աշխատողին վճարվող աշխատավարձը պակաս չէ… | 214 | 0.5 | Not covered, automatable: L: needs timesheets / payroll |
+| 33 | Պահպանվել է մինչև տասնութ տարեկան աշխատողի, հղի կանանց և մինչև մեկ տարեկան երեխա… | 209 | 0.3 | Document / on-site |
+| 34.1 | Կարգապահական պատասխանատվության է ենթարկվել միայն աշխատանքային կարգապահությունը… | 7, 222 | 0.3 | Document / on-site |
+| 34.2 | Աշխատանքային կարգապահության յուրաքանչյուր խախտման համար նշանակվել է մեկ կարգապահական… | 7, 225 | 0.3 | Document / on-site |
+| 34.3 | Մինչև կարգապահական տույժի կիրառումը՝ գործատուն գրավոր կերպով աշխատողից պահանջել է… | 7, 226 | 0.4 | Document / on-site |
+| 34.4 | Պահպանվել են կարգապահական տույժի կիրառման ժամկետները | 7, 227 | 0.5 | Document / on-site |
+| 35 | Պահպանվել է Հայաստանի Հանրապետության օրենսդրությամբ սահմանված ծանր, վնասակար,… | 257, 5 (+gov. decisions, other laws) | 0.8 | Document / on-site |
+| 36 | Պահպանվել է հղի կամ մինչև մեկ տարեկան երեխա խնամող կանանց Հայաստանի Հանրապետության… | 258 (+gov. decisions) | 0.4 | Document / on-site |
+| 37 | Հղի և մինչև մեկ տարեկան երեխա խնամող կինը բժշկական հետազոտություն անցնելու համար… | 258, 195 | 0.4 | Document / on-site |
+| 38 | Երեխային կրծքով կերակրող կնոջը մինչև երեխայի մեկուկես տարին լրանալը, երեխային… | 258, 195 | 0.4 | Document / on-site |
+
+The heaviest questions are 30.6 (working-time records, 1.3), 32.1 (minimum wage, 1.3), 32.2 (pay deadlines, 1.3), 28 (final settlement, 1.1) and 1, 20, 23, 30.5 (each 1.0).
+
+### 7.3 Coverage
+
+| Measure | Questions | Share of 102 | Weight | Share of weight (50.0) |
+|---|---|---|---|---|
+| Fully covered by a Tesuch rule | 0 | 0 % | 0.0 | 0 % |
+| **Partly covered** (7: Nos. 4, 9, 18, 20, 22, 31.9, 31.10) | 7 | **6.9 %** | 2.9 | 5.8 % |
+| Not covered, automatable | 43 | 42.2 % | 25.3 | 50.6 % |
+| Document / on-site only | 52 | 51.0 % | 21.8 | 43.6 % |
+
+**Today Tesuch fully answers none of the 102 checklist questions and partly answers 7 (about 7 % by count, 6 % by weight).** Three of our 13 rules have no counterpart in the checklist: `fixed-term-ending` (reminder only), `leave-cash-swap` (Art. 170(1) is not cited; only 170(2) appears in No. 28), `src-registration` (not in the 2022 checklist). The 43 automatable questions need either data we hold (contracts, leave: effort S/M, 23 questions) or payroll and timesheets (effort L, 20 questions).
+
+### 7.4 Top 15 candidates for new rules or document-checklist items
+
+Weights are the checklist's own. "Doc item" = add to an inspection-pack checklist ("have this ready"), no data needed.
+
+| # | Checklist No. | What | Weight | Type | Effort |
+|---|---|---|---|---|---|
+| 1 | 1 | Employee with no written contract or hiring act on file | 1.0 | Rule on data we hold | S |
+| 2 | 20 | Employer termination without one of the Art. 113 grounds: store a ground **code** (extends `termination-ground`) | 1.0 | Rule | S–M |
+| 3 | 11 | Fixed-term contract extended or re-concluded within one month (Art. 95(2.1)) → indefinite | 0.5 | New rule | S |
+| 4 | 25 | Dismissal during sick leave, leave, pregnancy, child under 1 year (Art. 114) | 0.6 | New rule | S–M |
+| 5 | 22 + 16 | Make `notice-period` ground-aware; add essential-conditions-change notice (Art. 105(2)) | 0.4 + 0.3 | Fix + rule | S |
+| 6 | 3.1–3.13 | Contract has all 13 mandatory Art. 84(1) items (the Inspections law names items 1, 4, 5, 6, 7 as an unannounced-check trigger) | 4.2 in total | Rule (missing-field check) + doc item | S–M |
+| 7 | 4 | Probation: fix the 6-month special case and the Art. 92(3) exclusions; add the other no-probation cases (91(3)(2),(4)) | 0.3 | Fix | S |
+| 8 | 10 | Under-16 employee must have a temporary (fixed-term) contract (Art. 17(4)) | 0.3 | New rule (birth date + term) | S |
+| 9 | 30.6 | Working-time records are kept for every employee (highest weight) | 1.3 | Doc item (rule later) | S (doc) / L (rule) |
+| 10 | 30.5 | Written work and rest schedules per employee | 1.0 | Doc item | S |
+| 11 | 32.1 + 32.2 | Minimum wage and pay deadlines (by the 15th, Art. 192) | 1.3 + 1.3 | Doc item now; rule needs payroll import and the minimum-wage law | S (doc) / L (rule) |
+| 12 | 28 | Final settlement paid on the termination day (Art. 130) | 1.1 | Rule if a paid-date field is added | M |
+| 13 | 12 | Documented business reason when essential conditions change (Art. 105(1)) | 0.8 | Doc item | S |
+| 14 | 30.3 + 30.14 + 31.2 | Under-18 limits: weekly hours (24 / 36), no night work, no rest-day work, two days off | 0.8 + 0.4 + 0.4 | Rule once weekly hours / schedule exist | M |
+| 15 | 6.1–6.6 | Hiring documents on file (ID, SSN, certificates, medical, parent consent under 16, foreigner's permit) | 1.9 in total | Doc item (6.4 and 6.5 matter most: 0.5, 0.3) | S |
+
+### 7.5 Do the checklists confirm the earlier findings?
+
+- **`probation-max`: confirmed.** Question 4 cites Art. 91(3) and **92(1),(2)** (not any 12-month provision). The checklist gives no numbers, but it points to the same two paragraphs I read: 3 months, and 6 months in cases provided by legislation. No source for 12 months appears among the checklist's 11 legal bases.
+- **`notice-period`: confirmed, with the ground-aware reading.** Question 16 repeats the 14/35/42/49/60-day tiers for **essential-condition changes** (Art. 105(2) with 115(1)), and question 22 asks only whether "the notice terms and procedure" (115(1),(3),(4)) were kept; question 20 first requires that a Art. 113 ground exists (113, 120–122); question 21 requires offering other work for grounds 113(1)(2),(3),(4). Nothing contradicts my reading that the tiers apply to specific grounds; question 23 adds the late-notice penalty (115(2), 195).
+- **Holidays: confirmed, and nothing new.** The checklist cites only 147(1) (shortened pre-holiday day, No. 30.13), 156(2) (no work on holidays, 31.8) and 185 (double pay, 32.6, 32.7). It lists **no holidays law** among its bases and never lists dates, so the date list must still come from the separate law.
+- **Corrected:** `fixed-term-expired`. Question 18 cites Art. 111(2),(3),(5); Art. 111(5) makes the contract indefinite if work continues, so that rule now has a legal basis (see 1.3).
+- **Extra points the checklist surfaces:** Art. 111(2) gives a 10-day written notice for ending a contract on expiry (our reminder window of 30 days is longer, which is fine); late wages carry a penalty of 0.15 % of the unpaid pay per overdue day (question 32.13, Art. 198); deductions are capped at 50 % of a month's pay (32.20, Art. 214); the 1-hour pre-holiday shortening is checked (30.13); the checklist cites Art. 7(7) (labour-law norms apply to the relationship) as a general basis in 23 questions.
+
+### 7.6 Which sources look outdated
+
+| File | Why |
+|---|---|
+| `labour-code-HO-124-N` | redaction valid 23.12.2022–06.04.2023; the 2022 checklist is consistent with it, but later amendments (for example the SRC registration duty) are missing |
+| `personal-data-law-HO-49-N` | 2015–2016 redaction; likely replaced or amended since |
+| `inspections-law-HO-60` | 2012 redaction; labour inspection powers, checklists and notice rules may have changed |
+| `inspection/299_1` (checklist N 5.1) | March 2022 version; confirm it is still the current Annex 5 |
+| `inspection/1`, `2`, `3` | undated copies without a decision header; cannot tell the version |
+| `inspection/239_1` | 2022 (OSH, not HR) |
+| `inspection/1650.*`, `1528.*`, `1648.1`, `167.1`, `2026_n1371*`, `1492.1-2`, `1.4` | 2023–2026: current, but irrelevant to labour-law readiness |
+
+Docs only: no rule, code or UI file was changed in round 2.
