@@ -43,6 +43,12 @@ curl -sS -H "Authorization: Bearer $CRON_SECRET" https://<production-domain>/api
 401 means a wrong secret. The job is idempotent (findings are upserted), so re-running is safe. Vercel dashboard → Project → Cron Jobs → Run also works. Hobby cron runs once a day, with imprecise timing.
 
 ## Backups
+**Weekly manual export (stop-gap until Supabase Pro).** Every week, and before any risky migration or bulk change, run on a computer you trust:
+```bash
+pnpm backup:export        # reads NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from .env.local
+```
+It writes `backups/tesuch-backup-YYYY-MM-DD.json` (every table, all rows, file mode 600; the folder is git-ignored) and exits with code 2 if any table failed. The file holds personal data: keep it on an encrypted disk, copy it to a second safe place, never commit, email or paste it. Delete copies older than 8 weeks. If a table is added in a migration, it is picked up automatically (and add it to `KNOWN_TABLES` in `scripts/backup-export.ts`). Restoring is manual: re-insert the rows in the order orgs, companies, employees, contracts, leave_records, findings. Move to Supabase Pro daily backups before real customer data (docs/RISKS.md R3).
+
 The Supabase **Free tier has no point-in-time recovery** and only limited backups. Before any risky migration or bulk data change export what matters (Dashboard → Database → Backups, or `pg_dump` with the connection string from Project Settings → Database). To recover from a bad change you restore from that export; plan it before you need it.
 
 ## Incident checklist

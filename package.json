@@ -12,6 +12,7 @@
     "rules:matrix": "node scripts/rules-matrix.mjs",
     "test:db": "bash supabase/tests/run.sh",
     "seed:demo": "tsx scripts/seed-demo.ts",
+    "backup:export": "tsx scripts/backup-export.ts",
     "test:e2e": "playwright test --trace off"
   },
   "dependencies": {
