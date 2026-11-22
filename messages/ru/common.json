@@ -13,6 +13,11 @@
     "overdue": "Просрочено",
     "due": "Срок: {date}",
     "language": "Язык",
-    "article": "Ст. {n}"
+    "article": "Ст. {n}",
+    "support": {
+      "help": "Помощь",
+      "telegram": "Telegram-бот",
+      "sla": "Отвечаем в течение 1 рабочего дня."
+    }
   }
 }

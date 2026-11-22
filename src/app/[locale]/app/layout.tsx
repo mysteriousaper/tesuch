@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { SupportFooter, SupportHeaderLink } from "@/components/support-help";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { hasCurrentConsent } from "@/components/legal/consent";
 import { ModeToggle } from "@/components/theme/mode-toggle";
@@ -27,6 +28,7 @@ export default async function AppLayout({ children, params }: { children: React.
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <span className="text-lg font-bold">{c("appName")}</span>
         <div className="flex items-center gap-3">
+          <SupportHeaderLink />
           <ModeToggle />
           <LocaleSwitcher />
           <form action={async () => { "use server"; await signOut(); redirect({ href: "/login", locale }); }}>
@@ -36,6 +38,7 @@ export default async function AppLayout({ children, params }: { children: React.
       </header>
       <AppNav />
       <main className="py-6">{children}</main>
+      <SupportFooter />
     </div>
   );
 }

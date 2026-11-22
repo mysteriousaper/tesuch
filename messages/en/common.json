@@ -13,6 +13,11 @@
     "overdue": "Overdue",
     "due": "Due {date}",
     "language": "Language",
-    "article": "Art. {n}"
+    "article": "Art. {n}",
+    "support": {
+      "help": "Help",
+      "telegram": "Telegram bot",
+      "sla": "We answer within 1 working day."
+    }
   }
 }
