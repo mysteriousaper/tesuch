@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { formatDate, ruleById, type Locale } from "@/lib/notify/i18n";
+import { formatDate, ruleById, rulesReviewedLine, type Locale } from "@/lib/notify/i18n";
 import type { Readiness } from "@/lib/readiness";
 import type { OwnerSnapshot } from "./owner-home-data";
 import { CoverageNote } from "@/components/coverage-note";
@@ -46,7 +46,7 @@ export async function OwnerHome({ locale, company, snapshot, telegramLinked, ass
       </section>
 
       {snapshot.status !== "none" && (
-        <CoverageNote titles={cov.titles} summary={t("coverage.summary", { n: cov.count })} listLabel={t("coverage.list")} note={t("coverage.note")} />
+        <CoverageNote titles={cov.titles} summary={t("coverage.summary", { n: cov.count })} listLabel={t("coverage.list")} note={t("coverage.note")} reviewed={rulesReviewedLine(locale as Locale)} />
       )}
 
       {(snapshot.status === "none" || !telegramLinked) && (

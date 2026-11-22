@@ -4,7 +4,7 @@
 // Written with createElement (no JSX) so the module runs unchanged in Next.js and in vitest.
 import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { createElement as h, type ReactElement, type ReactNode } from "react";
-import { citation, coverageLine, DISCLAIMER, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "../notify/i18n";
+import { citation, coverageLine, rulesReviewedLine, DISCLAIMER, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "../notify/i18n";
 import type { Finding, IsoDate } from "../rules/types";
 import { FONT_STACK } from "./fonts";
 import { noticePlan } from "./notice";
@@ -60,7 +60,7 @@ function orderDoc(title: string, company: CompanyInfo, children: ReactNode[]): D
       Page,
       { size: "A4", style: s.page },
       h(View, { style: s.content }, txt(s.company, company.name, company.taxId ? ` · ՀՎՀՀ՝ ${company.taxId}` : ""), ...children),
-      h(Text, { style: s.footer, fixed: true, render: ({ pageNumber, totalPages }) => `${DRAFT_FOOTER}   ${pageNumber}/${totalPages}` }),
+      h(Text, { style: s.footer, fixed: true, render: ({ pageNumber, totalPages }) => `${DRAFT_FOOTER} · ${rulesReviewedLine("hy")}   ${pageNumber}/${totalPages}` }),
     ),
   );
 }
@@ -322,7 +322,7 @@ export function readinessChecklist({ locale, company, asOf, score, items, pack =
       h(Text, {
         style: s.footerNeutral,
         fixed: true,
-        render: ({ pageNumber, totalPages }) => `${DISCLAIMER[locale]} · ${CL.generated[locale]} · ${pageNumber}/${totalPages}`,
+        render: ({ pageNumber, totalPages }) => `${DISCLAIMER[locale]} · ${rulesReviewedLine(locale)} · ${CL.generated[locale]} · ${pageNumber}/${totalPages}`,
       }),
     ),
     ...(pack
@@ -340,7 +340,7 @@ export function readinessChecklist({ locale, company, asOf, score, items, pack =
               ),
               txt(s.basis, PACK_DOCS.note[locale]),
             ),
-            h(Text, { style: s.footerNeutral, fixed: true, render: ({ pageNumber, totalPages }) => `${DISCLAIMER[locale]} · ${CL.generated[locale]} · ${pageNumber}/${totalPages}` }),
+            h(Text, { style: s.footerNeutral, fixed: true, render: ({ pageNumber, totalPages }) => `${DISCLAIMER[locale]} · ${rulesReviewedLine(locale)} · ${CL.generated[locale]} · ${pageNumber}/${totalPages}` }),
           ),
         ]
       : []),

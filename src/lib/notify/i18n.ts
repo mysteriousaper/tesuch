@@ -1,5 +1,6 @@
 // Shared, user-facing strings for alerts, digests and PDFs. Armenian is the default locale.
 import { RULES } from "../rules/catalog";
+import { rulesReviewedOn } from "../rules/coverage";
 import type { RuleDefinition } from "../rules/schema";
 import type { EffectiveSeverity, IsoDate } from "../rules/types";
 
@@ -44,6 +45,14 @@ export function coverageLine(locale: Locale): string {
     ru: `Тесуч проверяет областей: ${n}. Это не гарантия результата проверки.`,
     en: `Tesuch checks ${n} areas. Not a guarantee of the inspection result.`,
   }[locale];
+}
+
+/** "Rules last reviewed: <date>", or an honest "not yet reviewed by a lawyer" while no date is recorded in rules/*.json. */
+export function rulesReviewedLine(locale: Locale): string {
+  const d = rulesReviewedOn();
+  if (d === null) return { hy: "Կանոնները դեռ չեն ստուգվել իրավաբանի կողմից", ru: "Правила ещё не проверены юристом", en: "Rules not yet reviewed by a lawyer" }[locale];
+  const date = formatDate(d);
+  return { hy: `Կանոնների վերջին ստուգումը՝ ${date}`, ru: `Правила проверены юристом: ${date}`, en: `Rules last reviewed: ${date}` }[locale];
 }
 
 export const T = {

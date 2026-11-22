@@ -1,5 +1,5 @@
 {
-  "id": "probation-minor", "version": 1, "article": "91", "status": "needs_lawyer_review", "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
+  "id": "probation-minor", "version": 1, "article": "91", "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
   "basis": "law-firm summary (not yet checked against arlis.am)",
   "scope": "contract", "severity": "red",
   "title": { "hy": "Անչափահասի համար սահմանված է փորձաշրջան", "ru": "Испытательный срок установлен несовершеннолетнему", "en": "Probation set for a minor" },

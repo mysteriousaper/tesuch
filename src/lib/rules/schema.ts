@@ -11,6 +11,8 @@ export const ruleSchema = z
     // Never invented: null until a lawyer supplies the article number.
     article: z.string().regex(/^\d+(\.\d+)?$/).nullable(),
     status: z.enum(["verified", "needs_lawyer_review"]),
+    /** Date a lawyer last reviewed this rule against arlis.am (YYYY-MM-DD). null = not yet reviewed by a lawyer. */
+    reviewed_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
     source_url: z.string().url().startsWith("https://www.arlis.am/"),
     source_note: z.string(),
     basis: z.string(),

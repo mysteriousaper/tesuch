@@ -1,5 +1,5 @@
 {
-  "id": "annual-leave-min", "version": 2, "article": null, "status": "needs_lawyer_review", "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
+  "id": "annual-leave-min", "version": 2, "article": null, "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
   "basis": "brief: 20 working days (24 on a six-day week); article number missing",
   "scope": "employee", "severity": "amber",
   "title": { "hy": "Վերջին աշխատանքային տարում տրամադրված տարեկան արձակուրդը նվազագույնից պակաս է", "ru": "За последний рабочий год ежегодного отпуска предоставлено меньше минимума", "en": "Annual leave granted in the last working year is below the minimum" },
