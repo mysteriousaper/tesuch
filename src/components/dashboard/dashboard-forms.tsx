@@ -1,5 +1,6 @@
 "use client";
 
+import { SanityWatch } from "@/components/import/sanity-watch";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { addCompany, addEmployee, addLeave, loadDemoData, recheckCompany, renameOrg } from "@/app/[locale]/app/actions";
@@ -111,6 +112,7 @@ export function AddEmployeeForm({ locale, companyId, privacy = false }: { locale
           <option value="no">{t("fields.srcNo")}</option>
         </select>
       </label>
+      <SanityWatch />
     </ActionForm>
   );
 }
@@ -133,8 +135,9 @@ export function AddLeaveForm({ locale, companyId, employeeId }: { locale: string
       </label>
       <label className={labelCls}>
         {t("leaveDays")}
-        <input name="days" type="number" min={1} max={400} required inputMode="numeric" className={inputCls} />
+        <input name="days" type="number" min={1} required inputMode="numeric" className={inputCls} />
       </label>
+      <SanityWatch />
     </ActionForm>
   );
 }

@@ -9,12 +9,12 @@ import { overdueScoringOf, statsFor } from "./stats";
 type UserClient = Awaited<ReturnType<typeof supabaseForUser>>;
 
 export interface OwnerTask { key: string; ruleId: string; employee: string | null; dueDate: string; overdue: boolean }
-export interface OwnerSnapshot { status: Readiness; score: number | null; staff: number; open: number; tasks: OwnerTask[] }
+export interface OwnerSnapshot { status: Readiness; score: number | null; staff: number; open: number; tasks: OwnerTask[]; /** Newest row added to the staff, contract or leave data (ISO timestamp); null = nothing yet. */ dataUpdatedAt: string | null }
 
 /** Everything the owner home needs for one company, read through the user's RLS client. */
 export async function ownerSnapshot(supabase: UserClient, orgId: string, companyId: string): Promise<OwnerSnapshot> {
   const today = todayIso();
-  const [stats, findings] = await Promise.all([
+  const [stats, findings, lastEmployee, lastContract, lastLeave] = await Promise.all([
     companyStats(supabase, orgId, companyId),
     supabase
       .from("findings")
@@ -23,7 +23,11 @@ export async function ownerSnapshot(supabase: UserClient, orgId: string, company
       .eq("status", "open")
       .order("due_date")
       .limit(200),
+    supabase.from("employees").select("created_at").eq("company_id", companyId).order("created_at", { ascending: false }).limit(1),
+    supabase.from("contracts").select("created_at, employees!inner(company_id)").eq("employees.company_id", companyId).order("created_at", { ascending: false }).limit(1),
+    supabase.from("leave_records").select("created_at, employees!inner(company_id)").eq("employees.company_id", companyId).order("created_at", { ascending: false }).limit(1),
   ]);
+  const dataUpdatedAt = [lastEmployee, lastContract, lastLeave].flatMap((r) => (r.data ?? []).map((x) => x.created_at as string)).sort().at(-1) ?? null;
   const own = statsFor(stats, companyId);
   const candidates = (findings.data ?? []).flatMap((r) => {
     let severity;
@@ -43,5 +47,6 @@ export async function ownerSnapshot(supabase: UserClient, orgId: string, company
     staff: own.staff,
     open: own.open,
     tasks,
+    dataUpdatedAt,
   };
 }

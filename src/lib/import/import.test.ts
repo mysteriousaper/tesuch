@@ -326,3 +326,19 @@ describe("privacy mode import", () => {
     expect(r.employees[0].full_name).toBe("Иван Иванов");
   });
 });
+
+describe("import sanity warnings", () => {
+  const table = toTable([
+    ["Full name", "Hire date", "Date of birth", "Contract end", "Probation end"],
+    ["Anna", "01.02.2026", "10.05.1990", "", ""],
+    ["Child", "01.02.2026", "01.01.2020", "", ""],
+    ["Future", "01.03.2029", "10.05.1990", "", ""],
+  ]);
+  it("warns but still imports the row", () => {
+    const mapping = toMapping(autoMap(table.headers));
+    const r = buildImport(table, mapping, { ...opts(), today: "2026-11-22" });
+    expect(r.errors).toEqual([]);
+    expect(r.employees).toHaveLength(3);
+    expect(r.warnings.map((w) => [w.row, w.key])).toEqual([[3, "tooYoung"], [4, "futureStart"]]);
+  });
+});

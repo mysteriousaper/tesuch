@@ -1,5 +1,6 @@
 "use client";
 
+import { SanityWatch } from "@/components/import/sanity-watch";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { updateEmployee } from "@/app/[locale]/app/actions";
@@ -119,6 +120,7 @@ export function EditEmployeeForm({ locale, companyId, employeeId, contractId, va
           </label>
         </div>
       </details>
+      <SanityWatch />
     </ActionForm>
   );
 }

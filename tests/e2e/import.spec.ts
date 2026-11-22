@@ -90,6 +90,28 @@ test.describe("staff import (lane B)", () => {
     ]);
   });
 
+  test("implausible dates warn in the preview but do not block the import", async ({ page }) => {
+    await signInViaUi(page, user, "en");
+    await page.goto("/en/app/import");
+    await page.getByLabel("Company").selectOption(companyId);
+    const csv = ["Full name,Date of birth,Hire date", "Sanity Child,01.01.2020,01.09.2026", "Sanity Future,15.03.1990,01.01.2099", "Sanity Fine,15.03.1990,01.09.2026"].join("\n");
+    await page.getByLabel("File (.csv, .xlsx)").setInputFiles({ name: "sanity.csv", mimeType: "text/csv", buffer: Buffer.from(csv, "utf8") });
+    await page.getByRole("button", { name: "Next" }).click();
+    const warnings = page.getByTestId("import-warnings");
+    await expect(warnings).toContainText("Please double-check these rows");
+    await expect(warnings).toContainText("This person would be under 14");
+    await expect(warnings).toContainText("Start date is more than a year in the future");
+    await expect(page.getByRole("button", { name: "Import (3)" })).toBeEnabled();
+  });
+
+  test("manual form warns on an implausible birth date", async ({ page }) => {
+    await signInViaUi(page, user, "en");
+    await page.goto(`/en/app/companies/${companyId}`);
+    await page.locator("summary", { hasText: "Add employee" }).click();
+    await page.locator('input[name="birth_date"]').first().fill("2020-01-01");
+    await expect(page.getByTestId("sanity-watch").first()).toContainText("This person would be under 14");
+  });
+
   test("title rows above the header and windows-1251 encoding are handled", async ({ page }) => {
     await signInViaUi(page, user, "en");
     await page.goto("/en/app/import");

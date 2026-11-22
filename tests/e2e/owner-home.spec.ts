@@ -65,6 +65,23 @@ test.describe("owner home for a single business (S-2)", () => {
     await expect(page.locator('section[aria-labelledby="tasks-h"] li')).toHaveCount(3);
   });
 
+  test("shows when the data was last updated and nudges after 90 days", async ({ page }) => {
+    await signInViaUi(page, user, "en");
+    await expect(page.getByTestId("data-updated")).toContainText("Data last updated");
+    await expect(page.getByTestId("data-stale")).toHaveCount(0);
+
+    const old = new Date(Date.now() - 100 * 86_400_000).toISOString();
+    const db = admin();
+    const { data: emps } = await db.from("employees").select("id").eq("company_id", fx.companyId);
+    const ids = (emps ?? []).map((e) => e.id);
+    expect((await db.from("employees").update({ created_at: old }).in("id", ids)).error).toBeNull();
+    expect((await db.from("contracts").update({ created_at: old }).in("employee_id", ids)).error).toBeNull();
+    expect((await db.from("leave_records").update({ created_at: old }).in("employee_id", ids)).error).toBeNull();
+    await page.goto("/en/app");
+    await expect(page.getByTestId("data-stale")).toContainText("Your data is 100 days old");
+    await expect(page.getByTestId("data-stale").getByRole("link", { name: "Update staff data" })).toHaveAttribute("href", /\/app\/import$/);
+  });
+
   test("two companies keep the firm dashboard; ?view=firm is the advanced view", async ({ page }) => {
     await signInViaUi(page, user, "en");
     await page.getByRole("link", { name: "All companies and details" }).click();

@@ -4,6 +4,7 @@ import { formatDate, ruleById, type Locale } from "@/lib/notify/i18n";
 import type { Readiness } from "@/lib/readiness";
 import type { OwnerSnapshot } from "./owner-home-data";
 import { CoverageNote } from "@/components/coverage-note";
+import { daysSince, isStale } from "@/lib/import/sanity";
 import { coverage } from "@/lib/rules/coverage";
 import { OnboardingSteps } from "./onboarding-steps";
 
@@ -21,6 +22,8 @@ const TONE: Record<Readiness, { border: string; text: string; icon: string }> = 
 export async function OwnerHome({ locale, company, snapshot, telegramLinked, assisted }: { locale: string; company: { id: string; name: string }; snapshot: OwnerSnapshot; telegramLinked: boolean; assisted?: React.ReactNode }) {
   const t = await getTranslations("owner");
   const tone = TONE[snapshot.status];
+  const today = new Date().toISOString().slice(0, 10);
+  const stale = isStale(snapshot.dataUpdatedAt, today) ? daysSince(snapshot.dataUpdatedAt, today) : null;
   const cov = coverage(locale as Locale);
   const pack = `/api/pdf/checklist?company=${company.id}&locale=${locale}&pack=1`;
   return (
@@ -34,6 +37,12 @@ export async function OwnerHome({ locale, company, snapshot, telegramLinked, ass
         </p>
         <p className="text-base">{t(`hint.${snapshot.status}`)}</p>
         {snapshot.score !== null && <p className="text-sm text-muted">{t("score", { score: snapshot.score })}</p>}
+        {snapshot.dataUpdatedAt && <p className="text-sm text-muted" data-testid="data-updated">{t("dataAge", { date: formatDate(snapshot.dataUpdatedAt.slice(0, 10)) })}</p>}
+        {stale !== null && (
+          <p role="note" className="mt-1 rounded-theme border border-warn p-3 text-sm" data-testid="data-stale">
+            {t("dataAgeNudge", { days: stale })} <Link href="/app/import" className="font-semibold text-accent underline">{t("dataAgeCta")}</Link>
+          </p>
+        )}
       </section>
 
       {snapshot.status !== "none" && (

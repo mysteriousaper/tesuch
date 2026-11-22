@@ -49,6 +49,9 @@
       "summary": "Tesuch checks {n} areas",
       "list": "What Tesuch checks",
       "note": "Not a guarantee of the inspection result. A real inspection covers more than these areas."
-    }
+    },
+    "dataAge": "Data last updated {date}",
+    "dataAgeNudge": "Your data is {days} days old. Upload the current staff list so the status stays accurate.",
+    "dataAgeCta": "Update staff data"
   }
 }

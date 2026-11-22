@@ -344,6 +344,24 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
             </ul>
           </div>
 
+          {preview.warnings.length > 0 && (
+            <div role="note" data-testid="import-warnings" className="overflow-x-auto rounded-theme border border-warn">
+              <table className="w-full text-left text-sm">
+                <caption className="px-3 py-2 text-left font-semibold">{t("warningsTitle")}</caption>
+                <tbody>
+                  {preview.warnings.slice(0, ERRORS_SHOWN).map((w, i) => (
+                    <tr key={i} className="border-t border-line">
+                      <td className="px-3 py-2 tabular-nums">{w.row}</td>
+                      <td className="px-3 py-2">{field(w.field)}</td>
+                      <td className="px-3 py-2 text-warn">⚠ {t(`sanity.${w.key}`)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="px-3 py-2 text-xs text-muted">{t("warningsHint")}{preview.warnings.length > ERRORS_SHOWN ? ` ${t("moreErrors", { count: preview.warnings.length - ERRORS_SHOWN })}` : ""}</p>
+            </div>
+          )}
+
           {preview.errors.length > 0 && (
             <div className="overflow-x-auto rounded-theme border border-line">
               <table className="w-full text-left text-sm">

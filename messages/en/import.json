@@ -125,6 +125,16 @@
       "fixed_term_ground": "Fixed-term ground: the fixed-term ground check will not run.",
       "birth_date": "Birth date: the check on probation for minors will not run."
     },
-    "leaveNote": "Leave records are not imported. The annual leave check will not run for these employees until leave is added."
+    "leaveNote": "Leave records are not imported. The annual leave check will not run for these employees until leave is added.",
+    "warningsTitle": "Please double-check these rows",
+    "warningsHint": "These rows are still imported. Wrong dates give a wrong status.",
+    "sanity": {
+      "futureStart": "Start date is more than a year in the future",
+      "tooYoung": "This person would be under 14",
+      "tooOld": "This person would be over 100",
+      "endBeforeStart": "End date is before the start date",
+      "probationBeforeStart": "Probation ends before the start date",
+      "leaveDays": "More than 400 days is not possible"
+    }
   }
 }

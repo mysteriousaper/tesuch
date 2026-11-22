@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { ContractType, IsoDate, TerminationInitiator } from "../rules/types";
 import { NAME_FIELDS, type TargetField } from "./fields";
 import type { ColumnMapping } from "./mapping";
+import { sanityIssues, type SanityKey } from "./sanity";
 import { parseBool, parseContractType, parseDate, parseGround, parseInitiator, parseText, type Parsed, type RawCell } from "./normalize";
 import type { RawTable } from "./parse";
 
@@ -19,6 +20,13 @@ export type ImportErrorKey =
   | "import.error.endDateOnIndefinite"
   | "import.error.fixedTermWithoutEnd"
   | "import.error.terminationBeforeStart";
+
+/** Plausibility warnings: the row is still imported. Messages: import.sanity.<key>. */
+export interface ImportWarning {
+  row: number;
+  field: TargetField;
+  key: SanityKey;
+}
 
 export interface ImportError {
   row: number;
@@ -63,6 +71,7 @@ export interface ImportResult {
   employees: EmployeeInsert[];
   contracts: ContractInsert[];
   errors: ImportError[];
+  warnings: ImportWarning[];
   /** Data rows seen (blank rows excluded). */
   rowCount: number;
   /** Ids of employees whose code was generated (the file had none): their identity is the employee ID, not the code. */
@@ -78,6 +87,8 @@ export interface ImportOptions {
   privacy?: boolean;
   /** Privacy mode: codes already used in the company, so generated codes never collide with them. */
   existingCodes?: Iterable<string>;
+  /** Injected for deterministic tests; defaults to today. */
+  today?: IsoDate;
 }
 
 /** Mirrors employees.employee_code check (1-40 characters). */
@@ -131,8 +142,9 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
   const columnOf = new Map<TargetField, number>();
   for (const [col, field] of Object.entries(mapping)) if (field) columnOf.set(field, Number(col));
 
-  const result: ImportResult = { employees: [], contracts: [], errors: [], rowCount: table.rows.length, generatedCodeIds: [] };
+  const result: ImportResult = { employees: [], contracts: [], errors: [], warnings: [], rowCount: table.rows.length, generatedCodeIds: [] };
   const privacy = opts.privacy === true;
+  const today = opts.today ?? new Date().toISOString().slice(0, 10);
   const seenCodes = new Set<string>();
   const usedCodes = new Set<string>([...(opts.existingCodes ?? [])].map(codeKey));
 
@@ -199,6 +211,10 @@ export function buildImport(table: RawTable, mapping: ColumnMapping, opts: Impor
     if (errors.length > 0) {
       result.errors.push(...errors);
       continue;
+    }
+
+    for (const w of sanityIssues({ birthDate: dates.birth_date, startDate: dates.start_date, endDate: dates.end_date, probationEnd: dates.probation_end }, today)) {
+      result.warnings.push({ row: rowNumber, field: w.field as TargetField, key: w.key });
     }
 
     if (needsCode) {
