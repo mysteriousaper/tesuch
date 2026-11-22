@@ -411,3 +411,5 @@ Weights are the checklist's own. "Doc item" = add to an inspection-pack checklis
 | `inspection/1650.*`, `1528.*`, `1648.1`, `167.1`, `2026_n1371*`, `1492.1-2`, `1.4` | 2023–2026: current, but irrelevant to labour-law readiness |
 
 Docs only: no rule, code or UI file was changed in round 2.
+
+> **Owner confirmation (22 Nov 2026):** the owner checked arlis.am and confirms these are the current versions in force today (no later amendments found). A lawyer should still confirm before rules are marked verified.

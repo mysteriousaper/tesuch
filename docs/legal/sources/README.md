@@ -9,3 +9,5 @@ Official texts downloaded by the owner from arlis.am. `.txt` files are text extr
 | inspections-law-HO-60.pdf | «ՀՀ-ում ստուգումների կազմակերպման և անցկացման մասին» ՀՀ օրենք (ՀՕ-60) |
 
 Still missing: labour-law inspection checklist (ստուգաթերթ), law on holidays and commemoration days, SRC employee/contract registration rules.
+
+> **Owner confirmation (22 Nov 2026):** the owner checked arlis.am and confirms these are the current versions in force today (no later amendments found). A lawyer should still confirm before rules are marked verified.

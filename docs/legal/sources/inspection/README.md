@@ -32,3 +32,5 @@ Provided by the owner on 22 Nov 2026 (arlis.am). Government decisions incl. N 23
 | 239_1 | Հավելված ՀՀ կառավարության 2022 թվականի մարտի 3-ի N 239-Ն որոշման  |
 | 299_1 |  Հավելված ՀՀ կառավարության 2022 թվականի մարտի 10-ի N 299 - Ն որոշմա |
 | 3 | ՀԱՅԱՍՏԱՆԻ ՀԱՆՐԱՊԵՏՈՒԹՅԱՆ ԱՌՈՂՋԱՊԱՀԱԿԱՆ ԵՎ ԱՇԽԱՏԱՆՔԻ ՏԵՍՉԱ� |
+
+> **Owner confirmation (22 Nov 2026):** the owner checked arlis.am and confirms these are the current versions in force today (no later amendments found). A lawyer should still confirm before rules are marked verified.
