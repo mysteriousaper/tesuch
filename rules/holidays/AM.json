@@ -1,0 +1,23 @@
+{
+  "country": "AM",
+  "status": "needs_verification",
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Fixed-date national holidays of the Republic of Armenia as listed in the Labour Code (list of holidays and memorial days). The whole file is NOT yet checked against arlis.am: a lawyer must confirm every date, the current list, and the rules for moving a day off when a holiday falls on a weekend. Movable holidays (Easter) and one-off government transfers of working days are NOT included; add them under by_year once a source is cited.",
+  "reviewed_on": null,
+  "weekend": [0, 6],
+  "fixed": [
+    { "month": 1, "day": 1, "name": { "hy": "Ամանոր", "ru": "Новый год", "en": "New Year" } },
+    { "month": 1, "day": 2, "name": { "hy": "Ամանոր", "ru": "Новый год", "en": "New Year" } },
+    { "month": 1, "day": 6, "name": { "hy": "Սուրբ Ծնունդ և Աստվածահայտնություն", "ru": "Рождество и Богоявление", "en": "Christmas and Epiphany" } },
+    { "month": 1, "day": 28, "name": { "hy": "Բանակի օր", "ru": "День армии", "en": "Army Day" } },
+    { "month": 3, "day": 8, "name": { "hy": "Կանանց միջազգային օր", "ru": "Международный женский день", "en": "International Women's Day" } },
+    { "month": 4, "day": 7, "name": { "hy": "Մայրության և գեղեցկության տոն", "ru": "День материнства и красоты", "en": "Motherhood and Beauty Day" } },
+    { "month": 4, "day": 24, "name": { "hy": "Հայոց ցեղասպանության զոհերի հիշատակի օր", "ru": "День памяти жертв Геноцида армян", "en": "Armenian Genocide Remembrance Day" } },
+    { "month": 5, "day": 1, "name": { "hy": "Աշխատանքի օր", "ru": "День труда", "en": "Labour Day" } },
+    { "month": 5, "day": 9, "name": { "hy": "Հաղթանակի և խաղաղության տոն", "ru": "День Победы и мира", "en": "Victory and Peace Day" } },
+    { "month": 5, "day": 28, "name": { "hy": "Հանրապետության օր", "ru": "День Республики", "en": "Republic Day" } },
+    { "month": 7, "day": 5, "name": { "hy": "Սահմանադրության օր", "ru": "День Конституции", "en": "Constitution Day" } },
+    { "month": 9, "day": 21, "name": { "hy": "Անկախության օր", "ru": "День независимости", "en": "Independence Day" } }
+  ],
+  "by_year": {}
+}

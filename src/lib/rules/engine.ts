@@ -1,5 +1,6 @@
 import { addDays, format, parseISO } from "date-fns";
 import { Almanac, Engine } from "json-rules-engine";
+import { addWorkingDays, AM_CALENDAR, nextWorkingDay, type HolidayCalendar } from "./holidays";
 import { baseFacts, isActive, paramFacts, type RuleContext } from "./facts";
 import type { RuleDefinition } from "./schema";
 import type { Contract, EffectiveSeverity, Employee, Finding, IsoDate, LeaveRecord } from "./types";
@@ -33,14 +34,16 @@ function buildEngine(rules: RuleDefinition[]): Engine {
   return engine;
 }
 
-function dueDate(rule: RuleDefinition, ctx: RuleContext): IsoDate {
+function dueDate(rule: RuleDefinition, ctx: RuleContext, calendar: HolidayCalendar): IsoDate {
   const anchor =
     rule.due.date === "probationEnd"
       ? ctx.contract.probationEnd
       : rule.due.date === "contractEnd"
         ? ctx.contract.endDate
         : ctx.asOf;
-  return format(addDays(parseISO(anchor ?? ctx.asOf), rule.due.offsetDays), "yyyy-MM-dd");
+  const from = anchor ?? ctx.asOf;
+  const due = rule.due.unit === "working" ? addWorkingDays(from, rule.due.offsetDays, calendar) : format(addDays(parseISO(from), rule.due.offsetDays), "yyyy-MM-dd");
+  return rule.due.moveToWorkingDay ? nextWorkingDay(due, calendar) : due;
 }
 
 /** The contract employee-scope rules are evaluated against: latest active, else latest started. */
@@ -69,11 +72,11 @@ function guardFacts(rule: RuleDefinition): string[] {
 }
 
 /** Deterministic: same rules + data + asOf always produce the same findings. */
-export async function evaluateCompany(rules: RuleDefinition[], data: CompanyData, asOf: IsoDate): Promise<Finding[]> {
-  return (await evaluateCompanyDetailed(rules, data, asOf)).findings;
+export async function evaluateCompany(rules: RuleDefinition[], data: CompanyData, asOf: IsoDate, calendar: HolidayCalendar = AM_CALENDAR): Promise<Finding[]> {
+  return (await evaluateCompanyDetailed(rules, data, asOf, calendar)).findings;
 }
 
-export async function evaluateCompanyDetailed(rules: RuleDefinition[], data: CompanyData, asOf: IsoDate): Promise<Evaluation> {
+export async function evaluateCompanyDetailed(rules: RuleDefinition[], data: CompanyData, asOf: IsoDate, calendar: HolidayCalendar = AM_CALENDAR): Promise<Evaluation> {
   const byId = new Map(rules.map((r) => [r.id, r]));
   const contractRulesList = rules.filter((r) => r.scope === "contract");
   const employeeRulesList = rules.filter((r) => r.scope === "employee");
@@ -96,7 +99,7 @@ export async function evaluateCompanyDetailed(rules: RuleDefinition[], data: Com
     }
     for (const ev of events) {
       const rule = byId.get(ev.type)!;
-      const due = dueDate(rule, ctx);
+      const due = dueDate(rule, ctx, calendar);
       findings.push({
         ruleId: rule.id,
         ruleVersion: rule.version,
