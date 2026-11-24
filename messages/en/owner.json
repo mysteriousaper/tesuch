@@ -48,10 +48,19 @@
     "coverage": {
       "summary": "Tesuch checks {n} areas",
       "list": "What Tesuch checks",
-      "note": "Not a guarantee of the inspection result. A real inspection covers more than these areas."
+      "note": "Not a guarantee of the inspection result. A real inspection covers more than these areas.",
+      "checklist": "Tesuch checks, in part, {checked} of {total} items of the official labour inspection checklist. The rest are your documents."
     },
     "dataAge": "Data last updated {date}",
     "dataAgeNudge": "Your data is {days} days old. Upload the current staff list so the status stays accurate.",
-    "dataAgeCta": "Update staff data"
+    "dataAgeCta": "Update staff data",
+    "documents": {
+      "title": "Documents to have ready",
+      "summary": "Documents to have ready ({done} of {total})",
+      "hint": "Items of the labour inspection checklist that Tesuch cannot check: tick what you have ready. Not legal advice.",
+      "ready": "We have it",
+      "viewerNote": "Only the owner and the accountant can tick.",
+      "error": "Could not save. Try again."
+    }
   }
 }
