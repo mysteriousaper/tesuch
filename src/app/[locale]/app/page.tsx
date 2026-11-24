@@ -17,6 +17,8 @@ import { createOrg } from "./actions";
 import { canEditRole } from "./dashboard-logic";
 
 export const dynamic = "force-dynamic";
+// The demo-data action runs here and recomputes rules for three companies: allow the Hobby maximum.
+export const maxDuration = 60;
 
 export default async function AppHome({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ view?: string }> }) {
   const { locale } = await params;

@@ -32,5 +32,5 @@ export async function GET(req: Request) {
     ground: b.contract.termination_ground,
     workforceReduction: b.contract.workforce_reduction,
   });
-  return pdfResponse(pdf, "dismissal", b.contract.id);
+  return pdfResponse(pdf, "dismissal", b.contract.id, b.employee.full_name);
 }

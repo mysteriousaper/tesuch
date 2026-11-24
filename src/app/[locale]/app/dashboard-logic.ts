@@ -177,9 +177,10 @@ export async function insertEmployeeWithContract(
 
 export interface DemoWriter {
   insertCompany(name: string): Promise<string>;
-  insertEmployee(companyId: string, e: DemoEmployee): Promise<string>;
-  insertContract(employeeId: string, c: DemoContract): Promise<void>;
-  insertLeave(employeeId: string, leave: DemoEmployee["leave"]): Promise<void>;
+  /** One batched insert per company: the ids are chosen here so contracts and leave can reference them. */
+  insertEmployees(companyId: string, rows: { id: string; e: DemoEmployee }[]): Promise<void>;
+  insertContracts(rows: { employeeId: string; c: DemoContract }[]): Promise<void>;
+  insertLeave(rows: { employeeId: string; l: DemoEmployee["leave"][number] }[]): Promise<void>;
   /** Deleting a company cascades to its employees, contracts, leave and findings. */
   deleteCompanies(ids: string[]): Promise<void>;
 }
@@ -194,11 +195,12 @@ export async function insertDemo(w: DemoWriter, demo: DemoCompany[]): Promise<{ 
     for (const c of demo) {
       const companyId = await w.insertCompany(c.name);
       created.push(companyId);
-      for (const e of c.employees) {
-        const employeeId = await w.insertEmployee(companyId, e);
-        await w.insertContract(employeeId, e.contract);
-        if (e.leave.length) await w.insertLeave(employeeId, e.leave);
-      }
+      // Three statements per company instead of three per employee.
+      const rows = c.employees.map((e) => ({ id: crypto.randomUUID(), e }));
+      await w.insertEmployees(companyId, rows);
+      await w.insertContracts(rows.map(({ id, e }) => ({ employeeId: id, c: e.contract })));
+      const leave = rows.flatMap(({ id, e }) => e.leave.map((l) => ({ employeeId: id, l })));
+      if (leave.length) await w.insertLeave(leave);
     }
     return { ok: true, companyIds: created };
   } catch {

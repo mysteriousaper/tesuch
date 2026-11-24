@@ -1,3 +1,4 @@
+import { pdfDisposition } from "./filename";
 import "server-only";
 import { z } from "zod";
 import { yerevanToday } from "@/components/documents/yerevan-date";
@@ -64,12 +65,11 @@ export async function loadContract(db: Db, contractId: string): Promise<Contract
 }
 
 /** ASCII-only filename: transliterated names would be guesswork, so use a short id instead. */
-export function pdfResponse(buf: Buffer, kind: string, id: string): Response {
-  const name = `tesuch-${kind}-${id.slice(0, 8)}-${today()}.pdf`.replace(/[^A-Za-z0-9._-]/g, "");
+export function pdfResponse(buf: Buffer, kind: string, id: string, label?: string): Response {
   return new Response(new Uint8Array(buf), {
     headers: {
       "content-type": "application/pdf",
-      "content-disposition": `attachment; filename="${name}"`,
+      "content-disposition": pdfDisposition(kind, id, today(), label),
       "cache-control": "private, no-store",
       "x-content-type-options": "nosniff",
     },

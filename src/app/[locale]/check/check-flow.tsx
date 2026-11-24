@@ -212,11 +212,16 @@ function LeadForm({ answers }: { answers: Record<string, Answer> }) {
                 companySize: (f.get("size") as never) || null,
                 role: (f.get("role") as never) || null,
                 consent: f.get("consent") === "on" ? true : (false as never),
+                website: String(f.get("website") ?? ""),
               }),
             );
           })
         }
       >
+        {/* Honeypot: invisible to people and assistive tech, bots fill it. */}
+        <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+          <label>Website<input name="website" type="text" tabIndex={-1} autoComplete="off" /></label>
+        </div>
         <div className="flex flex-col gap-1.5 sm:col-span-2">
           <label htmlFor="lead-email" className="text-sm font-medium">{t("email")}</label>
           <input id="lead-email" name="email" type="email" required autoComplete="email" maxLength={254} className={input} />

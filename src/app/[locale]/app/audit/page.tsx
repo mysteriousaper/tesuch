@@ -1,11 +1,11 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
-import { AUDIT_ACTIONS, AUDIT_PAGE_SIZE, AUDIT_TABLES, auditHref, auditRange, parseAuditQuery } from "@/components/members/lib";
+import { AUDIT_ACTIONS, AUDIT_PAGE_SIZE, AUDIT_TABLES, auditHref, auditRange, describeAudit, parseAuditQuery } from "@/components/members/lib";
 import { emailsFor, orgSession } from "@/components/members/server";
 import { redirect } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
-interface Row { id: number; at: string; actor: string | null; action: string; table_name: string; row_id: string | null }
+interface Row { id: number; at: string; actor: string | null; action: string; table_name: string; row_id: string | null; old_row: Record<string, unknown> | null; new_row: Record<string, unknown> | null }
 
 const selectCls = "rounded-theme border border-control bg-surface px-3 py-2.5 text-base";
 
@@ -32,9 +32,11 @@ export default async function AuditPage({ params, searchParams }: {
 
   const q = parseAuditQuery(await searchParams);
   const [from, to] = auditRange(q.page);
-  let query = supabase.from("audit_log").select("id, at, actor, action, table_name, row_id", { count: "exact" }).eq("org_id", org.id);
+  let query = supabase.from("audit_log").select("id, at, actor, action, table_name, row_id, old_row, new_row", { count: "exact" }).eq("org_id", org.id);
   if (q.table) query = query.eq("table_name", q.table);
   if (q.action) query = query.eq("action", q.action);
+  // Nightly rule runs write findings without a person behind them: hidden unless asked for.
+  if (!q.system) query = query.or("table_name.neq.findings,actor.not.is.null");
   const { data, count, error } = await query.order("at", { ascending: false }).order("id", { ascending: false }).range(from, to);
   const rows = (data ?? []) as Row[];
   const emails = await emailsFor(rows.flatMap((r) => (r.actor ? [r.actor] : [])));
@@ -63,8 +65,12 @@ export default async function AuditPage({ params, searchParams }: {
             {AUDIT_ACTIONS.map((a) => <option key={a} value={a}>{t(`actions.${a}`)}</option>)}
           </select>
         </label>
+        <label className="flex items-center gap-2 py-2.5 text-sm">
+          <input type="checkbox" name="system" value="1" defaultChecked={q.system} className="size-4" />
+          {t("showSystem")}
+        </label>
         <button className="rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{t("apply")}</button>
-        {(q.table || q.action) && <a href="?" className="py-2.5 text-sm text-muted underline">{t("reset")}</a>}
+        {(q.table || q.action || q.system) && <a href="?" className="py-2.5 text-sm text-muted underline">{t("reset")}</a>}
       </form>
 
       {error ? (
@@ -82,7 +88,7 @@ export default async function AuditPage({ params, searchParams }: {
                   <time dateTime={r.at} className="text-muted">{fmt.dateTime(new Date(r.at), { dateStyle: "short", timeStyle: "short" })}</time>
                 </div>
                 <p className="break-all text-muted">{r.actor ? emails.get(r.actor) ?? r.actor : t("system")}</p>
-                {r.row_id && <p className="break-all font-mono text-xs text-muted">{r.row_id}</p>}
+                <Detail row={r} label={t("changedKeys")} />
               </li>
             ))}
           </ul>
@@ -105,7 +111,7 @@ export default async function AuditPage({ params, searchParams }: {
                     <td className="max-w-[16rem] truncate px-3 py-2" title={r.actor ? emails.get(r.actor) : undefined}>{r.actor ? emails.get(r.actor) ?? r.actor : <span className="text-muted">{t("system")}</span>}</td>
                     <td className="px-3 py-2">{t(`actions.${r.action}` as "actions.insert")}</td>
                     <td className="px-3 py-2">{tableLabel(r.table_name)}</td>
-                    <td className="px-3 py-2 font-mono text-xs text-muted">{r.row_id ?? "—"}</td>
+                    <td className="px-3 py-2"><Detail row={r} label={t("changedKeys")} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -122,5 +128,17 @@ export default async function AuditPage({ params, searchParams }: {
         </nav>
       )}
     </div>
+  );
+}
+
+/** Readable name of the record, the changed fields for updates, and the raw id as a quiet fallback. */
+function Detail({ row, label }: { row: Row; label: string }) {
+  const d = describeAudit(row);
+  return (
+    <>
+      {d.name && <p className="break-words font-medium">{d.name}</p>}
+      {d.changed.length > 0 && <p className="text-xs text-muted">{label}: {d.changed.join(", ")}</p>}
+      {row.row_id && <p className="break-all font-mono text-xs text-muted">{row.row_id}</p>}
+    </>
   );
 }

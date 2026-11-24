@@ -28,6 +28,24 @@ test.describe("PDF routes: tenancy and error pages", () => {
     }
   });
 
+  test("PDF filename carries the employee name; documents page searches by name", async ({ page }) => {
+    await signInViaUi(page, a, "en");
+    const r = await page.request.get(pdfUrls(fxA).probation);
+    const cd = r.headers()["content-disposition"];
+    expect(cd).toMatch(/filename="tesuch-[A-Za-z0-9._-]+\.pdf"/);
+    expect(cd).toContain("filename*=UTF-8''");
+    await page.goto("/en/app/documents");
+    await expect(page.getByText("Արամ Դեմոյան")).toBeVisible();
+    await expect(page.getByText("Анна Демова")).toBeVisible();
+    await page.getByLabel("Search by name").fill("анна");
+    await page.getByRole("button", { name: "Search" }).click();
+    await expect(page.getByText("Анна Демова")).toBeVisible();
+    await expect(page.getByText("Արամ Դեմոյան")).toHaveCount(0);
+    await page.getByLabel("Search by name").fill("%");
+    await page.getByRole("button", { name: "Search" }).click();
+    await expect(page.getByText("No employees match this search.")).toBeVisible();
+  });
+
   test("user B gets 404 for every /api/pdf/* URL of A's company and contracts", async ({ page }) => {
     await signInViaUi(page, b, "en");
     for (const [name, url] of Object.entries(pdfUrls(fxA))) {

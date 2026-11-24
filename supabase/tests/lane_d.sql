@@ -50,15 +50,28 @@ begin
   raise notice 'ok   stored rows: lowercased email, clamped score and size';
 end $$;
 
--- ----- Global cap: 30 leads per rolling hour -----
--- 2 rows exist; add 27 recent ones (29 total) and one older than an hour that must not count.
+-- ----- Per-visitor cap: 5 leads per IP hash per rolling hour (M-3) -----
+set role service_role;
+select pg_temp.expect_ok(format($q$select public.submit_lead('ip%s@example.am', 'hy', 50, '{}', null, null, true, 'hash-a')$q$, i), format('lead %s from one visitor accepted', i)) from generate_series(1, 5) i;
+select pg_temp.expect_error($q$select public.submit_lead('ip6@example.am', 'hy', 50, '{}', null, null, true, 'hash-a')$q$, '6th lead from the same visitor rejected');
+select pg_temp.expect_ok($q$select public.submit_lead('other@example.am', 'hy', 50, '{}', null, null, true, 'hash-b')$q$, 'another visitor is not affected');
+reset role;
+do $$
+begin
+  if exists (select 1 from public.leads where email = 'ip6@example.am') then raise exception 'FAIL throttled lead was stored'; end if;
+  if exists (select 1 from public.leads where ip_hash = 'hash-a' and email !~ '^ip[1-5]@') then raise exception 'FAIL wrong ip_hash rows'; end if;
+  raise notice 'ok   per-visitor throttle stored nothing extra';
+end $$;
+
+-- ----- Global cap: 100 leads per rolling hour -----
+-- 8 rows exist; add 91 recent ones (99 total) and one older than an hour that must not count.
 insert into public.leads (email, locale, consent, created_at)
-select format('flood%s@example.am', i), 'hy', true, now() - interval '5 minutes' from generate_series(1, 27) i;
+select format('flood%s@example.am', i), 'hy', true, now() - interval '5 minutes' from generate_series(1, 91) i;
 insert into public.leads (email, locale, consent, created_at) values ('old@example.am', 'hy', true, now() - interval '2 hours');
 
 set role service_role;
-select pg_temp.expect_ok($q$select public.submit_lead('thirtieth@example.am', 'hy', 50, '{}', null, null, true)$q$, '30th lead in the hour accepted (older rows not counted)');
-select pg_temp.expect_error($q$select public.submit_lead('thirty-first@example.am', 'hy', 50, '{}', null, null, true)$q$, '31st lead in the hour rejected by the global cap');
+select pg_temp.expect_ok($q$select public.submit_lead('thirtieth@example.am', 'hy', 50, '{}', null, null, true)$q$, '100th lead in the hour accepted (older rows not counted)');
+select pg_temp.expect_error($q$select public.submit_lead('thirty-first@example.am', 'hy', 50, '{}', null, null, true)$q$, '101st lead in the hour rejected by the global cap');
 reset role;
 
 do $$

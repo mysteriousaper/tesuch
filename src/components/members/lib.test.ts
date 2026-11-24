@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  acceptErrorKey, auditHref, auditRange, envelope, exportFilename, inviteSchema, inviteUrl, jsonDownload, memberErrorKey, parseAuditQuery, supportInviteEmail, SUPPORT_INVITE_ROLE, TOKEN_RE,
+  acceptErrorKey, auditHref, describeAudit, auditRange, envelope, exportFilename, inviteSchema, inviteUrl, jsonDownload, memberErrorKey, parseAuditQuery, supportInviteEmail, SUPPORT_INVITE_ROLE, TOKEN_RE,
 } from "./lib";
 
 describe("inviteSchema", () => {
@@ -40,8 +40,8 @@ describe("error mapping", () => {
 
 describe("audit query", () => {
   it("keeps only known filters and a sane page", () => {
-    expect(parseAuditQuery({ page: "3", table: "employees", action: "delete" })).toEqual({ page: 3, table: "employees", action: "delete" });
-    expect(parseAuditQuery({ page: "-1", table: "auth.users", action: "drop" })).toEqual({ page: 1, table: undefined, action: undefined });
+    expect(parseAuditQuery({ page: "3", table: "employees", action: "delete" })).toEqual({ page: 3, table: "employees", action: "delete", system: false });
+    expect(parseAuditQuery({ page: "-1", table: "auth.users", action: "drop" })).toEqual({ page: 1, table: undefined, action: undefined, system: false });
     expect(parseAuditQuery({ page: ["2", "9"] }).page).toBe(2);
     expect(parseAuditQuery({ page: "abc" }).page).toBe(1);
     expect(parseAuditQuery({ page: "99999999" }).page).toBe(1);
@@ -51,8 +51,8 @@ describe("audit query", () => {
     expect(auditRange(3, 10)).toEqual([20, 29]);
   });
   it("keeps filters in page links", () => {
-    expect(auditHref({ page: 1, table: "employees" }, 2)).toBe("?table=employees&page=2");
-    expect(auditHref({ page: 2 }, 1)).toBe("?");
+    expect(auditHref({ page: 1, table: "employees", system: false }, 2)).toBe("?table=employees&page=2");
+    expect(auditHref({ page: 2, system: false }, 1)).toBe("?");
   });
 });
 
@@ -83,5 +83,20 @@ describe("supportInviteEmail", () => {
   it("returns the normalised address for owners and pre-fills accountant", () => {
     expect(supportInviteEmail(" Help@Tesuch.AM ", true)).toBe("help@tesuch.am");
     expect(SUPPORT_INVITE_ROLE).toBe("accountant");
+  });
+});
+
+describe("audit helpers", () => {
+  it("system flag is read from the query and kept in links", () => {
+    const q = parseAuditQuery({ system: "1" });
+    expect(q.system).toBe(true);
+    expect(auditHref(q, 2)).toBe("?system=1&page=2");
+  });
+
+  it("describes a row by name and lists changed fields, ignoring noise", () => {
+    const d = describeAudit({ old_row: { id: "1", full_name: "Ա Բ", birth_date: "1990-01-01", six_day_week: false }, new_row: { id: "1", full_name: "Ա Բ", birth_date: "1991-01-01", six_day_week: false } });
+    expect(d).toEqual({ name: "Ա Բ", changed: ["birth_date"] });
+    expect(describeAudit({ new_row: { name: "Co" } })).toEqual({ name: "Co", changed: [] });
+    expect(describeAudit({})).toEqual({ name: null, changed: [] });
   });
 });

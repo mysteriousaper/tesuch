@@ -25,7 +25,7 @@ export function AddCompanyForm({ locale }: { locale: string }) {
 export function LoadDemoButton({ locale }: { locale: string }) {
   const t = useTranslations("dashboard");
   return (
-    <ActionForm action={loadDemoData.bind(null, locale)} submitLabel={t("loadDemo")} variant="secondary" success={() => t("demoLoaded")} className="flex flex-col gap-2">
+    <ActionForm action={loadDemoData.bind(null, locale)} submitLabel={t("loadDemo")} variant="secondary" success={() => t("demoLoaded")} pendingLabel={t("demoLoading")} className="flex flex-col gap-2">
       <p className="text-sm text-muted">{t("loadDemoHint")}</p>
     </ActionForm>
   );

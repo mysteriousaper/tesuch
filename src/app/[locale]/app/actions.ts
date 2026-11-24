@@ -131,15 +131,18 @@ export async function loadDemoData(locale: string): Promise<ActionState> {
   // Writes go through the user's client, so RLS decides what is allowed.
   const result = await insertDemo({
     insertCompany: async (name) => must(await supabase.from("companies").insert({ org_id: org.id, name }).select("id").single()).id,
-    insertEmployee: async (companyId, e) => must(await supabase.from("employees")
-      .insert({ org_id: org.id, company_id: companyId, full_name: e.fullName, birth_date: e.birthDate, six_day_week: e.sixDayWeek })
-      .select("id").single()).id,
-    insertContract: async (employeeId, c) => {
-      const { error } = await supabase.from("contracts").insert({ org_id: org.id, employee_id: employeeId, ...c });
+    insertEmployees: async (companyId, rows) => {
+      const { error } = await supabase.from("employees").insert(rows.map(({ id, e }) => (
+        { id, org_id: org.id, company_id: companyId, full_name: e.fullName, birth_date: e.birthDate, six_day_week: e.sixDayWeek }
+      )));
       if (error) throw error;
     },
-    insertLeave: async (employeeId, leave) => {
-      const { error } = await supabase.from("leave_records").insert(leave.map((l) => ({ org_id: org.id, employee_id: employeeId, ...l })));
+    insertContracts: async (rows) => {
+      const { error } = await supabase.from("contracts").insert(rows.map(({ employeeId, c }) => ({ org_id: org.id, employee_id: employeeId, ...c })));
+      if (error) throw error;
+    },
+    insertLeave: async (rows) => {
+      const { error } = await supabase.from("leave_records").insert(rows.map(({ employeeId, l }) => ({ org_id: org.id, employee_id: employeeId, ...l })));
       if (error) throw error;
     },
     deleteCompanies: async (ids) => {
