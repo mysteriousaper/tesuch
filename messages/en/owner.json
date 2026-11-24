@@ -4,7 +4,8 @@
       "clear": "No known issues in what Tesuch checks",
       "attention": "Needs attention",
       "risk": "Risk",
-      "none": "Add your staff to see where you stand"
+      "none": "Add your staff to see where you stand",
+      "title": "Status"
     },
     "hint": {
       "clear": "Tesuch found nothing urgent in the areas it checks. This is not a guarantee of the inspection result.",
@@ -66,7 +67,8 @@
       "score": "Score",
       "tasks": "Tasks this week",
       "checklist": "Checklist items checked",
-      "of": "of {total}"
+      "of": "of {total}",
+      "rules": "Areas checked"
     }
   }
 }

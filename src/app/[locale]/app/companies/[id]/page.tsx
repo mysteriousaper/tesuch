@@ -1,5 +1,6 @@
 import { Gauge, ListChecks, Users } from "lucide-react";
 import { GlassMetric } from "@/components/ui/glass-metric";
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
@@ -74,35 +75,38 @@ export default async function CompanyPage({ params, searchParams }: { params: Pr
 
   return (
     <div className="flex flex-col gap-6">
-      <Link href="/app" className="text-sm text-muted hover:text-ink">← {t("back")}</Link>
+      <PageHead
+        title={company.name}
+        description={`${company.tax_id ? `${company.tax_id} · ` : ""}${t("employeesCount", { count: stats.staff })} · ${t("openFindings", { count: stats.open })}`}
+        actions={
+          <>
+            {canEdit && <RecheckButton locale={locale} companyId={company.id} />}
+            <Link href="/app" className="gd-secondary">← {t("back")}</Link>
+          </>
+        }
+      />
 
-      <section className="flex flex-wrap items-center justify-between gap-4 glass p-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">{company.name}</h1>
-          <p className="text-sm text-muted">
-            {company.tax_id ? `${company.tax_id} · ` : ""}{t("employeesCount", { count: stats.staff })} · {t("openFindings", { count: stats.open })}
-          </p>
-          {canEdit && <div className="mt-2"><RecheckButton locale={locale} companyId={company.id} /></div>}
+      <div className="gd-company-grid">
+        <section className="gd-panel" data-gd-enter aria-label={c("score")}>
+          {score === null ? (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <p className="text-lg font-semibold">{t("noScore")}</p>
+              <p className="text-sm text-muted">{t("noScoreHint")}</p>
+              {canEdit && <Link href="/app/import" className="gd-primary">{t("importEmployees")}</Link>}
+            </div>
+          ) : (
+            <div className="mx-auto flex max-w-[240px] flex-col items-center gap-1">
+              <ScoreGauge value={score} label={c("score")} size={180} />
+              <p className="text-sm font-semibold text-danger">{t("openFindings", { count: stats.open })}</p>
+              <p className="text-center text-xs text-muted">{t("scoreDisclaimer")}</p>
+            </div>
+          )}
+        </section>
+        <div className="gd-summary gd-summary-3">
+          <GlassMetric label={t("employees")} icon={<Users />} value={stats.staff} />
+          <GlassMetric label={t("findings")} icon={<ListChecks />} value={stats.open} tone={stats.open ? "warn" : "ok"} />
+          <GlassMetric highlight label={c("score")} icon={<Gauge />} value={score ?? "–"} caption={score === null ? undefined : "/ 100"} />
         </div>
-        {score === null ? (
-          <div className="flex max-w-[220px] flex-col items-center gap-2 text-center">
-            <p className="text-lg font-semibold">{t("noScore")}</p>
-            <p className="text-sm text-muted">{t("noScoreHint")}</p>
-            {canEdit && <Link href="/app/import" className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t("importEmployees")}</Link>}
-          </div>
-        ) : (
-          <div className="flex max-w-[220px] flex-col items-center gap-1">
-            <ScoreGauge value={score} label={c("score")} size={160} />
-            <p className="text-sm font-semibold text-danger">{t("openFindings", { count: stats.open })}</p>
-            <p className="text-center text-xs text-muted">{t("scoreDisclaimer")}</p>
-          </div>
-        )}
-      </section>
-
-      <div className="grid gap-5 sm:grid-cols-3">
-        <GlassMetric label={t("employees")} icon={<Users className="size-4" />} value={stats.staff} />
-        <GlassMetric label={t("findings")} icon={<ListChecks className="size-4" />} value={stats.open} tone={stats.open ? "warn" : "ok"} />
-        <GlassMetric label={c("score")} icon={<Gauge className="size-4" />} value={score ?? "–"} caption={score === null ? undefined : "/ 100"} tone={score === null ? "neutral" : score >= 80 ? "ok" : score >= 50 ? "warn" : "danger"} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">

@@ -1,3 +1,4 @@
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { AssistedInviteCard, ConfirmForm, CopyLink, InviteForm, RoleForm } from "@/components/members/forms";
 import { inviteUrl, supportInviteEmail, type Role } from "@/components/members/lib";
@@ -41,17 +42,17 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
   const supportEmail = supportInviteEmail(process.env.NEXT_PUBLIC_SUPPORT_EMAIL, isOwner);
 
   return (
-    <div className="flex max-w-3xl flex-col gap-6">
-      <div className="glass flex flex-wrap items-end justify-between gap-2 px-5 py-4" data-glass-enter>
-        <div>
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="text-sm text-muted">{org.name}</p>
-        </div>
-        <nav aria-label={t("related")} className="flex flex-wrap gap-3 text-sm">
-          <Link href="/app/members/data" className="text-accent underline">{t("data.link")}</Link>
-          {isOwner && <Link href="/app/audit" className="text-accent underline">{t("auditLink")}</Link>}
-        </nav>
-      </div>
+    <div className="flex flex-col gap-6">
+      <PageHead
+        title={t("title")}
+        description={org.name}
+        actions={
+          <nav aria-label={t("related")} className="flex flex-wrap gap-2">
+            <Link href="/app/members/data" className="gd-secondary">{t("data.link")}</Link>
+            {isOwner && <Link href="/app/audit" className="gd-secondary">{t("auditLink")}</Link>}
+          </nav>
+        }
+      />
 
       {isOwner && (
         <section className="flex flex-col gap-3 glass p-4" aria-labelledby="invite-h">

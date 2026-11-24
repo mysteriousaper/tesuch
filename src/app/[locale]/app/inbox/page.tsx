@@ -1,3 +1,4 @@
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { AlertTriangle, CalendarClock } from "lucide-react";
 import { GlassMetric } from "@/components/ui/glass-metric";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
@@ -140,10 +141,7 @@ export default async function InboxPage({ params, searchParams }: {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="glass px-5 py-4" data-glass-enter>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-sm text-muted">{t("intro", { org: org.name })}</p>
-      </div>
+      <PageHead title={t("title")} description={t("intro", { org: org.name })} />
 
       {!failed && total > 0 && (
         <div className="grid gap-5 sm:grid-cols-2">

@@ -1,19 +1,18 @@
 import type { ReactNode } from "react";
-import { cn } from "@/lib/utils";
 
 export type GlassTone = "ok" | "warn" | "danger" | "neutral";
-export const toneText: Record<GlassTone, string> = { ok: "text-ok", warn: "text-warn", danger: "text-danger", neutral: "text-ink" };
+const colour: Record<GlassTone, string | undefined> = { ok: "var(--gd-teal)", warn: "var(--gd-ochre)", danger: "var(--gd-coral)", neutral: undefined };
 
-/** Small stat card: label + icon, a big value, a caption (after the reference's `Metric`). */
-export function GlassMetric({ label, icon, value, caption, tone = "neutral", className }: { label: string; icon?: ReactNode; value: ReactNode; caption?: ReactNode; tone?: GlassTone; className?: string }) {
+/** Reference `Metric` tile. `highlight` gives the filled teal tile; otherwise the value takes the tone colour. */
+export function GlassMetric({ label, icon, value, caption, tone = "neutral", highlight = false }: { label: string; icon?: ReactNode; value: ReactNode; caption?: ReactNode; tone?: GlassTone; highlight?: boolean }) {
   return (
-    <article className={cn("glass flex flex-col gap-2 p-4", className)} data-glass-enter>
-      <div className="flex items-center justify-between gap-2 text-sm text-muted">
+    <article className="gd-metric" data-tone={highlight ? "teal" : undefined} data-gd-enter>
+      <div className="gd-metric-head">
         <span>{label}</span>
-        {icon && <span aria-hidden="true" className="grid size-8 place-items-center rounded-full bg-surface-2 text-ink">{icon}</span>}
+        {icon && <span className="gd-metric-icon" aria-hidden="true">{icon}</span>}
       </div>
-      <strong className={cn("text-3xl font-extrabold tabular-nums", toneText[tone])}>{value}</strong>
-      {caption && <div className="text-sm text-muted">{caption}</div>}
+      <strong className="gd-metric-value" style={highlight ? undefined : { color: colour[tone] }}>{value}</strong>
+      {caption && <div className="gd-metric-caption"><span>{caption}</span></div>}
     </article>
   );
 }

@@ -1,3 +1,4 @@
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContractDocs, type ContractRow } from "@/components/documents/contract-docs";
 import { CompanyPicker } from "@/components/documents/company-picker";
@@ -49,10 +50,7 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
 
   return (
     <section className="flex flex-col gap-6">
-      <header className="glass flex flex-col gap-2 px-5 py-4" data-glass-enter>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="max-w-2xl text-muted">{t("intro")}</p>
-      </header>
+      <PageHead title={t("title")} description={t("intro")} />
 
       <div className="flex flex-col gap-4 glass p-4 sm:flex-row sm:items-end sm:justify-between">
         <CompanyPicker companies={companies} selected={company.id} label={t("company")} submit={t("choose")} />

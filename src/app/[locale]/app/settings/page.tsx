@@ -1,3 +1,4 @@
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RenameOrgForm } from "@/components/dashboard/dashboard-forms";
 import { PrivacyModeForm } from "@/components/dashboard/privacy-mode-form";
@@ -41,8 +42,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
   }
 
   return (
-    <div className="flex max-w-2xl flex-col gap-6">
-      <h1 className="glass px-5 py-4 text-2xl font-bold" data-glass-enter>{t("settings.title")}</h1>
+    <div className="flex flex-col gap-6">
+      <PageHead title={t("settings.title")} />
 
       {org && (
         <section className="flex flex-col gap-4 glass p-4" aria-labelledby="org-h">

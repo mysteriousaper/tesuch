@@ -1,3 +1,4 @@
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ImportWizard, type ImportCompany } from "@/components/import/import-wizard";
 import { privacyOrgIds } from "@/components/dashboard/privacy";
@@ -21,11 +22,8 @@ export default async function ImportPage({ params }: { params: Promise<{ locale:
   const options: ImportCompany[] = (companies ?? []).filter((c) => editable.has(c.org_id)).map((c) => ({ id: c.id, name: c.name, privacy: privacyOrgs.has(c.org_id) }));
 
   return (
-    <div className="flex max-w-4xl flex-col gap-6">
-      <header className="glass px-5 py-4" data-glass-enter>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="mt-1 text-muted">{t("intro")}</p>
-      </header>
+    <div className="flex flex-col gap-6">
+      <PageHead title={t("title")} description={t("intro")} />
       <ImportWizard locale={locale as Locale} companies={options} />
     </div>
   );

@@ -10,6 +10,10 @@
       "members": "Team",
       "audit": "Audit log"
     },
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "shell": {
+      "workspace": "Workspace",
+      "ask": "What needs attention"
+    }
   }
 }

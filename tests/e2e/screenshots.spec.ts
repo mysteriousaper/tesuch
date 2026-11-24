@@ -34,7 +34,7 @@ test.describe("screenshots", () => {
         const shot = async (name: string, path: string) => {
           await page.goto(path);
           await page.waitForTimeout(900);
-          await expectNoHorizontalScroll(page);
+          try { await expectNoHorizontalScroll(page); } catch (e) { throw new Error(`${path}: ${(e as Error).message}`); }
           await page.screenshot({ path: `${OUT}/${name}-${view.name}-${scheme}.png`, fullPage: false });
         };
         for (const [n, p] of [["landing", "/hy"], ["login", "/hy/login"], ["check", "/hy/check"], ["security", "/hy/security"], ["privacy", "/hy/privacy"]] as const) await shot(n, p);

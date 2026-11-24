@@ -1,3 +1,4 @@
+import { PageHead } from "@/components/ui/glassy-dashboard";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CompanyPicker } from "@/components/documents/company-picker";
 import { yerevanToday } from "@/components/documents/yerevan-date";
@@ -106,12 +107,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
 
   return (
     <section className="flex flex-col gap-6">
-      <header className="glass flex flex-col gap-2 px-5 py-4" data-glass-enter>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-muted">
-          {t("intro")} · <span className="font-medium text-ink">{t("week", { year: week.year, week: week.week })}</span>
-        </p>
-      </header>
+      <PageHead title={t("title")} description={<>{t("intro")} · <strong>{t("week", { year: week.year, week: week.week })}</strong></>} />
       {companies.length > 1 && <CompanyPicker companies={companies} selected={company.id} label={t("company")} submit={t("choose")} />}
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div>{body}</div>
