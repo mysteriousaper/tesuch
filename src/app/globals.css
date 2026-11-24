@@ -18,19 +18,19 @@
 
 :root,
 [data-theme="glass"] {
-  --bg: light-dark(#e8dccf, #2a211d);
-  --surface: light-dark(#fbf6ef, #3b302c);
-  --surface-2: light-dark(#f0e4d6, #463a35);
-  --ink: light-dark(#25201e, #fff6e9);
-  --muted: light-dark(#5b4b41, #dccbbb);
-  --line: light-dark(#cdb9a6, #5b4a41);
-  --control: light-dark(#7a6558, #a58f80);
-  --accent: light-dark(#3a2a22, #f3ddca);
-  --accent-ink: light-dark(#fffaf5, #231a16);
-  --highlight: light-dark(#8a3a22, #f9bf9b);
+  --bg: light-dark(#e3e6ea, #1d2025);
+  --surface: light-dark(#f7f8fa, #2f333a);
+  --surface-2: light-dark(#eceef2, #3a3f47);
+  --ink: light-dark(#1f2124, #f3f5f8);
+  --muted: light-dark(#4a4f57, #d3d8df);
+  --line: light-dark(#c8ccd3, #4b515a);
+  --control: light-dark(#6b717a, #8d95a0);
+  --accent: light-dark(#1f2326, #e6eaf0);
+  --accent-ink: light-dark(#f7f8fa, #15181c);
+  --highlight: light-dark(#1f4f7a, #a9c7ea);
   --ok: light-dark(#09644f, #75dac0);
-  --warn: light-dark(#855400, #f1be58);
-  --danger: light-dark(#a43c27, #ff9177);
+  --warn: light-dark(#8a5a00, #f1be58);
+  --danger: light-dark(#a63a2b, #ff9a85);
   --advisory: light-dark(#4b3fb0, #b9aef5);
   --radius: 14px;
   --radius-lg: 22px;
@@ -101,19 +101,19 @@
 @supports not (color: light-dark(white, black)) {
   :root,
   [data-theme="glass"] {
-    --bg: #e8dccf;
-    --surface: #fbf6ef;
-    --surface-2: #f0e4d6;
-    --ink: #25201e;
-    --muted: #5b4b41;
-    --line: #cdb9a6;
-    --control: #7a6558;
-    --accent: #3a2a22;
-    --accent-ink: #fffaf5;
-    --highlight: #8a3a22;
+    --bg: #e3e6ea;
+    --surface: #f7f8fa;
+    --surface-2: #eceef2;
+    --ink: #1f2124;
+    --muted: #4a4f57;
+    --line: #c8ccd3;
+    --control: #6b717a;
+    --accent: #1f2326;
+    --accent-ink: #f7f8fa;
+    --highlight: #1f4f7a;
     --ok: #09644f;
-    --warn: #855400;
-    --danger: #a43c27;
+    --warn: #8a5a00;
+    --danger: #a63a2b;
     --advisory: #4b3fb0;
   }
   [data-theme="official"] {
@@ -230,9 +230,9 @@ h3 {
   --glass-blur: 16px;
   --glass-a: 84%;
   --glass-a2: 70%;
-  --glass-edge: light-dark(rgb(255 253 246 / 70%), rgb(255 236 212 / 18%));
-  --glass-shade: light-dark(rgb(57 40 28 / 14%), rgb(11 6 5 / 40%));
-  --glass-shadow: light-dark(rgb(74 49 33 / 14%), rgb(0 0 0 / 40%));
+  --glass-edge: light-dark(rgb(255 255 255 / 70%), rgb(235 242 255 / 18%));
+  --glass-shade: light-dark(rgb(30 34 40 / 14%), rgb(5 7 10 / 40%));
+  --glass-shadow: light-dark(rgb(30 34 40 / 14%), rgb(0 0 0 / 40%));
   --page-wash: light-dark(
     linear-gradient(160deg, #efe4d8 0%, #e2d2c0 52%, #d6c1ab 100%),
     linear-gradient(160deg, #332824 0%, #2a211d 55%, #231b18 100%)
@@ -244,13 +244,13 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(rgb(248 239 228 / 70%), rgb(244 232 218 / 62%)), url("/glass-bg.jpg") center 60% / cover no-repeat;
-  filter: sepia(0.2) saturate(0.8);
+  background: linear-gradient(rgb(240 242 245 / 70%), rgb(232 235 240 / 62%)), url("/glass-bg.jpg") center 60% / cover no-repeat;
+  filter: saturate(0.5);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-mode="light"]) body::before { background: linear-gradient(rgb(20 14 11 / 30%), rgb(20 14 11 / 30%)), url("/glass-bg.jpg") center 60% / cover no-repeat; filter: sepia(0.15) saturate(0.75) brightness(0.6); }
+  :root:not([data-mode="light"]) body::before { background: linear-gradient(rgb(20 14 11 / 30%), rgb(20 14 11 / 30%)), url("/glass-bg.jpg") center 60% / cover no-repeat; filter: saturate(0.5) brightness(0.6); }
 }
-[data-mode="dark"] body::before { background: linear-gradient(rgb(20 14 11 / 30%), rgb(20 14 11 / 30%)), url("/glass-bg.jpg") center 60% / cover no-repeat; filter: sepia(0.15) saturate(0.75) brightness(0.6); }
+[data-mode="dark"] body::before { background: linear-gradient(rgb(20 14 11 / 30%), rgb(20 14 11 / 30%)), url("/glass-bg.jpg") center 60% / cover no-repeat; filter: saturate(0.5) brightness(0.6); }
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   :where([class~="bg-surface"], [class~="glass"]):not(.gd-app *) {
     background-color: color-mix(in srgb, var(--surface) var(--glass-a), transparent);

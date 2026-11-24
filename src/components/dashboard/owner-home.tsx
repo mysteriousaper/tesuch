@@ -86,7 +86,7 @@ export async function OwnerHome({ locale, company, snapshot, telegramLinked, ass
         )}
 
         {snapshot.status !== "none" && (
-          <GlassSection id="tasks-h" title={t("tasksTitle")}>
+          <GlassSection id="tasks-h" title={t("tasksTitle")} className="self-start">
             {snapshot.tasks.length === 0 ? (
               <p className="gd-empty">{t("noTasks")}</p>
             ) : (
