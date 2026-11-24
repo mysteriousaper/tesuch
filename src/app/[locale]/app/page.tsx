@@ -14,6 +14,7 @@ import { currentOrg, firmOverview, userOrgs } from "@/components/dashboard/queri
 import { Link, redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
 import { createOrg } from "./actions";
+import { canEditRole } from "./dashboard-logic";
 
 export const dynamic = "force-dynamic";
 
@@ -48,9 +49,10 @@ export default async function AppHome({ params, searchParams }: { params: Promis
   // One business: the simple owner home. Two or more companies (or ?view=firm): the firm dashboard below.
   const single = rows.length === 1 && view !== "firm" ? rows[0] : null;
   if (single) {
-    const [snapshot, { data: tg }] = await Promise.all([
+    const [snapshot, { data: tg }, { data: tickRows }] = await Promise.all([
       ownerSnapshot(supabase, org.id, single.id),
       supabase.from("telegram_links").select("chat_id").eq("user_id", user.id).maybeSingle(),
+      supabase.from("checklist_ticks").select("question_no").eq("company_id", single.id), // error (table not migrated yet) reads as no ticks
     ]);
     const supportEmail = supportInviteEmail(process.env.NEXT_PUBLIC_SUPPORT_EMAIL, org.role === "owner");
     return (
@@ -58,6 +60,7 @@ export default async function AppHome({ params, searchParams }: { params: Promis
         {showCodesNotice && <div className="mx-auto w-full max-w-2xl"><CodesNotice locale={locale} /></div>}
         <OwnerHome
           locale={locale} company={single} snapshot={snapshot} telegramLinked={Boolean(tg)}
+          ticked={(tickRows ?? []).map((r) => r.question_no as string)} canEdit={canEditRole(org.role)}
           assisted={supportEmail ? <AssistedInviteCard action={inviteMember.bind(null, locale)} email={supportEmail} /> : null}
         />
       </div>

@@ -15,6 +15,7 @@ import {
   leaveSchema, splitEmployee, uuid, type ActionState,
 } from "./dashboard-logic";
 import { generateDemoCompanies } from "./demo-data";
+import { isDocumentQuestionNo } from "@/lib/rules/checklist";
 
 // Thin server actions: validation, rollback and permission rules live in ./dashboard-logic (unit-tested).
 export type { ActionState };
@@ -341,4 +342,19 @@ export async function deleteCompany(locale: string, companyId: string, _prev: Ac
   if (!data?.length) return FAIL("forbidden");
   revalidatePath(`/${locale}/app`);
   return redirect({ href: "/app", locale });
+}
+
+/** Tick or untick "we have this document ready" for one checklist item. Owner/accountant only; org_id comes from the company row. */
+export async function setChecklistTick(locale: string, companyId: string, questionNo: string, ticked: boolean): Promise<ActionState> {
+  if (!uuid.safeParse(companyId).success || !isDocumentQuestionNo(questionNo)) return FAIL("invalid");
+  const { supabase, user } = await session();
+  if (!user) return FAIL("forbidden");
+  const co = await editableCompany(supabase, user.id, companyId);
+  if (!co) return FAIL("forbidden");
+  const { error } = ticked
+    ? await supabase.from("checklist_ticks").upsert({ org_id: co.org_id, company_id: co.id, question_no: questionNo }, { onConflict: "company_id,question_no", ignoreDuplicates: true })
+    : await supabase.from("checklist_ticks").delete().eq("company_id", co.id).eq("question_no", questionNo);
+  if (error) return FAIL("generic");
+  revalidatePath(`/${locale}/app`);
+  return { ok: true };
 }

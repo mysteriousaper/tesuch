@@ -1,15 +1,58 @@
 {
-  "id": "probation-max", "version": 1, "article": "92", "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
-  "basis": "law-firm summary (not yet checked against arlis.am)",
-  "scope": "contract", "severity": "red",
-  "title": { "hy": "Փորձաշրջանը գերազանցում է թույլատրելի առավելագույնը", "ru": "Испытательный срок превышает допустимый максимум", "en": "Probation exceeds the legal maximum" },
-  "conditions": { "any": [
-    { "all": [
-      { "fact": "probationSpecialCase", "operator": "equal", "value": false },
-      { "fact": "probationOverrunDays", "params": { "maxMonths": 3 }, "operator": "greaterThan", "value": 0 }
-    ] },
-    { "fact": "probationOverrunDays", "params": { "maxMonths": 12 }, "operator": "greaterThan", "value": 0 }
-  ] },
-  "due": { "date": "asOf", "offsetDays": 0 },
-  "edge_cases": ["Last allowed day = start + N months - 1 day (to confirm with lawyer).", "Month-end starts clamp (31 Jan + 3 months = 30 Apr).", "Leap years: 30 Nov 2027 + 3 months = 29 Feb 2028."]
+  "id": "probation-max",
+  "version": 2,
+  "article": "92",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 92(1): probation cannot exceed three months; Art. 92(2): up to six months in cases provided by legislation (PRE_REVIEW 1.9; the earlier 12 months had no source).",
+  "scope": "contract",
+  "severity": "red",
+  "title": {
+    "hy": "Փորձաշրջանը գերազանցում է թույլատրելի առավելագույնը",
+    "ru": "Испытательный срок превышает допустимый максимум",
+    "en": "Probation exceeds the legal maximum"
+  },
+  "conditions": {
+    "any": [
+      {
+        "all": [
+          {
+            "fact": "probationSpecialCase",
+            "operator": "equal",
+            "value": false
+          },
+          {
+            "fact": "probationOverrunDays",
+            "params": {
+              "maxMonths": 3
+            },
+            "operator": "greaterThan",
+            "value": 0
+          }
+        ]
+      },
+      {
+        "fact": "probationOverrunDays",
+        "params": {
+          "maxMonths": 6
+        },
+        "operator": "greaterThan",
+        "value": 0
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Special case = 6 months (Art. 92(2)), not 12; another act may allow more for specific posts (no source supplied).",
+    "Art. 92(3): sick leave, agreed or unpaid leave, public duties, strikes are not counted in the term, so the real end date can be later than start + N months; the rule uses the recorded end date.",
+    "Last allowed day = start + N months - 1 day is not stated in the Code (Art. 29 on counting terms: lawyer to confirm).",
+    "Month-end starts clamp (31 Jan + 3 months = 30 Apr).",
+    "Leap years: 30 Nov 2027 + 3 months = 29 Feb 2028.",
+    "Other no-probation cases (Art. 91(3)(2),(4)) not modelled yet."
+  ]
 }

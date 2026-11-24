@@ -1,6 +1,7 @@
 // Pure dashboard logic, shared by the server actions and unit-tested without a database.
 // Database access is passed in as small async functions, so rollback behaviour can be tested with fakes.
 import { z } from "zod";
+import { GROUND_CODES } from "../../../lib/rules/grounds";
 import type { DemoCompany, DemoContract, DemoEmployee } from "./demo-data";
 
 /** Result shape for forms using useActionState. `error` is a key in dashboard.errors. */
@@ -68,6 +69,9 @@ export const employeeSchema = contractRules(employeeFields).transform(blankGroun
 export const editSchema = contractRules(employeeFields.extend({
   terminated_on: optDate,
   termination_ground: optText,
+  position_stated: triState,
+  pay_stated: triState,
+  termination_ground_code: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(GROUND_CODES).nullable()),
   termination_initiator: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(["employer", "employee", "mutual"]).nullable()),
   notice_given_on: optDate,
   workforce_reduction: checkbox,

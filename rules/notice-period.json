@@ -1,18 +1,85 @@
 {
-  "id": "notice-period", "version": 1, "article": null, "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
-  "basis": "brief: 14/35/42/49/60 days by length of service, 2 months for workforce cuts; article number missing",
-  "scope": "contract", "severity": "red",
-  "title": { "hy": "Աշխատանքից ազատման մասին ծանուցման ժամկետը պահպանված չէ", "ru": "Не соблюдён срок предупреждения об увольнении", "en": "Dismissal notice period not respected" },
-  "conditions": { "all": [
-    { "fact": "isEmployerTermination", "operator": "equal", "value": true },
-    { "fact": "noticeShortfallDays", "params": {
-      "tiers": [
-        { "minYears": 0, "days": 14 }, { "minYears": 1, "days": 35 }, { "minYears": 5, "days": 42 },
-        { "minYears": 10, "days": 49 }, { "minYears": 15, "days": 60 }
-      ],
-      "workforceReductionMonths": 2
-    }, "operator": "greaterThan", "value": 0 }
-  ] },
-  "due": { "date": "asOf", "offsetDays": 0 },
-  "edge_cases": ["Service counted from first contract start with this employer.", "Missing notice date counts as zero days' notice.", "Which grounds require notice must be confirmed by a lawyer."]
+  "id": "notice-period",
+  "version": 2,
+  "article": "115",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 115(1): 2 months for 113(1)(1),(2); tiers 14/35/42/49/60 days for 113(1)(3),(7),(11) and 105(2); 3 days for 113(1)(12); Art. 115(1.1): 3 days for 113(1)(13); Art. 93(1): 3 days on probation. No notice period stated for fault grounds 113(1)(5),(6),(8),(9),(10).",
+  "scope": "contract",
+  "severity": "red",
+  "title": {
+    "hy": "Աշխատանքից ազատման մասին ծանուցման ժամկետը պահպանված չէ",
+    "ru": "Не соблюдён срок предупреждения об увольнении",
+    "en": "Dismissal notice period not respected"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "isEmployerTermination",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "noticeGroundKnown",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "noticeShortfallDays",
+        "params": {
+          "tiers": [
+            {
+              "minYears": 0,
+              "days": 14
+            },
+            {
+              "minYears": 1,
+              "days": 35
+            },
+            {
+              "minYears": 5,
+              "days": 42
+            },
+            {
+              "minYears": 10,
+              "days": 49
+            },
+            {
+              "minYears": 15,
+              "days": 60
+            }
+          ],
+          "workforceReductionMonths": 2,
+          "groundNotice": {
+            "113(1)(1)": "months",
+            "113(1)(2)": "months",
+            "113(1)(3)": "tiers",
+            "113(1)(7)": "tiers",
+            "113(1)(11)": "tiers",
+            "105(2)": "tiers",
+            "113(1)(12)": 3,
+            "113(1)(13)": 3,
+            "93(1)": 3
+          }
+        },
+        "operator": "greaterThan",
+        "value": 0
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Ground-aware: the termination ground code (or the workforce-reduction flag = 113(1)(2)) selects the notice period. Skipped, never auto-resolved, while the ground is unknown.",
+    "Grounds not in the map (fault grounds 113(1)(5),(6),(8),(9),(10), 113(1)(4), others) need no notice by the Code text, so they never fire.",
+    "Service counted from first contract start with this employer; tiers by whole years of service at the notice date.",
+    "Missing notice date counts as zero days' notice.",
+    "Periods are calendar days (Art. 29(7)); a period ending on a non-working day moving to the next working day is not modelled.",
+    "Longer periods may be set by collective or labour contract (Art. 115(1)): not modelled.",
+    "Not modelled: Art. 115(2) penalty, 115(3) notice content, 115(5) lapse of notice, 115(4) time to look for work."
+  ]
 }

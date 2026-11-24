@@ -7,7 +7,8 @@
     "hero": {
       "eyebrow": "Security and privacy",
       "title": "We designed Tesuch so that even if it were ever breached, there is almost nothing valuable to steal",
-      "subtitle": "Employees are stored as codes, not names. We keep only dates, never documents, salaries or passport data. Below is exactly what we keep, who processes it and what we do not claim."
+      "subtitle": "Employees are stored as codes, not names. We keep only dates, never documents, salaries or passport data. Below is exactly what we keep, who processes it and what we do not claim.",
+      "coverage": "Tesuch checks, in part, {checked} of {total} items of the official labour inspection checklist. The rest are your documents."
     },
     "nav": {
       "design": "Built to hold little",

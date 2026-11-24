@@ -27,6 +27,8 @@ test.describe("owner home for a single business (S-2)", () => {
     await page.getByTestId("coverage-summary").click();
     await expect(page.getByTestId("rules-reviewed")).toHaveText("Rules not yet reviewed by a lawyer");
     await expect(page.getByTestId("coverage-disclaimer")).toContainText("Not a guarantee of the inspection result");
+    await expect(page.getByTestId("checklist-coverage")).toHaveText(/checks, in part, 12 of 102 items of the official labour inspection checklist/);
+    await expect(page.getByTestId("documents-summary")).toHaveText(/^Documents to have ready \(\d+ of 90\)$/);
     // the only open finding is informational, so there is nothing to do this week
     await expect(page.locator("#tasks-h")).toHaveText("Do this week");
     await expect(page.getByText("Nothing to do this week.")).toBeVisible();

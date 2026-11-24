@@ -4,6 +4,7 @@
 // Written with createElement (no JSX) so the module runs unchanged in Next.js and in vitest.
 import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import { createElement as h, type ReactElement, type ReactNode } from "react";
+import { CHECKLIST, checklistCoverageLine, documentGroups } from "../rules/checklist";
 import { citation, coverageLine, rulesReviewedLine, DISCLAIMER, formatDate, ruleById, SEVERITY_LABEL, T, type Locale } from "../notify/i18n";
 import type { Finding, IsoDate } from "../rules/types";
 import { FONT_STACK } from "./fonts";
@@ -267,6 +268,14 @@ export const PACK_DOCS = {
   },
 } as const;
 
+const PACK_N51 = {
+  title: {
+    hy: "Աշխատանքային տեսչության ստուգաթերթ՝ ինչ պետք է պատրաստ լինի",
+    ru: "Проверочный лист трудовой инспекции: что должно быть готово",
+    en: "Labour inspection checklist: what must be ready",
+  },
+} as const;
+
 export interface ChecklistData {
   locale: Locale;
   /** "Inspector is here" pack: adds a page listing the documents to have ready. */
@@ -276,11 +285,13 @@ export interface ChecklistData {
   /** null = company has no staff yet; the PDF prints "No data yet" instead of a number. */
   score: number | null;
   items: { finding: Finding; employeeName: string }[];
+  /** Pack only: checklist N 5.1 question numbers the company marked "we have it". */
+  ticked?: string[];
 }
 
 const WIDTHS = ["28%", "17%", "14%", "19%", "22%"];
 
-export function readinessChecklist({ locale, company, asOf, score, items, pack = false }: ChecklistData): DocElement {
+export function readinessChecklist({ locale, company, asOf, score, items, pack = false, ticked = [] }: ChecklistData): DocElement {
   const header = h(
     View,
     { style: s.th, fixed: true },
@@ -339,6 +350,19 @@ export function readinessChecklist({ locale, company, asOf, score, items, pack =
                 h(View, { key: item, style: s.tr, wrap: false }, h(View, { style: s.box }), txt({ flex: 1, fontSize: 11 }, item)),
               ),
               txt(s.basis, PACK_DOCS.note[locale]),
+              txt({ ...s.title, marginTop: 24 }, PACK_N51.title[locale]),
+              txt(s.basis, checklistCoverageLine(locale)),
+              ...documentGroups().flatMap((g) => [
+                txt({ fontWeight: 700, marginTop: 10, marginBottom: 2, fontSize: 11 }, CHECKLIST.groups[g.group]?.[locale] ?? g.group),
+                ...g.items.map((q) =>
+                  h(
+                    View,
+                    { key: q.no, style: s.tr, wrap: false },
+                    h(View, { style: s.box }, ticked.includes(q.no) ? h(Text, { style: { fontSize: 9, marginTop: -2, marginLeft: 1 } }, "✓") : null),
+                    txt({ flex: 1, fontSize: 10 }, `${q.no}. ${q.text[locale]}`),
+                  ),
+                ),
+              ]),
             ),
             h(Text, { style: s.footerNeutral, fixed: true, render: ({ pageNumber, totalPages }) => `${DISCLAIMER[locale]} · ${rulesReviewedLine(locale)} · ${CL.generated[locale]} · ${pageNumber}/${totalPages}` }),
           ),

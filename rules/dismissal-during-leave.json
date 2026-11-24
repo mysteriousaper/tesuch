@@ -1,0 +1,40 @@
+{
+  "id": "dismissal-during-leave",
+  "version": 1,
+  "article": "114",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 114(1)(2): termination at the employer's initiative is prohibited «աշխատողի արձակուրդում գտնվելու ժամանակահատվածում»; 114(1)(2.1): with pregnant women until one month after the end of maternity leave. Art. 114(3): liquidation of the organisation is not restricted. Official checklist N 5.1 question 25.",
+  "scope": "contract",
+  "severity": "amber",
+  "title": {
+    "hy": "Գործատուի նախաձեռնությամբ լուծումը համընկնում է արձակուրդի հետ (114-րդ հոդված՝ արգելված է)",
+    "ru": "Увольнение по инициативе работодателя пришлось на отпуск (ст. 114: запрещено)",
+    "en": "Employer termination falls inside a leave (Art. 114: prohibited)"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "isEmployerTermination",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "terminatedDuringLeave",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Checks annual leave and maternity leave records (maternity: plus one month after the last day). Leave end is a lower bound: days are counted as calendar days, so the rule never over-flags.",
+    "Excluded: ground 113(1)(1) (liquidation, Art. 114(3)).",
+    "Not modelled: sick leave (114(1)(1)), pregnancy before leave (2.1), caring for a child under one year (2.2), strike, other 114(1) points: no data."
+  ]
+}

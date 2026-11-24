@@ -30,7 +30,7 @@ async function ruleIds(opts: { e?: Partial<Employee>; c?: Partial<Contract>; l?:
 
 describe("catalog", () => {
   it("loads every rule, all unverified until a lawyer signs off", () => {
-    expect(RULES).toHaveLength(13);
+    expect(RULES).toHaveLength(18);
     for (const r of RULES) expect(r.status).toBe("needs_lawyer_review");
   });
   it("rejects a verified rule without an article", () => {
@@ -99,9 +99,13 @@ describe("probation-max (Art. 92)", () => {
     expect(probationOverrunDays(con({ startDate: "2027-11-30", probationEnd: "2028-02-28" }), 3)).toBe(0);
     expect(probationOverrunDays(con({ startDate: "2027-11-30", probationEnd: "2028-02-29" }), 3)).toBe(1);
   });
-  it("allows up to 12 months in special cases", async () => {
-    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2027-01-14" } })).not.toContain("probation-max");
-    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2027-01-15" } })).toContain("probation-max");
+  it("allows up to 6 months in special cases (Art. 92(2)), not 12", async () => {
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2026-07-14" } })).not.toContain("probation-max");
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2026-07-15" } })).toContain("probation-max");
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2027-01-14" } })).toContain("probation-max");
+  });
+  it("a special case with 3 months or less never fires", async () => {
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2026-04-14" } })).not.toContain("probation-max");
   });
 });
 
@@ -177,26 +181,40 @@ describe("annual-leave-min", () => {
     const c = { startDate: "2025-01-15" };
     expect(await ruleIds({ c, asOf: "2026-02-01", l: [] })).not.toContain("annual-leave-min");
   });
-  const c = { startDate: "2025-01-15" };
-  it("is silent before a full working year", async () => {
-    expect(await ruleIds({ c, asOf: "2026-01-14" })).not.toContain("annual-leave-min");
+  // Working year 1 = 2022-01-15 .. 2023-01-15; its 18-month window (Art. 167(3)) ends 2024-07-15.
+  const c = { startDate: "2022-01-15" };
+  const asOf = "2026-02-01";
+  it("is silent while the 18-month window has not passed", async () => {
+    expect(await ruleIds({ c, asOf: "2024-07-14", l: [{ startDate: "2023-07-01", days: 20 }, { startDate: "2022-01-20", days: 1 }] })).not.toContain("annual-leave-min");
+    const s = { startDate: "2024-01-15" };
+    expect(await ruleIds({ c: s, asOf: "2025-06-01", l: [{ startDate: "2024-07-01", days: 1 }] })).not.toContain("annual-leave-min");
+  });
+  it("judges the first year the day its window ends", async () => {
+    const l = [{ startDate: "2022-07-01", days: 19 }];
+    expect(await ruleIds({ c, asOf: "2024-07-14", l })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf: "2024-07-15", l })).toContain("annual-leave-min");
   });
   it("flags fewer than 20 days on a five-day week", async () => {
-    expect(await ruleIds({ c, l: [{ startDate: "2025-07-01", days: 19 }] })).toContain("annual-leave-min");
-    expect(await ruleIds({ c, l: [{ startDate: "2025-07-01", days: 20 }] })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2024-07-01", days: 19 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2024-07-01", days: 20 }] })).not.toContain("annual-leave-min");
   });
   it("requires 24 days on a six-day week", async () => {
-    expect(await ruleIds({ c, e: { sixDayWeek: true }, l: [{ startDate: "2025-07-01", days: 20 }] })).toContain("annual-leave-min");
-    expect(await ruleIds({ c, e: { sixDayWeek: true }, l: [{ startDate: "2025-07-01", days: 24 }] })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, e: { sixDayWeek: true }, l: [{ startDate: "2024-07-01", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, e: { sixDayWeek: true }, l: [{ startDate: "2024-07-01", days: 24 }] })).not.toContain("annual-leave-min");
   });
-  it("counts only leave inside the last completed working year", async () => {
-    expect(await ruleIds({ c, l: [{ startDate: "2026-01-15", days: 20 }] })).toContain("annual-leave-min");
+  it("judges the latest year past its window: leave in the year and in the window counts (carry-over)", async () => {
+    // At 2026-02-01 the latest judged year is 2023-01-15 .. 2024-01-15 (window to 2025-07-15).
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2022-07-01", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2025-07-14", days: 20 }] })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2025-07-15", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2023-01-14", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2023-01-15", days: 20 }] })).not.toContain("annual-leave-min");
   });
   it("counts service from the first contract with the employer", async () => {
     const findings = await evaluateCompany(RULES, {
       employees: [emp()],
-      contracts: [con({ id: "old", startDate: "2024-03-01", terminatedOn: "2025-12-31", terminationGround: "x", terminationInitiator: "mutual" }), con({ id: "new", startDate: "2026-01-01" })],
-      leave: [leave({ startDate: "2024-06-01", days: 5 })],
+      contracts: [con({ id: "old", startDate: "2022-03-01", terminatedOn: "2025-12-31", terminationGround: "x", terminationInitiator: "mutual" }), con({ id: "new", startDate: "2026-01-01" })],
+      leave: [leave({ startDate: "2023-06-01", days: 5 })],
     }, "2026-02-01");
     expect(findings.map((f) => f.ruleId)).toContain("annual-leave-min");
   });
@@ -212,7 +230,7 @@ describe("leave-cash-swap", () => {
 });
 
 describe("notice-period", () => {
-  const term = (o: Partial<Contract>) => ({ terminationInitiator: "employer" as const, terminationGround: "x", ...o });
+  const term = (o: Partial<Contract>) => ({ terminationInitiator: "employer" as const, terminationGround: "x", terminationGroundCode: "113(1)(3)", ...o });
   it("needs 14 days under 1 year of service", async () => {
     expect(await ruleIds({ c: term({ noticeGivenOn: "2026-01-01", terminatedOn: "2026-01-15" }) })).not.toContain("notice-period");
     expect(await ruleIds({ c: term({ noticeGivenOn: "2026-01-02", terminatedOn: "2026-01-15" }) })).toContain("notice-period");
@@ -228,9 +246,37 @@ describe("notice-period", () => {
     expect(await ruleIds({ c: { ...c, terminatedOn: "2025-12-31" } })).not.toContain("notice-period");
   });
   it("needs 2 months for workforce reduction", async () => {
-    const c = term({ workforceReduction: true, startDate: "2025-06-01", noticeGivenOn: "2025-11-30", terminatedOn: "2026-01-29" });
+    const c = term({ workforceReduction: true, terminationGroundCode: null, startDate: "2025-06-01", noticeGivenOn: "2025-11-30", terminatedOn: "2026-01-29" });
     expect(await ruleIds({ c })).toContain("notice-period");
     expect(await ruleIds({ c: { ...c, terminatedOn: "2026-01-30" } })).not.toContain("notice-period");
+  });
+  it("workforce reduction ground code gives the same 2 months as the flag", async () => {
+    const c = term({ terminationGroundCode: "113(1)(1)", startDate: "2025-06-01", noticeGivenOn: "2025-11-30", terminatedOn: "2026-01-29" });
+    expect(await ruleIds({ c })).toContain("notice-period");
+    expect(await ruleIds({ c: { ...c, terminatedOn: "2026-01-30" } })).not.toContain("notice-period");
+  });
+  it("applies the length-of-service tiers to 113(1)(7), 113(1)(11) and 105(2) too", async () => {
+    for (const code of ["113(1)(7)", "113(1)(11)", "105(2)"]) {
+      const c = term({ terminationGroundCode: code, noticeGivenOn: "2026-01-02", terminatedOn: "2026-01-15" });
+      expect(await ruleIds({ c }), code).toContain("notice-period");
+    }
+  });
+  it("3 days for 113(1)(12), 113(1)(13) and probation dismissal 93(1)", async () => {
+    for (const code of ["113(1)(12)", "113(1)(13)", "93(1)"]) {
+      const c = term({ terminationGroundCode: code, noticeGivenOn: "2026-01-10", terminatedOn: "2026-01-13" });
+      expect(await ruleIds({ c }), code).not.toContain("notice-period");
+      expect(await ruleIds({ c: { ...c, terminatedOn: "2026-01-12" } }), code).toContain("notice-period");
+    }
+  });
+  it("fault grounds need no notice by the Code text, so they never fire", async () => {
+    for (const code of ["113(1)(5)", "113(1)(6)", "113(1)(8)", "113(1)(9)", "113(1)(10)", "113(1)(4)"]) {
+      expect(await ruleIds({ c: term({ terminationGroundCode: code, terminatedOn: "2026-01-31" }) }), code).not.toContain("notice-period");
+    }
+  });
+  it("is skipped, not resolved, while the ground is unknown", async () => {
+    const r = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con(term({ terminationGroundCode: null, terminatedOn: "2026-01-31" }))], leave: [] }, "2026-02-01");
+    expect(r.findings.map((f) => f.ruleId)).not.toContain("notice-period");
+    expect(r.skipped).toContain("notice-period|e1|c1");
   });
   it("treats a missing notice date as no notice", async () => {
     expect(await ruleIds({ c: term({ terminatedOn: "2026-01-31" }) })).toContain("notice-period");
@@ -322,15 +368,118 @@ describe("unknown input is skipped, never resolved", () => {
     expect(planSync("org", fixed.findings, [open], fixed.skipped).autoResolve).toEqual(["f1"]);
   });
   it("leave is company-level: no leave anywhere skips, any leave checks employees with none", async () => {
-    const c = (id: string, employeeId: string) => con({ id, employeeId, startDate: "2025-01-15" });
+    const c = (id: string, employeeId: string) => con({ id, employeeId, startDate: "2022-01-15" });
     const base = { employees: [emp(), emp({ id: "e2" })], contracts: [c("c1", "e1"), c("c2", "e2")] };
     const none = await evaluateCompanyDetailed(RULES, { ...base, leave: [] }, "2026-02-01");
     expect(none.findings.map((f) => f.ruleId)).not.toContain("annual-leave-min");
     expect(none.skipped).toEqual(expect.arrayContaining(["annual-leave-min|e1|", "annual-leave-min|e2|"]));
     expect(planSync("org", none.findings, [storedOpen("annual-leave-min", null)], none.skipped).autoResolve).toEqual([]);
-    const some = await evaluateCompanyDetailed(RULES, { ...base, leave: [leave({ employeeId: "e1", startDate: "2025-07-01", days: 20 })] }, "2026-02-01");
+    const some = await evaluateCompanyDetailed(RULES, { ...base, leave: [leave({ employeeId: "e1", startDate: "2023-07-01", days: 20 })] }, "2026-02-01");
     const hits = some.findings.filter((f) => f.ruleId === "annual-leave-min").map((f) => f.employeeId);
     expect(hits).toEqual(["e2"]);
     expect(some.skipped).not.toContain("annual-leave-min|e2|");
+  });
+});
+
+describe("employee-no-contract (Art. 102)", () => {
+  const run = (employees: Employee[], contracts: Contract[]) => evaluateCompanyDetailed(RULES, { employees, contracts, leave: [] }, "2026-02-01");
+  it("flags an employee without any contract when others have one", async () => {
+    const r = await run([emp(), emp({ id: "e2" })], [con()]);
+    const hits = r.findings.filter((f) => f.ruleId === "employee-no-contract");
+    expect(hits.map((f) => f.employeeId)).toEqual(["e2"]);
+    expect(hits[0]).toMatchObject({ contractId: null, article: "102", severity: "advisory" });
+  });
+  it("is silent when every employee has a contract, or when the company has no contract data at all", async () => {
+    expect((await run([emp()], [con()])).findings.map((f) => f.ruleId)).not.toContain("employee-no-contract");
+    expect((await run([emp()], [])).findings).toEqual([]);
+  });
+  it("runs no other employee rule for an employee without a contract", async () => {
+    const r = await run([emp({ id: "e2" })], [con()]);
+    expect(r.findings.map((f) => f.ruleId)).toEqual(["employee-no-contract"]);
+  });
+});
+
+describe("termination-ground-code (Art. 113)", () => {
+  const t = { terminatedOn: "2026-01-20", terminationGround: "x", terminationInitiator: "employer" as const, noticeGivenOn: "2025-12-01" };
+  it("flags an employer termination without a ground code", async () => {
+    expect(await ruleIds({ c: t })).toContain("termination-ground-code");
+  });
+  it("is satisfied by a code or by the workforce-reduction flag (113(1)(2))", async () => {
+    expect(await ruleIds({ c: { ...t, terminationGroundCode: "113(1)(5)" } })).not.toContain("termination-ground-code");
+    expect(await ruleIds({ c: { ...t, workforceReduction: true } })).not.toContain("termination-ground-code");
+  });
+  it("ignores resignations, mutual agreements and future terminations", async () => {
+    expect(await ruleIds({ c: { ...t, terminationInitiator: "employee" } })).not.toContain("termination-ground-code");
+    expect(await ruleIds({ c: { ...t, terminationInitiator: "mutual" } })).not.toContain("termination-ground-code");
+    expect(await ruleIds({ c: { ...t, terminatedOn: "2026-03-01" } })).not.toContain("termination-ground-code");
+  });
+});
+
+describe("fixed-term-chain (Art. 95(2.1))", () => {
+  const first = con({ id: "c1", type: "fixed_term", startDate: "2025-01-01", endDate: "2025-12-31", fixedTermGround: "x" });
+  const second = (o: Partial<Contract>) => con({ id: "c2", type: "fixed_term", startDate: "2026-01-15", endDate: "2026-12-31", fixedTermGround: "", ...o });
+  const hits = async (contracts: Contract[]) =>
+    (await evaluateCompany(RULES, { employees: [emp()], contracts, leave: [] }, "2026-02-01")).filter((f) => f.ruleId === "fixed-term-chain").map((f) => f.contractId);
+  it("fires on the later contract when the break is at most one month and no ground is recorded", async () => {
+    expect(await hits([first, second({})])).toEqual(["c2"]);
+    expect(await hits([first, second({ startDate: "2026-01-31" })])).toEqual(["c2"]); // 31 Dec + 1 month = 31 Jan: still within
+  });
+  it("is silent when the break is longer than a month", async () => {
+    expect(await hits([first, second({ startDate: "2026-02-01" })])).toEqual([]);
+  });
+  it("is silent when a ground is recorded (Art. 95(1)/(3) may apply) or unknown", async () => {
+    expect(await hits([first, second({ fixedTermGround: "seasonal" })])).toEqual([]);
+    expect(await hits([first, second({ fixedTermGround: null })])).toEqual([]);
+  });
+  it("is silent when the later contract is indefinite or the earlier one is not fixed-term", async () => {
+    expect(await hits([first, second({ type: "indefinite", endDate: null })])).toEqual([]);
+    expect(await hits([{ ...first, type: "indefinite", endDate: null }, second({})])).toEqual([]);
+  });
+});
+
+describe("dismissal-during-leave (Art. 114)", () => {
+  const t = (o: Partial<Contract> = {}) => ({ terminationInitiator: "employer" as const, terminationGround: "x", terminationGroundCode: "113(1)(5)", ...o });
+  const annual = { type: "annual" as const, startDate: "2026-01-10", days: 5 };
+  it("flags termination on any day of an annual leave (days counted as calendar days)", async () => {
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-10" }), l: [annual] })).toContain("dismissal-during-leave");
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-14" }), l: [annual] })).toContain("dismissal-during-leave");
+  });
+  it("is silent the day before and after the leave lower bound", async () => {
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-09" }), l: [annual] })).not.toContain("dismissal-during-leave");
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-15" }), l: [annual] })).not.toContain("dismissal-during-leave");
+  });
+  it("maternity leave protects until one month after its last day", async () => {
+    const m = { type: "maternity" as const, startDate: "2025-10-01", days: 140 }; // last day 2026-02-17
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-03-17" }), l: [m], asOf: "2026-04-01" })).toContain("dismissal-during-leave");
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-03-18" }), l: [m], asOf: "2026-04-01" })).not.toContain("dismissal-during-leave");
+  });
+  it("is not restricted for liquidation (113(1)(1)) and ignores resignations and other leave types", async () => {
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-12", terminationGroundCode: "113(1)(1)" }), l: [annual] })).not.toContain("dismissal-during-leave");
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-12", terminationInitiator: "employee" }), l: [annual] })).not.toContain("dismissal-during-leave");
+    expect(await ruleIds({ c: t({ terminatedOn: "2026-01-12" }), l: [{ ...annual, type: "other" }] })).not.toContain("dismissal-during-leave");
+  });
+});
+
+describe("contract-required-items (Art. 84(1))", () => {
+  it("flags a contract known to lack the position or the pay", async () => {
+    expect(await ruleIds({ c: { positionStated: false } })).toContain("contract-required-items");
+    expect(await ruleIds({ c: { payStated: false } })).toContain("contract-required-items");
+    expect(await ruleIds({ c: { positionStated: true, payStated: false } })).toContain("contract-required-items");
+  });
+  it("is silent when both are stated, and skipped (not resolved) while both are unknown", async () => {
+    expect(await ruleIds({ c: { positionStated: true, payStated: true } })).not.toContain("contract-required-items");
+    const r = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con()], leave: [] }, "2026-02-01");
+    expect(r.findings.map((f) => f.ruleId)).not.toContain("contract-required-items");
+    expect(r.skipped).toContain("contract-required-items|e1|c1");
+  });
+  it("one known 'yes' with the other unknown does not fire", async () => {
+    expect(await ruleIds({ c: { positionStated: true } })).not.toContain("contract-required-items");
+  });
+});
+
+describe("fixed-term-ending due date (Art. 111(2))", () => {
+  it("is due 10 days before the end", async () => {
+    const f = await evaluateCompany(RULES, { employees: [emp()], contracts: [con({ type: "fixed_term", endDate: "2026-03-03", fixedTermGround: "x" })], leave: [] }, "2026-02-01");
+    expect(f.find((x) => x.ruleId === "fixed-term-ending")?.dueDate).toBe("2026-02-21");
   });
 });

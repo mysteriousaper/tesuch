@@ -1,0 +1,1336 @@
+{
+  "id": "N5.1",
+  "version": 1,
+  "title": {
+    "hy": "Աշխատանքային իրավունքի բնագավառում վերահսկողության ստուգաթերթ N 5.1",
+    "ru": "Проверочный лист N 5.1: контроль в сфере трудового права",
+    "en": "Labour inspection checklist N 5.1 (labour law)"
+  },
+  "source": "Government decision N 718-N annex 5 (as amended by N 299-N of 10.03.2022); question texts shortened by Tesuch. Source: docs/legal/sources/inspection/299_1.",
+  "source_note": "covered_by is a list of Tesuch rule ids that check part of the question, or \"document\" when Tesuch cannot check it and the owner keeps the paper ready. Coverage is partial: a rule never answers the whole question. Not legal advice; a lawyer should confirm.",
+  "total_weight": 50.0,
+  "groups": {
+    "hiring": {
+      "hy": "Աշխատանքի ընդունում",
+      "ru": "Приём на работу",
+      "en": "Hiring"
+    },
+    "contracts": {
+      "hy": "Պայմանագրեր և փոփոխություններ",
+      "ru": "Договоры и изменения условий",
+      "en": "Contracts and changes"
+    },
+    "termination": {
+      "hy": "Աշխատանքի լուծում",
+      "ru": "Прекращение работы",
+      "en": "Termination"
+    },
+    "time": {
+      "hy": "Աշխատաժամանակ, հանգիստ, արձակուրդ",
+      "ru": "Рабочее время, отдых, отпуск",
+      "en": "Working time, rest, leave"
+    },
+    "pay": {
+      "hy": "Վարձատրություն",
+      "ru": "Оплата труда",
+      "en": "Pay"
+    },
+    "other": {
+      "hy": "Կարգապահություն և անվտանգություն",
+      "ru": "Дисциплина и охрана труда",
+      "en": "Discipline and safety"
+    }
+  },
+  "questions": [
+    {
+      "no": "1",
+      "weight": 1.0,
+      "basis": "14",
+      "group": "hiring",
+      "text": {
+        "hy": "Գրավոր աշխատանքային պայմանագիր կամ աշխատանքի ընդունման հրաման յուրաքանչյուր աշխատողի համար",
+        "ru": "Письменный трудовой договор или приказ о приёме на каждого работника",
+        "en": "Written contract or hiring act for every employee"
+      },
+      "covered_by": [
+        "employee-no-contract"
+      ]
+    },
+    {
+      "no": "2",
+      "weight": 0.3,
+      "basis": "5, 85",
+      "group": "hiring",
+      "text": {
+        "hy": "Աշխատանքի ընդունման ակտի կամ պայմանագրի մեկ օրինակը հանձնված է աշխատողին",
+        "ru": "Один экземпляр приказа о приёме или договора выдан работнику",
+        "en": "One copy of the hiring act or contract given to the employee"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "3.1",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են կնքման ամսաթիվը և վայրը",
+        "ru": "В договоре указаны дата и место заключения",
+        "en": "Contract states the date and place of signing"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.2",
+      "weight": 0.2,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են աշխատողի անունը, ազգանունը",
+        "ru": "В договоре указаны имя и фамилия работника",
+        "en": "Contract states the employee's name"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.3",
+      "weight": 0.2,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված է գործատուի անվանումը կամ անունը, ազգանունը",
+        "ru": "В договоре указано наименование работодателя или его имя",
+        "en": "Contract states the employer's name"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.4",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված է կառուցվածքային ստորաբաժանումը (եթե կա)",
+        "ru": "В договоре указано структурное подразделение (если есть)",
+        "en": "Contract states the department (if any)"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.5",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված է աշխատանքը սկսելու ամսաթիվը",
+        "ru": "В договоре указана дата начала работы",
+        "en": "Contract states the start date"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.6",
+      "weight": 0.5,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են պաշտոնի անվանումը և (կամ) աշխատանքային գործառույթները",
+        "ru": "В договоре указаны должность и (или) трудовые функции",
+        "en": "Contract states the position and (or) job functions"
+      },
+      "covered_by": [
+        "contract-required-items"
+      ]
+    },
+    {
+      "no": "3.7",
+      "weight": 0.5,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են հիմնական աշխատավարձի չափը և (կամ) այն որոշելու ձևը",
+        "ru": "В договоре указан размер основной зарплаты и (или) порядок её определения",
+        "en": "Contract states the basic pay and (or) how it is set"
+      },
+      "covered_by": [
+        "contract-required-items"
+      ]
+    },
+    {
+      "no": "3.8",
+      "weight": 0.5,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են հավելումները, հավելավճարները, լրավճարները",
+        "ru": "В договоре указаны надбавки, доплаты и дополнительные выплаты",
+        "en": "Contract states supplements and extra payments"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.9",
+      "weight": 0.2,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված է գործողության ժամկետը (անհրաժեշտության դեպքում)",
+        "ru": "В договоре указан срок действия (при необходимости)",
+        "en": "Contract states its term (where needed)"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.10",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Փորձաշրջանի դեպքում պայմանագրում նշված են տևողությունը և պայմանները",
+        "ru": "Если есть испытательный срок, в договоре указаны его длительность и условия",
+        "en": "If there is probation, contract states its length and terms"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.11",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված է աշխատաժամանակի ռեժիմը",
+        "ru": "В договоре указан режим рабочего времени",
+        "en": "Contract states the working-time regime"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.12",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են ամենամյա արձակուրդի տեսակը և տևողությունը",
+        "ru": "В договоре указаны вид и продолжительность ежегодного отпуска",
+        "en": "Contract states the type and length of annual leave"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.13",
+      "weight": 0.3,
+      "basis": "84",
+      "group": "hiring",
+      "text": {
+        "hy": "Պայմանագրում նշված են այն ստորագրող անձի պաշտոնը, անունը, ազգանունը",
+        "ru": "В договоре указаны должность и имя подписавшего его лица",
+        "en": "Contract states the position and name of the person who signs it"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "3.14",
+      "weight": 0.3,
+      "basis": "99",
+      "group": "hiring",
+      "text": {
+        "hy": "Համատեղությամբ աշխատանքի պայմանագրում նշված է, որ աշխատանքը համատեղությամբ է",
+        "ru": "В договоре по совместительству указано, что работа выполняется по совместительству",
+        "en": "Contract for a second job states that the work is concurrent"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "4",
+      "weight": 0.3,
+      "basis": "7, 91, 92",
+      "group": "hiring",
+      "text": {
+        "hy": "Փորձաշրջանի արգելքը և առավելագույն ժամկետը պահպանված են",
+        "ru": "Соблюдены запреты и предельный срок испытательного срока",
+        "en": "Probation bans and maximum length respected"
+      },
+      "covered_by": [
+        "probation-max",
+        "probation-minor",
+        "probation-transfer"
+      ]
+    },
+    {
+      "no": "5",
+      "weight": 0.3,
+      "basis": "85",
+      "group": "hiring",
+      "text": {
+        "hy": "Աշխատանքի անցնելուց առաջ աշխատողը ծանոթացել է պայմաններին և ներքին կանոններին",
+        "ru": "До начала работы работник ознакомлен с условиями и внутренними правилами",
+        "en": "Employee was told the terms and internal rules before starting"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "6.1",
+      "weight": 0.2,
+      "basis": "89",
+      "group": "hiring",
+      "text": {
+        "hy": "Անձը հաստատող փաստաթուղթ",
+        "ru": "Документ, удостоверяющий личность",
+        "en": "ID document"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "6.2",
+      "weight": 0.2,
+      "basis": "89",
+      "group": "hiring",
+      "text": {
+        "hy": "Սոցիալական ապահովության քարտ կամ քարտ չունենալու մասին տեղեկանք",
+        "ru": "Карта социального обеспечения или справка об её отсутствии",
+        "en": "Social security card or a note that there is none"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "6.3",
+      "weight": 0.2,
+      "basis": "89",
+      "group": "hiring",
+      "text": {
+        "hy": "Կրթության կամ որակավորման վկայական (երբ պահանջվում է)",
+        "ru": "Документ об образовании или квалификации (когда требуется)",
+        "en": "Education or qualification certificate (where required)"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "6.4",
+      "weight": 0.5,
+      "basis": "89",
+      "group": "hiring",
+      "text": {
+        "hy": "Առողջական վիճակի տեղեկանք՝ սանիտարական գրքույկ (երբ պահանջվում է)",
+        "ru": "Справка о состоянии здоровья, санитарная книжка (когда требуется)",
+        "en": "Health certificate or sanitary book (where required)"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "6.5",
+      "weight": 0.3,
+      "basis": "89",
+      "group": "hiring",
+      "text": {
+        "hy": "Ծնողի կամ խնամակալի գրավոր համաձայնությունը (մինչև 16 տարեկանի համար)",
+        "ru": "Письменное согласие родителя или опекуна (для лиц до 16 лет)",
+        "en": "Written consent of a parent or guardian (for under 16)"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "6.6",
+      "weight": 0.5,
+      "basis": "89, 22 (+other laws)",
+      "group": "hiring",
+      "text": {
+        "hy": "Օտարերկրացու կացության կարգավիճակի կամ աշխատանքի թույլտվության փաստաթուղթ",
+        "ru": "Документ о статусе пребывания или разрешение на работу (для иностранцев)",
+        "en": "Residence status or work permit document (for foreigners)"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "7",
+      "weight": 0.3,
+      "basis": "3.1, 89",
+      "group": "hiring",
+      "text": {
+        "hy": "Աշխատանքի ընդունման հայտարարություններում և աշխատանքի ընթացքում խտրականության հիմք դարձող պայմաններ չկան",
+        "ru": "В объявлениях о найме и в трудовых отношениях нет дискриминационных условий",
+        "en": "No discriminatory terms in job ads or during employment"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "8",
+      "weight": 0.2,
+      "basis": "7, 108",
+      "group": "hiring",
+      "text": {
+        "hy": "Աշխատողին չի արգելվել աշխատել և աշխատավարձը չի զրկվել օրենքով չնախատեսված դեպքերում",
+        "ru": "Работнику не запрещали работать и не лишали зарплаты вне случаев, указанных в законе",
+        "en": "Employee was not kept from work or left unpaid outside cases set by law"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "9",
+      "weight": 0.5,
+      "basis": "7, 95",
+      "group": "contracts",
+      "text": {
+        "hy": "Որոշակի ժամկետով պայմանագիր կնքվել է միայն հիմնավոր դեպքում",
+        "ru": "Срочный договор заключён только при наличии законного основания",
+        "en": "Fixed-term contract used only where the law allows it"
+      },
+      "covered_by": [
+        "fixed-term-ground"
+      ]
+    },
+    {
+      "no": "10",
+      "weight": 0.3,
+      "basis": "17",
+      "group": "contracts",
+      "text": {
+        "hy": "Մինչև 16 տարեկանների հետ կնքված է ժամանակավոր պայմանագիր",
+        "ru": "С лицами до 16 лет заключён временный договор",
+        "en": "Under-16s have a temporary (fixed-term) contract"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "11",
+      "weight": 0.5,
+      "basis": "7, 95",
+      "group": "contracts",
+      "text": {
+        "hy": "Նույն աշխատանքի համար որոշակի ժամկետով պայմանագիրը մեկ ամսվա ընթացքում չի երկարաձգվել կամ կրկին կնքվել",
+        "ru": "Срочный договор на ту же работу не продлялся и не заключался повторно с перерывом до месяца",
+        "en": "Fixed-term contract for the same work not extended or repeated within a month"
+      },
+      "covered_by": [
+        "fixed-term-chain"
+      ]
+    },
+    {
+      "no": "12",
+      "weight": 0.8,
+      "basis": "105",
+      "group": "contracts",
+      "text": {
+        "hy": "Աշխատանքի էական պայմանների փոփոխման հիմքերը (ծավալ, տնտեսական, տեխնոլոգիական, կազմակերպչական) փաստաթղթավորված են",
+        "ru": "Основания изменения существенных условий труда (объём, экономика, технологии, организация) оформлены документально",
+        "en": "Reasons for changing essential terms (volume, economic, technological, organisational) are documented"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "13",
+      "weight": 0.3,
+      "basis": "105",
+      "group": "contracts",
+      "text": {
+        "hy": "Մինչև 1 տարեկան երեխա խնամողի աշխատանքի էական պայմանները չեն փոփոխվել",
+        "ru": "Существенные условия труда лица, ухаживающего за ребёнком до года, не изменялись",
+        "en": "Essential terms of a person caring for a child under one were not changed"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "14",
+      "weight": 0.3,
+      "basis": "105",
+      "group": "contracts",
+      "text": {
+        "hy": "Վարձատրության պայմանը առանց համաձայնության փոխվել է միայն օրենքի կամ կոլեկտիվ պայմանագրի փոփոխության դեպքում՝ մեկ ամիս առաջ գրավոր ծանուցմամբ",
+        "ru": "Условия оплаты без согласия изменены только из-за изменения закона или коллективного договора с письменным уведомлением за месяц",
+        "en": "Pay terms changed without consent only after a change in law or collective agreement, with one month's written notice"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "15",
+      "weight": 0.3,
+      "basis": "105",
+      "group": "contracts",
+      "text": {
+        "hy": "Էական պայմանները փոփոխելիս աշխատողը տեղափոխվել է առողջական վիճակին չհակացուցված աշխատանքի",
+        "ru": "При изменении существенных условий работник переведён на работу, не противопоказанную по здоровью",
+        "en": "On changing essential terms the employee moved to work not contraindicated by health"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "16",
+      "weight": 0.3,
+      "basis": "105",
+      "group": "contracts",
+      "text": {
+        "hy": "Էական պայմանների փոփոխման ծանուցումը տրվել է 14, 35, 42, 49 կամ 60 օր առաջ՝ ըստ ստաժի",
+        "ru": "Уведомление об изменении существенных условий дано за 14, 35, 42, 49 или 60 дней по стажу",
+        "en": "Notice of changed essential terms given 14, 35, 42, 49 or 60 days ahead, by service"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "17",
+      "weight": 0.3,
+      "basis": "110",
+      "group": "termination",
+      "text": {
+        "hy": "Համաձայնությամբ լուծելիս կարգը պահպանված է",
+        "ru": "При расторжении по соглашению сторон соблюдён порядок",
+        "en": "Termination by agreement followed the procedure"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "18",
+      "weight": 0.3,
+      "basis": "111",
+      "group": "termination",
+      "text": {
+        "hy": "Ժամկետի լրանալով լուծելիս ծանուցման կարգը և ժամկետները պահպանված են",
+        "ru": "При расторжении по истечении срока соблюдены порядок и сроки уведомления",
+        "en": "Termination on expiry followed the notice procedure and deadlines"
+      },
+      "covered_by": [
+        "fixed-term-expired",
+        "fixed-term-ending"
+      ]
+    },
+    {
+      "no": "19",
+      "weight": 0.3,
+      "basis": "7, 112",
+      "group": "termination",
+      "text": {
+        "hy": "Աշխատողի նախաձեռնությամբ լուծելիս կարգը պահպանված է",
+        "ru": "При расторжении по инициативе работника соблюдён порядок",
+        "en": "Termination at the employee's initiative followed the procedure"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "20",
+      "weight": 1.0,
+      "basis": "7, 120-122",
+      "group": "termination",
+      "text": {
+        "hy": "Գործատուի նախաձեռնությամբ լուծումը կատարվել է օրինական հիմքով",
+        "ru": "Увольнение по инициативе работодателя произведено на законном основании",
+        "en": "Employer termination was on a legal ground"
+      },
+      "covered_by": [
+        "termination-ground-code",
+        "termination-ground"
+      ]
+    },
+    {
+      "no": "21",
+      "weight": 0.3,
+      "basis": "113",
+      "group": "termination",
+      "text": {
+        "hy": "Լուծարումից առաջ աշխատողին առաջարկվել է այլ համապատասխան աշխատանք (113-րդ հոդվածի 2-4-րդ կետեր)",
+        "ru": "Перед увольнением по пп. 2-4 ст. 113 работнику предложена другая подходящая работа",
+        "en": "Other suitable work offered before dismissal under Art. 113 points 2-4"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "22",
+      "weight": 0.4,
+      "basis": "115",
+      "group": "termination",
+      "text": {
+        "hy": "Գործատուի նախաձեռնությամբ լուծելիս ծանուցման ժամկետները և կարգը պահպանված են",
+        "ru": "При увольнении по инициативе работодателя соблюдены сроки и порядок уведомления",
+        "en": "Notice periods and procedure kept for employer termination"
+      },
+      "covered_by": [
+        "notice-period"
+      ]
+    },
+    {
+      "no": "23",
+      "weight": 1.0,
+      "basis": "115, 195",
+      "group": "termination",
+      "text": {
+        "hy": "Ծանուցման ժամկետանց օրերի համար տուժանքը վճարված է",
+        "ru": "Штраф за просрочку уведомления выплачен",
+        "en": "Penalty for late notice paid"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "24",
+      "weight": 0.3,
+      "basis": "109, 5",
+      "group": "termination",
+      "text": {
+        "hy": "Լուծումը ձևակերպված է անհատական իրավական ակտով, որը երեք օրվա ընթացքում հանձնված է աշխատողին",
+        "ru": "Расторжение оформлено индивидуальным правовым актом, выданным работнику в течение трёх дней",
+        "en": "Termination recorded in an individual legal act handed over within three days"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "25",
+      "weight": 0.6,
+      "basis": "105, 114",
+      "group": "termination",
+      "text": {
+        "hy": "Գործատուի նախաձեռնությամբ լուծման արգելքները (արձակուրդ, հիվանդություն, հղիություն և այլն) պահպանված են",
+        "ru": "Запреты на увольнение по инициативе работодателя (отпуск, болезнь, беременность и др.) соблюдены",
+        "en": "Dismissal bans (leave, sickness, pregnancy and others) respected"
+      },
+      "covered_by": [
+        "dismissal-during-leave"
+      ]
+    },
+    {
+      "no": "26",
+      "weight": 0.3,
+      "basis": "119",
+      "group": "termination",
+      "text": {
+        "hy": "Աշխատողների ներկայացուցչի ազատման կարգը և երաշխիքները պահպանված են",
+        "ru": "Порядок и гарантии при увольнении представителя работников соблюдены",
+        "en": "Procedure and guarantees for dismissing an employee representative respected"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "27",
+      "weight": 0.3,
+      "basis": "129, 195",
+      "group": "termination",
+      "text": {
+        "hy": "Արձակման նպաստը վճարված է օրենքով սահմանված չափով",
+        "ru": "Выходное пособие выплачено в установленном размере",
+        "en": "Severance pay paid in the amount the law sets"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "28",
+      "weight": 1.1,
+      "basis": "111, 112, 130, 170, 195",
+      "group": "termination",
+      "text": {
+        "hy": "Վերջնահաշվարկը վճարված է լուծման օրը",
+        "ru": "Окончательный расчёт выплачен в день прекращения договора",
+        "en": "Final settlement paid on the day of termination"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "29",
+      "weight": 0.1,
+      "basis": "130",
+      "group": "termination",
+      "text": {
+        "hy": "Աշխատողի խնդրանքով տրված է տեղեկանք աշխատանքային գործառույթների մասին",
+        "ru": "По просьбе работника выдана справка о трудовых функциях",
+        "en": "Reference on job functions issued on request"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.1",
+      "weight": 0.4,
+      "basis": "139 (+gov. decisions)",
+      "group": "time",
+      "text": {
+        "hy": "Շաբաթական նորմալ աշխատաժամանակը պահպանված է",
+        "ru": "Соблюдена нормальная недельная продолжительность рабочего времени",
+        "en": "Normal weekly working time kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.2",
+      "weight": 0.8,
+      "basis": "139 (+gov. decisions)",
+      "group": "time",
+      "text": {
+        "hy": "Օրական նորմալ աշխատաժամանակը պահպանված է",
+        "ru": "Соблюдена нормальная ежедневная продолжительность рабочего времени",
+        "en": "Normal daily working time kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.3",
+      "weight": 0.8,
+      "basis": "140",
+      "group": "time",
+      "text": {
+        "hy": "Կրճատ աշխատաժամանակը պահպանված է",
+        "ru": "Соблюдено сокращённое рабочее время",
+        "en": "Reduced working time kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.4",
+      "weight": 0.8,
+      "basis": "141",
+      "group": "time",
+      "text": {
+        "hy": "Օրենքով նախատեսված դեպքերում սահմանված է ոչ լրիվ աշխատաժամանակ",
+        "ru": "В случаях, предусмотренных законом, установлено неполное рабочее время",
+        "en": "Part-time set where the law requires it"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.5",
+      "weight": 1.0,
+      "basis": "142",
+      "group": "time",
+      "text": {
+        "hy": "Յուրաքանչյուր աշխատողի աշխատաժամանակի և հանգստի բաշխման գրաֆիկը",
+        "ru": "График распределения рабочего времени и отдыха на каждого работника",
+        "en": "Written schedule of working and rest time for each employee"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.6",
+      "weight": 1.3,
+      "basis": "142",
+      "group": "time",
+      "text": {
+        "hy": "Յուրաքանչյուր աշխատողի աշխատաժամանակի ստույգ հաշվառում",
+        "ru": "Точный учёт рабочего времени каждого работника",
+        "en": "Accurate working-time records for each employee"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.7",
+      "weight": 0.5,
+      "basis": "143, 154, 155",
+      "group": "time",
+      "text": {
+        "hy": "Աշխատաժամանակի գումարային հաշվարկի կարգը և սահմանափակումները պահպանված են",
+        "ru": "Порядок и ограничения суммированного учёта рабочего времени соблюдены",
+        "en": "Rules and limits of summed working-time accounting kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.8",
+      "weight": 0.5,
+      "basis": "145",
+      "group": "time",
+      "text": {
+        "hy": "Արտաժամյա աշխատանքի ներգրավումը եղել է միայն բացառիկ դեպքերում",
+        "ru": "К сверхурочной работе привлекали только в исключительных случаях",
+        "en": "Overtime used only in exceptional cases"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.9",
+      "weight": 0.5,
+      "basis": "144",
+      "group": "time",
+      "text": {
+        "hy": "Արտաժամյա աշխատանքի սահմանափակումները պահպանված են",
+        "ru": "Ограничения на сверхурочную работу соблюдены",
+        "en": "Overtime restrictions kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.10",
+      "weight": 0.8,
+      "basis": "139",
+      "group": "time",
+      "text": {
+        "hy": "Օրական և շաբաթական առավելագույն աշխատաժամանակը պահպանված է",
+        "ru": "Предельная суточная и недельная продолжительность работы соблюдена",
+        "en": "Maximum daily and weekly working time kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.11",
+      "weight": 0.8,
+      "basis": "146",
+      "group": "time",
+      "text": {
+        "hy": "Արտաժամյա աշխատանքը իրար հաջորդող երկու օրում չի գերազանցել սահմանվածը",
+        "ru": "Сверхурочная работа за два дня подряд не превысила предел",
+        "en": "Overtime over two consecutive days within the limit"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.12",
+      "weight": 0.5,
+      "basis": "146",
+      "group": "time",
+      "text": {
+        "hy": "Արտաժամյա աշխատանքը տարվա ընթացքում չի գերազանցել սահմանվածը",
+        "ru": "Сверхурочная работа за год не превысила предел",
+        "en": "Overtime over the year within the limit"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.13",
+      "weight": 0.5,
+      "basis": "147",
+      "group": "time",
+      "text": {
+        "hy": "Տոների նախօրյակին աշխատանքային օրը կրճատված է",
+        "ru": "Рабочий день накануне праздников сокращён",
+        "en": "Working day shortened before holidays"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "30.14",
+      "weight": 0.4,
+      "basis": "148",
+      "group": "time",
+      "text": {
+        "hy": "Մինչև 18 տարեկանների և այլ խմբերի համար գիշերային աշխատանքի սահմանափակումները պահպանված են",
+        "ru": "Ограничения ночной работы для лиц до 18 лет и других групп соблюдены",
+        "en": "Night-work limits for under-18s and other groups kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "30.15",
+      "weight": 0.4,
+      "basis": "148",
+      "group": "time",
+      "text": {
+        "hy": "Հղիները և մինչև 3 տարեկան երեխա խնամողները գիշերային աշխատանքի ներգրավվել են միայն համաձայնությամբ",
+        "ru": "Беременные и ухаживающие за ребёнком до 3 лет привлекались к ночной работе только с согласия",
+        "en": "Pregnant women and carers of children under three on night work only with consent"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.1",
+      "weight": 0.3,
+      "basis": "152",
+      "group": "time",
+      "text": {
+        "hy": "Հանգստի և սնվելու ընդմիջումների կարգը պահպանված է",
+        "ru": "Порядок перерывов для отдыха и питания соблюдён",
+        "en": "Rest and meal breaks given as required"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.2",
+      "weight": 0.4,
+      "basis": "17",
+      "group": "time",
+      "text": {
+        "hy": "14-18 տարեկանների հանգստյան օրերի և արձակուրդի կարգը պահպանված է",
+        "ru": "Порядок выходных и отпуска для лиц 14-18 лет соблюдён",
+        "en": "Rest days and leave rules for ages 14 to 18 kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.3",
+      "weight": 0.3,
+      "basis": "153",
+      "group": "time",
+      "text": {
+        "hy": "Երկար աշխատաժամանակով մինչև 18 տարեկաններին տրամադրված են ընդմիջումներ",
+        "ru": "Лицам до 18 лет при длинном рабочем времени предоставлены перерывы",
+        "en": "Under-18s on long hours given extra breaks"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.4",
+      "weight": 0.3,
+      "basis": "153",
+      "group": "time",
+      "text": {
+        "hy": "Շոգ պայմաններում աշխատանքի համար տրամադրված են հատուկ ընդմիջումներ",
+        "ru": "При работе в жаре предоставлены специальные перерывы",
+        "en": "Special breaks given for work in extreme heat"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.5",
+      "weight": 0.6,
+      "basis": "154",
+      "group": "time",
+      "text": {
+        "hy": "Աշխատանքային օրերի միջև օրական հանգիստը պահպանված է",
+        "ru": "Ежедневный отдых между рабочими днями соблюдён",
+        "en": "Daily rest between working days kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "31.6",
+      "weight": 0.6,
+      "basis": "155",
+      "group": "time",
+      "text": {
+        "hy": "Շաբաթական անընդմեջ հանգիստը (35 ժամ) պահպանված է",
+        "ru": "Непрерывный еженедельный отдых (35 часов) соблюдён",
+        "en": "Weekly rest of 35 hours kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "31.7",
+      "weight": 0.4,
+      "basis": "155",
+      "group": "time",
+      "text": {
+        "hy": "Հանգստյան օրերին աշխատանքի արգելքը և կարգը պահպանված են",
+        "ru": "Запрет и порядок работы в выходные дни соблюдены",
+        "en": "Ban and procedure for work on rest days kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.8",
+      "weight": 0.4,
+      "basis": "156",
+      "group": "time",
+      "text": {
+        "hy": "Տոնական և հիշատակի օրերին աշխատանքի արգելքը պահպանված է",
+        "ru": "Запрет работы в праздничные и памятные дни соблюдён",
+        "en": "Ban on work on holidays and memorial days kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "31.9",
+      "weight": 0.3,
+      "basis": "7, 159, 160, 161, 168 (+gov. decisions)",
+      "group": "time",
+      "text": {
+        "hy": "Ամենամյա արձակուրդների տրամադրման կարգը և տևողությունը պահպանված են",
+        "ru": "Порядок и продолжительность ежегодных отпусков соблюдены",
+        "en": "Annual leave granted as required"
+      },
+      "covered_by": [
+        "annual-leave-min"
+      ]
+    },
+    {
+      "no": "31.10",
+      "weight": 0.1,
+      "basis": "172-176.1, 195",
+      "group": "time",
+      "text": {
+        "hy": "Նպատակային արձակուրդները (հղիության, ծննդաբերության և այլն) տրամադրված են",
+        "ru": "Целевые отпуска (по беременности, родам и др.) предоставлены",
+        "en": "Purpose leave (maternity and others) granted"
+      },
+      "covered_by": [
+        "maternity-min"
+      ]
+    },
+    {
+      "no": "32.1",
+      "weight": 1.3,
+      "basis": "7, 179, 180, 189 (+other laws)",
+      "group": "pay",
+      "text": {
+        "hy": "Աշխատավարձը ոչ պակաս նվազագույնից է",
+        "ru": "Зарплата не ниже минимального размера",
+        "en": "Pay not below the minimum wage"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.2",
+      "weight": 1.3,
+      "basis": "7, 192",
+      "group": "pay",
+      "text": {
+        "hy": "Աշխատավարձի վճարման ժամկետները և կարգը պահպանված են",
+        "ru": "Сроки и порядок выплаты зарплаты соблюдены",
+        "en": "Pay deadlines and procedure kept"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.3",
+      "weight": 0.8,
+      "basis": "7, 84.1, 184",
+      "group": "pay",
+      "text": {
+        "hy": "Արտաժամյա աշխատանքի համար լրավճարը վճարված է",
+        "ru": "Доплата за сверхурочную работу выплачена",
+        "en": "Overtime premium paid"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.4",
+      "weight": 0.8,
+      "basis": "7, 84.1, 184",
+      "group": "pay",
+      "text": {
+        "hy": "Գիշերային աշխատանքի համար լրավճարը վճարված է",
+        "ru": "Доплата за ночную работу выплачена",
+        "en": "Night-work premium paid"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.5",
+      "weight": 0.8,
+      "basis": "7, 183 (+gov. decisions)",
+      "group": "pay",
+      "text": {
+        "hy": "Ծանր և վնասակար աշխատանքի համար լրավճարը վճարված է",
+        "ru": "Доплата за тяжёлую и вредную работу выплачена",
+        "en": "Premium for heavy and harmful work paid"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.6",
+      "weight": 0.8,
+      "basis": "7, 185",
+      "group": "pay",
+      "text": {
+        "hy": "Հանգստյան և տոնական օրերին աշխատանքի համար վճարը կատարված է",
+        "ru": "Оплата работы в выходные и праздничные дни произведена",
+        "en": "Pay for work on rest days and holidays made"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.7",
+      "weight": 0.8,
+      "basis": "7, 185",
+      "group": "pay",
+      "text": {
+        "hy": "Գրաֆիկով տոնական օրերին աշխատանքի համար վճարը կատարված է",
+        "ru": "Оплата работы в праздничные дни по графику произведена",
+        "en": "Pay for scheduled work on holidays made"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.8",
+      "weight": 0.8,
+      "basis": "186",
+      "group": "pay",
+      "text": {
+        "hy": "Աշխատողի մեղքով չառաջացած պարապուրդի համար վճարը կատարված է",
+        "ru": "Оплата простоя не по вине работника произведена",
+        "en": "Pay for downtime not caused by the employee made"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.9",
+      "weight": 0.2,
+      "basis": "187.1",
+      "group": "pay",
+      "text": {
+        "hy": "Ուսումնական հաստատությունների արձակուրդների շրջանում վճարման կարգը պահպանված է",
+        "ru": "Порядок оплаты в период каникул учебных заведений соблюдён",
+        "en": "Pay rules for school-holiday periods kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.10",
+      "weight": 0.4,
+      "basis": "7, 188",
+      "group": "pay",
+      "text": {
+        "hy": "Աշխատանքի ծավալի ավելացման դեպքում վարձատրությունը համապատասխանաբար ավելացված է",
+        "ru": "При увеличении объёма работы оплата соответственно увеличена",
+        "en": "Pay increased when the workload grows"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.11",
+      "weight": 0.8,
+      "basis": "7, 169, 195",
+      "group": "pay",
+      "text": {
+        "hy": "Ամենամյա արձակուրդի միջին աշխատավարձը վճարված է ժամանակին",
+        "ru": "Средняя зарплата за ежегодный отпуск выплачена вовремя",
+        "en": "Average pay for annual leave paid on time"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.12",
+      "weight": 0.8,
+      "basis": "169, 195",
+      "group": "pay",
+      "text": {
+        "hy": "Վճարված, բայց չօգտագործված արձակուրդի օրերի հաշվարկը կատարված է",
+        "ru": "Учёт оплаченных, но не использованных дней отпуска ведётся",
+        "en": "Paid but unused leave days accounted for"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.13",
+      "weight": 0.8,
+      "basis": "198",
+      "group": "pay",
+      "text": {
+        "hy": "Աշխատավարձի ուշացման համար տուժանքը վճարված է",
+        "ru": "Штраф за задержку зарплаты выплачен",
+        "en": "Penalty for late wages paid"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.14",
+      "weight": 0.8,
+      "basis": "7, 195, 200",
+      "group": "pay",
+      "text": {
+        "hy": "Սովորելու գործուղված աշխատողին ուսումնական արձակուրդի վճարը կատարված է",
+        "ru": "Оплата учебного отпуска направленному на учёбу работнику произведена",
+        "en": "Study leave pay made for employees sent to study"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.15",
+      "weight": 0.3,
+      "basis": "7, 201.1",
+      "group": "pay",
+      "text": {
+        "hy": "Աշակերտների և նորընդունվածների մասնագիտական ուսուցման կարգը պահպանված է",
+        "ru": "Порядок профессионального обучения учеников и вновь принятых соблюдён",
+        "en": "Vocational training rules for trainees and new hires kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.16",
+      "weight": 0.3,
+      "basis": "195, 203",
+      "group": "pay",
+      "text": {
+        "hy": "Լրացուցիչ և հատուկ ընդմիջումները վճարված են միջին աշխատավարձով",
+        "ru": "Дополнительные и специальные перерывы оплачены по средней зарплате",
+        "en": "Extra and special breaks paid at average pay"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.17",
+      "weight": 0.3,
+      "basis": "205 (+gov. decisions)",
+      "group": "pay",
+      "text": {
+        "hy": "Դաշտային կամ տեղաշարժվող աշխատանքի հավելավճարները վճարված են",
+        "ru": "Выплаты за полевую и разъездную работу произведены",
+        "en": "Allowances for field or travelling work paid"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.18",
+      "weight": 0.4,
+      "basis": "7, 209 (+gov. decisions)",
+      "group": "pay",
+      "text": {
+        "hy": "Գործուղման մեկնածների երաշխիքները պահպանված են, հատուցումները վճարված",
+        "ru": "Гарантии командированных соблюдены, компенсации выплачены",
+        "en": "Business-trip guarantees kept and compensation paid"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.19",
+      "weight": 0.8,
+      "basis": "213",
+      "group": "pay",
+      "text": {
+        "hy": "Աշխատավարձից պահումները կատարվել են օրենքով նախատեսված դեպքերում",
+        "ru": "Удержания из зарплаты производились в случаях, предусмотренных законом",
+        "en": "Pay deductions made only in cases set by law"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "32.20",
+      "weight": 0.3,
+      "basis": "214",
+      "group": "pay",
+      "text": {
+        "hy": "Պահումների ընդհանուր չափը չի գերազանցել սահմանվածը",
+        "ru": "Общий размер удержаний не превысил установленный предел",
+        "en": "Total deductions within the legal limit"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "32.21",
+      "weight": 0.5,
+      "basis": "214",
+      "group": "pay",
+      "text": {
+        "hy": "Պահումներից հետո վճարվող աշխատավարձը պակաս չէ սահմանված նվազագույնից",
+        "ru": "Зарплата после удержаний не ниже установленного минимума",
+        "en": "Pay after deductions not below the legal minimum"
+      },
+      "covered_by": "document",
+      "automatable": true
+    },
+    {
+      "no": "33",
+      "weight": 0.3,
+      "basis": "209",
+      "group": "other",
+      "text": {
+        "hy": "Մինչև 18 տարեկանների, հղիների և երեխա խնամողների գործուղման կարգը պահպանված է",
+        "ru": "Порядок командирования лиц до 18 лет, беременных и ухаживающих за детьми соблюдён",
+        "en": "Business-trip rules for under-18s, pregnant women and carers kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "34.1",
+      "weight": 0.3,
+      "basis": "7, 222",
+      "group": "other",
+      "text": {
+        "hy": "Կարգապահական պատասխանատվության են ենթարկվել միայն աշխատանքային կարգապահության խախտման համար",
+        "ru": "К дисциплинарной ответственности привлекали только за нарушение трудовой дисциплины",
+        "en": "Discipline applied only for breaches of work discipline"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "34.2",
+      "weight": 0.3,
+      "basis": "7, 225",
+      "group": "other",
+      "text": {
+        "hy": "Յուրաքանչյուր խախտման համար նշանակվել է մեկ տույժ",
+        "ru": "За каждое нарушение назначено одно взыскание",
+        "en": "One penalty per breach"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "34.3",
+      "weight": 0.4,
+      "basis": "7, 226",
+      "group": "other",
+      "text": {
+        "hy": "Տույժից առաջ աշխատողից գրավոր բացատրություն է պահանջվել",
+        "ru": "До взыскания у работника затребовано письменное объяснение",
+        "en": "Written explanation requested before a penalty"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "34.4",
+      "weight": 0.5,
+      "basis": "7, 227",
+      "group": "other",
+      "text": {
+        "hy": "Կարգապահական տույժի կիրառման ժամկետները պահպանված են",
+        "ru": "Сроки применения дисциплинарного взыскания соблюдены",
+        "en": "Deadlines for disciplinary penalties kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "35",
+      "weight": 0.8,
+      "basis": "257, 5 (+gov. decisions, other laws)",
+      "group": "other",
+      "text": {
+        "hy": "Ծանր և վնասակար աշխատանքների կանոնները պահպանված են",
+        "ru": "Правила для тяжёлых и вредных работ соблюдены",
+        "en": "Rules for heavy and harmful work kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "36",
+      "weight": 0.4,
+      "basis": "258 (+gov. decisions)",
+      "group": "other",
+      "text": {
+        "hy": "Հղիների և մինչև 1 տարեկան երեխա խնամողների աշխատանքային երաշխիքները պահպանված են",
+        "ru": "Трудовые гарантии беременных и ухаживающих за ребёнком до года соблюдены",
+        "en": "Work guarantees for pregnant women and carers of a child under one kept"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "37",
+      "weight": 0.4,
+      "basis": "258, 195",
+      "group": "other",
+      "text": {
+        "hy": "Բժշկական հետազոտության համար ժամանակը տրամադրված է և վճարված",
+        "ru": "Время для медосмотра предоставлено и оплачено",
+        "en": "Time for medical examination given and paid"
+      },
+      "covered_by": "document"
+    },
+    {
+      "no": "38",
+      "weight": 0.4,
+      "basis": "258, 195",
+      "group": "other",
+      "text": {
+        "hy": "Կրծքով կերակրող կնոջը տրամադրված են ընդմիջումներ",
+        "ru": "Кормящим матерям предоставлены перерывы",
+        "en": "Breaks given to breastfeeding mothers"
+      },
+      "covered_by": "document"
+    }
+  ]
+}

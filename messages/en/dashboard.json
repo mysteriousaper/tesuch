@@ -54,7 +54,9 @@
       "optional": "optional",
       "srcUnknown": "Not known",
       "srcYes": "Yes",
-      "srcNo": "No"
+      "srcNo": "No",
+      "positionStated": "The contract states the position or job functions",
+      "payStated": "The contract states the basic pay or how it is set"
     },
     "save": "Save",
     "saved": "Saved.",
@@ -120,6 +122,23 @@
         "employer": "Employer",
         "employee": "Employee",
         "mutual": "Mutual agreement"
+      },
+      "terminationGroundCode": "Legal ground code",
+      "groundCodes": {
+        "113_1_1": "Liquidation of the organisation",
+        "113_1_2": "Headcount or post reduction",
+        "113_1_3": "Not suited to the post or work",
+        "113_1_4": "Reinstatement of the previous employee",
+        "113_1_5": "Repeated failure to perform duties without good reason",
+        "113_1_6": "Loss of trust",
+        "113_1_7": "Long-term incapacity for work",
+        "113_1_8": "At work under the influence of alcohol or drugs",
+        "113_1_9": "Absent a whole working day without good reason",
+        "113_1_10": "Refusal of a mandatory medical examination",
+        "113_1_11": "Pension age (63 or 65)",
+        "113_1_12": "Foreigner's residence status lost",
+        "113_1_13": "Not admitted to work (Art. 108(1.1))",
+        "93_1": "Dismissal during probation (Art. 93)"
       }
     },
     "settings": {

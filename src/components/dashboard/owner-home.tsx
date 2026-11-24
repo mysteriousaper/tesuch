@@ -6,6 +6,8 @@ import type { OwnerSnapshot } from "./owner-home-data";
 import { CoverageNote } from "@/components/coverage-note";
 import { daysSince, isStale } from "@/lib/import/sanity";
 import { coverage } from "@/lib/rules/coverage";
+import { CHECKLIST, checklistCoverage, documentGroups } from "@/lib/rules/checklist";
+import { DocumentsReady } from "./documents-ready";
 import { OnboardingSteps } from "./onboarding-steps";
 
 const TONE: Record<Readiness, { border: string; text: string; icon: string }> = {
@@ -19,7 +21,7 @@ const TONE: Record<Readiness, { border: string; text: string; icon: string }> = 
  * Home for an owner who runs one business: one big status in words (colour is never the only signal),
  * at most three things to do this week, and the "Inspector is here" download.
  */
-export async function OwnerHome({ locale, company, snapshot, telegramLinked, assisted }: { locale: string; company: { id: string; name: string }; snapshot: OwnerSnapshot; telegramLinked: boolean; assisted?: React.ReactNode }) {
+export async function OwnerHome({ locale, company, snapshot, telegramLinked, assisted, ticked = [], canEdit = false }: { locale: string; company: { id: string; name: string }; snapshot: OwnerSnapshot; telegramLinked: boolean; assisted?: React.ReactNode; /** Checklist items the company marked "we have it". */ ticked?: string[]; canEdit?: boolean }) {
   const t = await getTranslations("owner");
   const tone = TONE[snapshot.status];
   const today = new Date().toISOString().slice(0, 10);
@@ -49,6 +51,8 @@ export async function OwnerHome({ locale, company, snapshot, telegramLinked, ass
         <CoverageNote titles={cov.titles} summary={t("coverage.summary", { n: cov.count })} listLabel={t("coverage.list")} note={t("coverage.note")} reviewed={rulesReviewedLine(locale as Locale)} />
       )}
 
+      <p className="-mt-3 px-1 text-sm text-muted" data-testid="checklist-coverage">{t("coverage.checklist", checklistCoverage())}</p>
+
       {(snapshot.status === "none" || !telegramLinked) && (
         <OnboardingSteps staffAdded={snapshot.status !== "none"} telegramLinked={telegramLinked} assisted={assisted} />
       )}
@@ -75,6 +79,13 @@ export async function OwnerHome({ locale, company, snapshot, telegramLinked, ass
             </ol>
           )}
         </section>
+      )}
+
+      {snapshot.status !== "none" && (
+        <DocumentsReady
+          locale={locale as Locale} companyId={company.id} initialTicked={ticked} canEdit={canEdit}
+          groups={documentGroups().map((g) => ({ ...g, label: CHECKLIST.groups[g.group]?.[locale as Locale] ?? g.group }))}
+        />
       )}
 
       <section className="flex flex-col gap-2 rounded-theme-lg border border-line bg-surface p-4">

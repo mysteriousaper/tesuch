@@ -60,11 +60,18 @@ export async function GET(req: Request) {
     .eq("company_id", company.id)
     .is("archived_at", null);
 
+  // Only the pack lists the checklist ticks. An error (table not migrated yet) reads as nothing ticked.
+  const pack = q.get("pack") === "1";
+  const ticked = pack
+    ? ((await db.from("checklist_ticks").select("question_no").eq("company_id", company.id)).data ?? []).map((r) => r.question_no as string)
+    : [];
+
   const pdf = await renderChecklist({
     locale: loc.data,
     company: { name: company.name, taxId: company.tax_id },
     asOf,
-    pack: q.get("pack") === "1",
+    pack,
+    ticked,
     // Unknown head count (query error) falls back to scoring; zero staff has no score.
     score: !staffErr && staff === 0 ? null : inspectionReadyScore(items.map((i) => i.finding)),
     items,

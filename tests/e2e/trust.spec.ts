@@ -12,6 +12,7 @@ for (const locale of LOCALES) {
       expect(res?.status(), "HTTP status").toBeLessThan(400);
       await expect(page.locator("html")).toHaveAttribute("lang", locale);
       await expect(page.locator("h1")).toBeVisible();
+      await expect(page.getByTestId("checklist-coverage")).toContainText("102");
       await expect(page.locator("#design li")).toHaveCount(4);
       await expect(page.locator(`#design a[href="/${locale}/check-file"]`)).toBeVisible();
       await expect(page.locator("#facts li")).toHaveCount(7);

@@ -1,0 +1,51 @@
+{
+  "id": "fixed-term-chain",
+  "version": 1,
+  "article": "95(2.1)",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 95(2.1): when a fixed-term contract is extended, or a second contract is concluded with the same employee for the same work and the break does not exceed one month, «աշխատանքային պայմանագիրը համարվում է կնքված անորոշ ժամկետով» (deemed indefinite). Does not apply to cases under Art. 95(1) and 95(3). Official checklist N 5.1 question 11.",
+  "scope": "contract",
+  "severity": "amber",
+  "title": {
+    "hy": "Որոշակի ժամկետով պայմանագիրը կնքվել է նախորդի ավարտից մեկ ամսվա ընթացքում՝ կարող է համարվել անորոշ ժամկետով",
+    "ru": "Срочный договор заключён в течение месяца после предыдущего: может считаться бессрочным",
+    "en": "Fixed-term contract follows the previous one within a month: may be deemed indefinite"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "isFixedTerm",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "fixedTermGroundKnown",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "hasFixedTermGround",
+        "operator": "equal",
+        "value": false
+      },
+      {
+        "fact": "priorFixedTermWithinMonth",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Fires on the later contract when an earlier fixed-term contract with this employer ended at most one month before its start (or overlaps it) and no Art. 95 ground is recorded.",
+    "A recorded ground may fall under Art. 95(1) or 95(3), where the rule does not apply, so the rule stays quiet then; the lawyer should decide.",
+    "'Same work' is not stored: a different job after a short break is not distinguished.",
+    "Extension by amendment (same contract, later end date) is not tracked as a separate contract."
+  ]
+}

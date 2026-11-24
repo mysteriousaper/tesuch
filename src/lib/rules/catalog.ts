@@ -12,6 +12,11 @@ import probationMinor from "../../../rules/probation-minor.json";
 import probationTransfer from "../../../rules/probation-transfer.json";
 import srcRegistration from "../../../rules/src-registration.json";
 import terminationGround from "../../../rules/termination-ground.json";
+import employeeNoContract from "../../../rules/employee-no-contract.json";
+import terminationGroundCode from "../../../rules/termination-ground-code.json";
+import fixedTermChain from "../../../rules/fixed-term-chain.json";
+import dismissalDuringLeave from "../../../rules/dismissal-during-leave.json";
+import contractRequiredItems from "../../../rules/contract-required-items.json";
 import { ruleSchema, type RuleDefinition } from "./schema";
 
 const RAW = [
@@ -28,6 +33,11 @@ const RAW = [
   noticePeriod,
   maternityMin,
   srcRegistration,
+  employeeNoContract,
+  terminationGroundCode,
+  fixedTermChain,
+  dismissalDuringLeave,
+  contractRequiredItems,
 ];
 
 export function parseRules(raw: unknown[]): RuleDefinition[] {

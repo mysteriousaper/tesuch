@@ -3,6 +3,7 @@
 import { SanityWatch } from "@/components/import/sanity-watch";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { GROUND_CODES, groundKey } from "@/lib/rules/grounds";
 import { updateEmployee } from "@/app/[locale]/app/actions";
 import { ActionForm, inputCls, labelCls } from "./action-form";
 
@@ -23,6 +24,9 @@ export interface EmployeeValues {
   termination_initiator: "employer" | "employee" | "mutual" | null;
   notice_given_on: string | null;
   workforce_reduction: boolean;
+  termination_ground_code: string | null;
+  position_stated: boolean | null;
+  pay_stated: boolean | null;
 }
 
 const FLAG_LABEL = { six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer" } as const;
@@ -98,6 +102,22 @@ export function EditEmployeeForm({ locale, companyId, employeeId, contractId, va
           <option value="no">{t("fields.srcNo")}</option>
         </select>
       </label>
+      <label className={labelCls}>
+        {t("fields.positionStated")}
+        <select name="position_stated" defaultValue={values.position_stated === null ? "" : values.position_stated ? "yes" : "no"} className={inputCls}>
+          <option value="">{t("fields.srcUnknown")}</option>
+          <option value="yes">{t("fields.srcYes")}</option>
+          <option value="no">{t("fields.srcNo")}</option>
+        </select>
+      </label>
+      <label className={labelCls}>
+        {t("fields.payStated")}
+        <select name="pay_stated" defaultValue={values.pay_stated === null ? "" : values.pay_stated ? "yes" : "no"} className={inputCls}>
+          <option value="">{t("fields.srcUnknown")}</option>
+          <option value="yes">{t("fields.srcYes")}</option>
+          <option value="no">{t("fields.srcNo")}</option>
+        </select>
+      </label>
       <details className="rounded-theme border border-line sm:col-span-2" open={Boolean(values.terminated_on)}>
         <summary className="cursor-pointer px-3 py-2 text-sm font-semibold">{t("termination")}</summary>
         <div className="grid gap-3 border-t border-line p-3 sm:grid-cols-2">
@@ -113,6 +133,13 @@ export function EditEmployeeForm({ locale, companyId, employeeId, contractId, va
           <label className={labelCls}>
             {t("fields2.terminationGround")}
             <input name="termination_ground" maxLength={300} defaultValue={values.termination_ground ?? ""} className={inputCls} />
+          </label>
+          <label className={`${labelCls} sm:col-span-2`}>
+            {t("fields2.terminationGroundCode")}
+            <select name="termination_ground_code" defaultValue={values.termination_ground_code ?? ""} className={inputCls}>
+              <option value="">{t("fields2.none")}</option>
+              {GROUND_CODES.map((k) => <option key={k} value={k}>{`${k} · ${t(`fields2.groundCodes.${groundKey(k)}`)}`}</option>)}
+            </select>
           </label>
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
             <input type="checkbox" name="workforce_reduction" defaultChecked={values.workforce_reduction} className="h-4 w-4" />

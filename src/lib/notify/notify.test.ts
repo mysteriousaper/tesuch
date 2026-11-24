@@ -33,7 +33,7 @@ describe("telegram messages", () => {
     expect(msg).toContain("15.04.2026");
   });
   it("uses 'pending' wording for rules without an article", () => {
-    expect(telegramAlert(item({ ruleId: "notice-period", article: null }), "en")).toContain("article pending lawyer review");
+    expect(telegramAlert(item({ ruleId: "src-registration", article: null }), "en")).toContain("article pending lawyer review");
   });
   it("escapes user-supplied names", () => {
     const msg = telegramAlert(item({}, { companyName: "<script>x</script>" }), "en");

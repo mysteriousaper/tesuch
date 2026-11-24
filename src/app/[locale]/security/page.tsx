@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 import { Cards, type Item } from "@/components/trust/cards";
 import { Link } from "@/i18n/navigation";
+import { checklistCoverage } from "@/lib/rules/checklist";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -40,6 +41,7 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
             {t("hero.title")}
           </h1>
           <p className="mt-4 max-w-2xl text-lg leading-relaxed text-muted">{t("hero.subtitle")}</p>
+          <p className="mt-3 max-w-2xl text-sm text-muted" data-testid="checklist-coverage">{t("hero.coverage", checklistCoverage())}</p>
         </header>
 
         <nav aria-label={t("hero.eyebrow")} className="mt-8 rounded-theme-lg border border-line bg-surface p-4">

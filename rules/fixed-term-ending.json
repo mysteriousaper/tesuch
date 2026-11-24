@@ -1,14 +1,50 @@
 {
-  "id": "fixed-term-ending", "version": 1, "article": "95", "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
-  "basis": "law-firm summary (not yet checked against arlis.am)",
-  "scope": "contract", "severity": "info",
-  "title": { "hy": "Որոշակի ժամկետով պայմանագիրը շուտով ավարտվում է", "ru": "Срочный трудовой договор скоро истекает", "en": "Fixed-term contract ends soon" },
-  "conditions": { "all": [
-    { "fact": "isActive", "operator": "equal", "value": true },
-    { "fact": "isFixedTerm", "operator": "equal", "value": true },
-    { "fact": "daysUntilContractEnd", "operator": "greaterThanInclusive", "value": 0 },
-    { "fact": "daysUntilContractEnd", "operator": "lessThanInclusive", "value": 30 }
-  ] },
-  "due": { "date": "contractEnd", "offsetDays": 0 },
-  "edge_cases": ["30-day window is a product choice. Consequences of working past the end date need lawyer input."]
+  "id": "fixed-term-ending",
+  "version": 2,
+  "article": "109(1)(2)",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 109(1)(2): contract ends when its term expires; Art. 109(2): termination is formalised by the employer's individual legal act; Art. 111(2): employer gives at least 10 days' written notice before expiry (not for replacement workers or contracts for specific works, 111(3)). Art. 95 contains no notice duty.",
+  "scope": "contract",
+  "severity": "info",
+  "title": {
+    "hy": "Որոշակի ժամկետով պայմանագիրը շուտով ավարտվում է",
+    "ru": "Срочный трудовой договор скоро истекает",
+    "en": "Fixed-term contract ends soon"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "isActive",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "isFixedTerm",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "daysUntilContractEnd",
+        "operator": "greaterThanInclusive",
+        "value": 0
+      },
+      {
+        "fact": "daysUntilContractEnd",
+        "operator": "lessThanInclusive",
+        "value": 30
+      }
+    ]
+  },
+  "due": {
+    "date": "contractEnd",
+    "offsetDays": -10
+  },
+  "edge_cases": [
+    "30-day reminder window is a product choice; the legal deadline is 10 days before the end (Art. 111(2)), used as the due date.",
+    "Art. 111(2) notice is not required for replacement workers or contracts for specific works (111(3)): not modelled.",
+    "Working past the end date makes the contract indefinite (Art. 111(5)): see fixed-term-expired. Extension or re-hire within a month: see fixed-term-chain."
+  ]
 }
