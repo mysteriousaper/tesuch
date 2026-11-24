@@ -74,3 +74,10 @@ describe("generated codes (codes mode, file without a code column)", () => {
     expect(r.keep.map((e) => e.id)).toEqual(["n2"]);
   });
 });
+
+describe("dedupeEmployees matched (re-sync)", () => {
+  it("returns the saved id of a matched employee", () => {
+    const r = dedupeEmployees([emp("Ա Բ", null, "AB-7")], [{ id: "saved-1", full_name: "Ա Բ", birth_date: null, external_ref: "ab-7" }]);
+    expect(r.matched).toEqual([{ candidate: expect.objectContaining({ full_name: "Ա Բ" }), existingId: "saved-1" }]);
+  });
+});

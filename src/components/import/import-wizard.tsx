@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useId, useMemo, useState, useTransition } from "react";
-import { commitImport, type CommitResult } from "@/app/[locale]/app/import/actions";
+import { commitImport, previewImport, type CommitResult, type PreviewResult } from "@/app/[locale]/app/import/actions";
 import { Link } from "@/i18n/navigation";
 import {
   autoMap, buildImport, decodeCsv, detectHeaderRow, missingRequiredFields, NAME_FIELDS, parseCsv, selectableFields, toMapping, toTable, unmappedImpact,
@@ -59,6 +59,28 @@ async function readFile(file: File): Promise<{ source: Source; encoding: CsvEnco
   return { source: { grid: parseCsv(decoded.text), bytes }, encoding: decoded.encoding };
 }
 
+/** Saved column mappings live in this browser, keyed by company and the file's header row. */
+const mapKey = (companyId: string, headers: string[]) => `tesuch.import.map.${companyId}.${headers.map((h) => h.trim().toLowerCase()).join("|")}`;
+function loadMapping(companyId: string, headers: string[]): ColumnMapping | null {
+  try {
+    const raw = window.localStorage.getItem(mapKey(companyId, headers));
+    if (!raw) return null;
+    const data = JSON.parse(raw) as Record<string, TargetField | null>;
+    const out: ColumnMapping = {};
+    for (const [k, v] of Object.entries(data)) if (Number(k) < headers.length) out[Number(k)] = v;
+    return out;
+  } catch {
+    return null;
+  }
+}
+function saveMapping(companyId: string, headers: string[], mapping: ColumnMapping) {
+  try {
+    window.localStorage.setItem(mapKey(companyId, headers), JSON.stringify(mapping));
+  } catch {
+    // Private mode or storage full: the mapping is simply not remembered.
+  }
+}
+
 const fmtDate = (iso: string | null) => (iso ? iso.split("-").reverse().join(".") : "—");
 
 export function ImportWizard({ locale, companies }: { locale: Locale; companies: ImportCompany[] }) {
@@ -80,6 +102,9 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
   const [reading, setReading] = useState(false);
   const [result, setResult] = useState<CommitResult | null>(null);
   const [committing, startCommit] = useTransition();
+  const [sync, setSync] = useState<PreviewResult | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [mappingRestored, setMappingRestored] = useState(false);
 
   const field = (f: TargetField) => t(`fields.${f}`);
   const privacy = companies.find((c) => c.id === companyId)?.privacy === true;
@@ -112,9 +137,11 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     if (!parsed.headers.length || !parsed.rows.length) return "empty";
     if (parsed.rows.length > MAX_IMPORT_ROWS) return "tooManyRows";
     const g = autoMap(parsed.headers, { privacy });
+    const saved = loadMapping(companyId, parsed.headers);
     setTable(serializable(parsed));
     setGuesses(g);
-    setMapping(toMapping(g));
+    setMapping(saved ?? toMapping(g));
+    setMappingRestored(saved !== null);
     return null;
   }
 
@@ -163,6 +190,23 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     if (applyGrid(grid, detected)) setMapError(t("headerRowEmpty", { row: detected ?? 1 }));
   }
 
+  /** Save the mapping (this browser only), then compare the file with saved staff for the New / Changed / Unchanged counts. */
+  async function goPreview() {
+    if (!table) return;
+    saveMapping(companyId, table.headers, mapping);
+    setStep("preview");
+    setSync(null);
+    setSyncing(true);
+    try {
+      const rows = table.rows as { rowNumber: number; cells: (string | number | boolean | Date | null)[] }[];
+      setSync(await previewImport({ companyId, headers: table.headers, rows, mapping: Object.fromEntries(Object.entries(mapping).map(([k, v]) => [k, v ?? null])) }));
+    } catch {
+      setSync({ ok: false, error: "failed" });
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   function downloadTemplate() {
     const csv = templateCsv(locale, field, { name: t("templateSample.name"), ground: t("templateSample.ground") }, { privacy });
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
@@ -194,6 +238,8 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
     setSource(null);
     setEncoding(null);
     setMapError(null);
+    setSync(null);
+    setMappingRestored(false);
   }
 
   const errorRows = preview ? new Set(preview.errors.map((e) => e.row)).size : 0;
@@ -310,13 +356,14 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
               );
             })}
           </ul>
+          {mappingRestored && <p role="note" className="text-sm text-muted">{t("savedMapping")}</p>}
           {missing.length > 0 && (
             <p role="alert" className="text-sm text-danger">{t("missingRequired", { fields: missing.map(field).join(", ") })}</p>
           )}
           {duplicates.map((f) => <p key={f} role="alert" className="text-sm text-danger">{t("duplicateTarget", { field: field(f) })}</p>)}
           <div className="flex justify-between gap-3">
             <button type="button" onClick={reset} className={btnGhost}>{t("back")}</button>
-            <button type="button" onClick={() => setStep("preview")} disabled={missing.length > 0 || duplicates.length > 0} className={btn}>{t("next")}</button>
+            <button type="button" onClick={goPreview} disabled={missing.length > 0 || duplicates.length > 0} className={btn}>{t("next")}</button>
           </div>
         </section>
       )}
@@ -326,9 +373,18 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
           <h2 className="text-lg font-semibold">{t("previewTitle")}</h2>
           <div className="flex flex-wrap gap-3 text-sm">
             <span className="rounded-full bg-surface-2 px-3 py-1 font-semibold text-ok">✓ {t("validRows", { count: preview.employees.length })}</span>
+            {syncing && <span role="status" className="rounded-full bg-surface-2 px-3 py-1 text-muted">{t("syncChecking")}</span>}
+            {sync?.ok && (
+              <>
+                <span data-testid="sync-added" className="rounded-full bg-surface-2 px-3 py-1 font-semibold">{t("syncAdded", { count: sync.added })}</span>
+                <span data-testid="sync-changed" className="rounded-full bg-surface-2 px-3 py-1 font-semibold">{t("syncChanged", { count: sync.changed })}</span>
+                <span data-testid="sync-unchanged" className="rounded-full bg-surface-2 px-3 py-1 font-semibold text-muted">{t("syncUnchanged", { count: sync.unchanged })}</span>
+              </>
+            )}
             {errorRows > 0 && <span className="rounded-full bg-surface-2 px-3 py-1 font-semibold text-danger">⚠ {t("errorRows", { count: errorRows })}</span>}
           </div>
-          <p className="text-xs text-muted">{privacy ? t("dupHintPrivacy") : t("dupHint")}</p>
+          <p className="text-xs text-muted">{privacy ? t("dupHintPrivacy") : t("dupHint")} {t("syncHint")}</p>
+          {sync && !sync.ok && <p role="note" className="text-xs text-warn">{t("syncFailed")}</p>}
           {privacy && (
             <p role="note" className="rounded-theme border border-line p-3 text-sm">
               {t("privacyNote")}{namesIgnored ? ` ${t("privacyNamesIgnored")}` : ""}
@@ -416,8 +472,8 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
           {committing && <p role="status" className="text-sm text-muted">{t("importing")}</p>}
           <div className="flex justify-between gap-3">
             <button type="button" onClick={() => setStep("map")} disabled={committing} className={btnGhost}>{t("back")}</button>
-            <button type="button" onClick={commit} disabled={committing || preview.employees.length === 0} className={btn}>
-              {t("import", { count: preview.employees.length })}
+            <button type="button" onClick={commit} disabled={committing || syncing || (sync?.ok ? sync.added + sync.changed === 0 : preview.employees.length === 0)} className={btn}>
+              {t("import", { count: sync?.ok ? sync.added + sync.changed : preview.employees.length })}
             </button>
           </div>
         </section>
@@ -430,6 +486,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
               <h2 className="text-lg font-semibold text-ok">✓ {t("doneTitle")}</h2>
               <ul className="flex flex-col gap-1 text-sm">
                 <li>{t("imported", { count: result.imported })}</li>
+                {result.updated > 0 && <li>{t("updated", { count: result.updated })}</li>}
                 {result.skippedDuplicates > 0 && <li className="text-muted">{t("skippedDuplicates", { count: result.skippedDuplicates })}</li>}
                 {result.skippedErrors > 0 && <li className="text-muted">{t("skippedErrors", { count: result.skippedErrors })}</li>}
                 {result.findings !== null && <li>{t("findings", { count: result.findings })}</li>}

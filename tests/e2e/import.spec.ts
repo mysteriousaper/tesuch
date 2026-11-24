@@ -75,19 +75,38 @@ test.describe("staff import (lane B)", () => {
     await expect(page.getByRole("heading", { level: 1, name: "QA Import Co" })).toBeVisible();
   });
 
-  test("re-importing the same file does not duplicate employees", async ({ page }) => {
+  test("re-importing the same file does not duplicate employees: preview shows all unchanged", async ({ page }) => {
     await signInViaUi(page, user, "en");
     await page.goto("/en/app/import");
     await page.getByLabel("Company").selectOption(companyId);
     await page.getByLabel("File (.csv, .xlsx)").setInputFiles({ name: "staff.csv", mimeType: "text/csv", buffer: Buffer.from(CSV, "utf8") });
     await page.getByRole("button", { name: "Next" }).click();
-    await page.getByRole("button", { name: /^Import \(\d+\)$/ }).click();
-    await expect(page.getByRole("heading", { name: /Import complete|There are no new rows/ }).or(page.getByText(/no new rows/))).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByTestId("sync-unchanged")).toHaveText("Unchanged: 2", { timeout: 30_000 });
+    await expect(page.getByTestId("sync-added")).toHaveText("New: 0");
+    await expect(page.getByTestId("sync-changed")).toHaveText("Changed: 0");
+    await expect(page.getByRole("button", { name: /^Import \(0\)$/ })).toBeDisabled();
     const { data } = await admin().from("employees").select("full_name, birth_date").eq("company_id", companyId).order("full_name");
     expect(data).toEqual([
       { full_name: "Թեստ Աշխատող Երկու", birth_date: "2010-01-01" },
       { full_name: "Թեստ Աշխատող Մեկ", birth_date: "1990-03-15" },
     ]);
+  });
+
+  test("re-sync: a changed probation date is updated, not duplicated", async ({ page }) => {
+    const changed = CSV.replace("30.11.2026", "15.12.2026");
+    await signInViaUi(page, user, "en");
+    await page.goto("/en/app/import");
+    await page.getByLabel("Company").selectOption(companyId);
+    await page.getByLabel("File (.csv, .xlsx)").setInputFiles({ name: "staff.csv", mimeType: "text/csv", buffer: Buffer.from(changed, "utf8") });
+    // Same layout as the previous import in this browser context only if storage persisted; the note is optional here.
+    await page.getByRole("button", { name: "Next" }).click();
+    await expect(page.getByTestId("sync-changed")).toHaveText("Changed: 1", { timeout: 30_000 });
+    await expect(page.getByTestId("sync-unchanged")).toHaveText("Unchanged: 1");
+    await page.getByRole("button", { name: /^Import \(1\)$/ }).click();
+    await expect(page.getByText(/1 existing employee updated/)).toBeVisible({ timeout: 30_000 });
+    const { data } = await admin().from("contracts").select("probation_end, employees!inner(full_name, company_id)").eq("employees.company_id", companyId).order("probation_end");
+    expect(data).toHaveLength(2);
+    expect(data!.map((c) => c.probation_end)).toEqual(["2026-12-15", "2026-12-31"]);
   });
 
   test("implausible dates warn in the preview but do not block the import", async ({ page }) => {
