@@ -30,5 +30,5 @@ export async function GET(req: Request) {
     orderDate: today(),
     terminationDate: termination?.data ?? null,
   });
-  return pdfResponse(pdf, `probation-${decision.data}`, b.contract.id);
+  return pdfResponse(pdf, `probation-${decision.data}`, b.contract.id, b.employee.full_name);
 }

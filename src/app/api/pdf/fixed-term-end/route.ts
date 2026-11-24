@@ -22,5 +22,5 @@ export async function GET(req: Request) {
     contractEnd: b.contract.end_date,
     noticeDate: today(),
   });
-  return pdfResponse(pdf, "fixed-term-end", b.contract.id);
+  return pdfResponse(pdf, "fixed-term-end", b.contract.id, b.employee.full_name);
 }

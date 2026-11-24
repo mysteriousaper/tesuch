@@ -7,16 +7,19 @@ import { supabaseForUser } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+const EMPLOYEE_LIMIT = 50;
+
 interface EmployeeRow {
   id: string;
   full_name: string;
   contracts: ContractRow[];
 }
 
-export default async function DocumentsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ company?: string }> }) {
+export default async function DocumentsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ company?: string; q?: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { company: requested } = await searchParams;
+  const { company: requested, q: rawQ } = await searchParams;
+  const q = (rawQ ?? "").trim().slice(0, 100);
   const t = await getTranslations("documents");
   const db = await supabaseForUser();
 
@@ -31,12 +34,16 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
   }
   const company = companies.find((c) => c.id === requested) ?? companies[0];
 
-  const { data: employees } = await db
+  let query = db
     .from("employees")
     .select("id, full_name, contracts(id, type, start_date, end_date, probation_end, terminated_on)")
     .eq("company_id", company.id)
-    .is("archived_at", null)
-    .order("full_name");
+    .is("archived_at", null);
+  // Name search runs in the database; LIKE wildcards typed by the user are escaped.
+  if (q) query = query.ilike("full_name", `%${q.replace(/[\\%_]/g, "\\$&")}%`);
+  const { data: employees } = await query.order("full_name").limit(EMPLOYEE_LIMIT + 1);
+  const more = (employees?.length ?? 0) > EMPLOYEE_LIMIT;
+  const shown = (employees ?? []).slice(0, EMPLOYEE_LIMIT);
 
   const today = yerevanToday();
 
@@ -63,11 +70,19 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
 
       <div className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{t("employees")}</h2>
-        {!employees?.length ? (
-          <p className="rounded-theme-lg border border-dashed border-line bg-surface p-6 text-muted">{t("noEmployees")}</p>
+        <form method="get" role="search" className="flex flex-wrap items-end gap-2">
+          <input type="hidden" name="company" value={company.id} />
+          <label className="flex flex-col gap-1 text-sm font-medium">
+            {t("search")}
+            <input type="search" name="q" defaultValue={q} maxLength={100} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
+          </label>
+          <button className="rounded-theme border border-control px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("searchApply")}</button>
+        </form>
+        {!shown.length ? (
+          <p className="rounded-theme-lg border border-dashed border-line bg-surface p-6 text-muted">{q ? t("noMatches") : t("noEmployees")}</p>
         ) : (
           <ul className="flex flex-col gap-3">
-            {(employees as unknown as EmployeeRow[]).map((e) => (
+            {(shown as unknown as EmployeeRow[]).map((e) => (
               <li key={e.id} className="rounded-theme-lg border border-line bg-surface p-4">
                 <p className="font-semibold">{e.full_name}</p>
                 {e.contracts.length === 0 ? (
@@ -102,6 +117,7 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
         )}
       </div>
 
+      {more && <p role="note" className="text-sm text-muted">{t("showingFirst", { count: EMPLOYEE_LIMIT })}</p>}
       <p className="text-xs text-muted">ⓘ {t("draftNote")}</p>
     </section>
   );
