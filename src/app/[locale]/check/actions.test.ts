@@ -54,3 +54,25 @@ describe("submitLead", () => {
     expect(await submitLead({ ...base, answers: {} })).toEqual({ ok: false, reason: "error" });
   });
 });
+
+describe("submitLead abuse guards", () => {
+  it("silently drops a submission with the honeypot filled and never calls the database", async () => {
+    expect(await submitLead({ ...base, answers: allGood, website: "http://spam.example" })).toEqual({ ok: true });
+    expect(rpc).not.toHaveBeenCalled();
+    expect(supabaseService).not.toHaveBeenCalled();
+  });
+  it("passes a visitor hash argument (null outside a request) and maps P0429 to throttled", async () => {
+    rpc.mockResolvedValue({ error: { code: "P0429" } });
+    expect(await submitLead({ ...base, answers: allGood })).toEqual({ ok: false, reason: "throttled" });
+    expect(rpc).toHaveBeenCalledWith("submit_lead", expect.objectContaining({ p_ip_hash: null }));
+  });
+});
+
+describe("submitLead before the migration", () => {
+  it("retries without the visitor hash when the function has no such argument yet", async () => {
+    rpc.mockResolvedValueOnce({ error: { code: "PGRST202" } }).mockResolvedValueOnce({ error: null });
+    expect(await submitLead({ ...base, answers: allGood })).toEqual({ ok: true });
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[1][1]).not.toHaveProperty("p_ip_hash");
+  });
+});
