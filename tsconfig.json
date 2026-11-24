@@ -36,6 +36,7 @@
   ],
   "exclude": [
     "node_modules",
-    "docs/qa"
+    "docs/qa",
+    "docs/design"
   ]
 }
