@@ -63,7 +63,7 @@ export async function submitLead(input: LeadInput): Promise<LeadResult> {
     p_consent: d.consent,
   };
   let { error } = await db.rpc("submit_lead", { ...args, p_ip_hash: await visitorHash() });
-  // Deploy order safety: before the 20261125000000 migration is applied the function has no p_ip_hash argument (PGRST202).
+  // Deploy order safety: before the 20261125030000 migration is applied the function has no p_ip_hash argument (PGRST202).
   if (error?.code === "PGRST202") ({ error } = await db.rpc("submit_lead", args));
   if (!error) return { ok: true };
   if (error.code === "P0429") return { ok: false, reason: "throttled" };
