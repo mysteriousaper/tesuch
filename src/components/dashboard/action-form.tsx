@@ -14,13 +14,15 @@ export const secondaryBtn = "rounded-theme border border-control bg-surface px-4
  * (announced to screen readers) and resets fields after success.
  */
 export function ActionForm({
-  action, children, submitLabel, success, variant = "primary", className = "flex flex-col gap-3", resetOnSuccess = true,
+  action, children, submitLabel, success, variant = "primary", pendingLabel, className = "flex flex-col gap-3", resetOnSuccess = true,
 }: {
   action: (prev: ActionState, form: FormData) => Promise<ActionState>;
   children?: React.ReactNode;
   submitLabel: string;
   /** Text shown on success; receives the optional count from the action. */
   success?: (count?: number) => string;
+  /** Text announced while the action runs (long actions such as loading demo data). */
+  pendingLabel?: string;
   variant?: "primary" | "secondary";
   className?: string;
   resetOnSuccess?: boolean;
@@ -41,9 +43,10 @@ export function ActionForm({
           {pending ? "…" : submitLabel}
         </button>
         <p role="status" aria-live="polite" className="text-sm">
-          {state?.ok && state.info && <span className="text-muted">{t(`info.${state.info}`)}</span>}
-          {state?.ok && !state.info && <span className="text-ok">{success ? success(state.count) : t("saved")}</span>}
-          {state && !state.ok && <span className="text-danger">{t(`errors.${state.error}`)}</span>}
+          {pending && pendingLabel && <span className="text-muted">{pendingLabel}</span>}
+          {!pending && state?.ok && state.info && <span className="text-muted">{t(`info.${state.info}`)}</span>}
+          {!pending && state?.ok && !state.info && <span className="text-ok">{success ? success(state.count) : t("saved")}</span>}
+          {!pending && state && !state.ok && <span className="text-danger">{t(`errors.${state.error}`)}</span>}
         </p>
       </div>
     </form>

@@ -13,6 +13,7 @@
     "taxId": "Tax ID (optional)",
     "taxIdHint": "8 digits",
     "add": "Add",
+    "demoLoading": "Loading demo companies… this can take up to a minute.",
     "loadDemo": "Load demo data",
     "loadDemoHint": "5 fictional companies and about 40 employees to try things out.",
     "demoLoaded": "Demo data loaded.",

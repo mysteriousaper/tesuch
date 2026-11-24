@@ -155,9 +155,9 @@ describe("insertDemo", () => {
     };
     const w = {
       insertCompany: vi.fn(async () => { step("insertCompany"); return `co-${++n}`; }),
-      insertEmployee: vi.fn(async () => { step("insertEmployee"); return `emp-${++n}`; }),
-      insertContract: vi.fn(async () => { step("insertContract"); }),
-      insertLeave: vi.fn(async () => { step("insertLeave"); }),
+      insertEmployees: vi.fn(async (companyId: string, rows: { id: string }[]) => { void companyId; void rows; step("insertEmployees"); }),
+      insertContracts: vi.fn(async (rows: { employeeId: string }[]) => { void rows; step("insertContracts"); }),
+      insertLeave: vi.fn(async (rows: unknown[]) => { void rows; step("insertLeave"); }),
       deleteCompanies: vi.fn(async (ids: string[]) => { void ids; }),
     };
     return w;
@@ -168,12 +168,15 @@ describe("insertDemo", () => {
     const r = await insertDemo(w, demo);
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.companyIds).toHaveLength(3);
-    expect(w.insertEmployee).toHaveBeenCalledTimes(6);
-    expect(w.insertContract).toHaveBeenCalledTimes(6);
+    // One batched statement per company, covering all of its employees.
+    expect(w.insertEmployees).toHaveBeenCalledTimes(3);
+    expect(w.insertContracts).toHaveBeenCalledTimes(3);
+    expect(w.insertEmployees.mock.calls[0][1]).toHaveLength(2);
+    expect(w.insertContracts.mock.calls[0][0].map((r) => r.employeeId)).toEqual(w.insertEmployees.mock.calls[0][1].map((r) => r.id));
     expect(w.deleteCompanies).not.toHaveBeenCalled();
   });
   it("rolls back every company created in this run when a later step fails", async () => {
-    const w = fakeWriter({ method: "insertContract", call: 3 }); // first contract of the second company
+    const w = fakeWriter({ method: "insertContracts", call: 2 }); // contracts of the second company
     expect(await insertDemo(w, demo)).toEqual({ ok: false });
     expect(w.deleteCompanies).toHaveBeenCalledTimes(1);
     const deleted = w.deleteCompanies.mock.calls[0][0];
@@ -187,7 +190,7 @@ describe("insertDemo", () => {
     expect(w.deleteCompanies).not.toHaveBeenCalled();
   });
   it("reports failure even if the rollback itself fails", async () => {
-    const w = fakeWriter({ method: "insertEmployee", call: 1 });
+    const w = fakeWriter({ method: "insertEmployees", call: 1 });
     w.deleteCompanies.mockRejectedValueOnce(new Error("network"));
     expect(await insertDemo(w, demo)).toEqual({ ok: false });
   });
