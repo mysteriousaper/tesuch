@@ -8,6 +8,8 @@
     "action": "Action",
     "all": "All",
     "apply": "Show",
+    "showSystem": "Include system entries",
+    "changedKeys": "Changed",
     "reset": "Clear filters",
     "error": "Could not load the audit log. Please try again.",
     "empty": "No entries match these filters.",

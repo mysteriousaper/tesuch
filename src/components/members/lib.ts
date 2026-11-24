@@ -58,6 +58,8 @@ export interface AuditQuery {
   page: number;
   table?: (typeof AUDIT_TABLES)[number];
   action?: (typeof AUDIT_ACTIONS)[number];
+  /** Include entries made by the system itself (nightly rule runs on findings). Hidden by default. */
+  system: boolean;
 }
 
 /** Reads untrusted search params; anything unknown is ignored rather than passed to the database. */
@@ -66,7 +68,19 @@ export function parseAuditQuery(sp: Record<string, string | string[] | undefined
   const page = Number.parseInt(one(sp.page) ?? "1", 10);
   const table = AUDIT_TABLES.find((t) => t === one(sp.table));
   const action = AUDIT_ACTIONS.find((a) => a === one(sp.action));
-  return { page: Number.isFinite(page) && page >= 1 && page <= 10_000 ? page : 1, table, action };
+  return { page: Number.isFinite(page) && page >= 1 && page <= 10_000 ? page : 1, table, action, system: one(sp.system) === "1" };
+}
+
+const NOISE_KEYS = new Set(["id", "org_id", "created_at", "updated_at"]);
+
+/** What an audit row is about: a readable name when the row has one, and for updates, which fields changed. */
+export function describeAudit(r: { old_row?: Record<string, unknown> | null; new_row?: Record<string, unknown> | null }): { name: string | null; changed: string[] } {
+  const row = r.new_row ?? r.old_row ?? {};
+  const pick = ["full_name", "name", "title", "email"].map((k) => row[k]).find((v) => typeof v === "string" && v.trim());
+  const changed = r.old_row && r.new_row
+    ? Object.keys(r.new_row).filter((k) => !NOISE_KEYS.has(k) && JSON.stringify(r.new_row![k]) !== JSON.stringify(r.old_row![k]))
+    : [];
+  return { name: (pick as string | undefined) ?? null, changed };
 }
 
 export function auditRange(page: number, size = AUDIT_PAGE_SIZE): [number, number] {
@@ -78,6 +92,7 @@ export function auditHref(q: AuditQuery, page: number): string {
   const p = new URLSearchParams();
   if (q.table) p.set("table", q.table);
   if (q.action) p.set("action", q.action);
+  if (q.system) p.set("system", "1");
   if (page > 1) p.set("page", String(page));
   const s = p.toString();
   return s ? `?${s}` : "?";
