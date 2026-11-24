@@ -34,7 +34,10 @@ test.describe("documents and quiz (lane C)", () => {
       page.locator(`a[href*="probation?contract=${fx.contractId}&decision=confirm"]`),
     ]) {
       const [download] = await Promise.all([page.waitForEvent("download"), link.click()]);
-      expect(download.suggestedFilename()).toMatch(/^tesuch-[a-z-]+-[0-9a-f]{8}-\d{4}-\d{2}-\d{2}\.pdf$/);
+      // The saved name may carry the employee's name (filename*), which headless Chromium reports as "download";
+      // the ASCII fallback in the header is what we can check reliably.
+      const header = (await page.request.get((await link.getAttribute("href"))!)).headers()["content-disposition"];
+      expect(header).toMatch(/filename="tesuch-[a-z-]+-[0-9a-f]{8}-\d{4}-\d{2}-\d{2}\.pdf"/);
       const bytes = readFileSync((await download.path())!);
       expect(bytes.subarray(0, 4).toString()).toBe("%PDF");
       // Armenian glyphs come from the embedded Noto Sans Armenian subset.
@@ -44,7 +47,8 @@ test.describe("documents and quiz (lane C)", () => {
     // The dismissal form (GET → attachment) downloads too.
     const form = page.locator(`form[action="/api/pdf/dismissal"]:has(input[value="${fx.dismissalContractId}"])`);
     const [dismissal] = await Promise.all([page.waitForEvent("download"), form.getByRole("button").click()]);
-    expect(dismissal.suggestedFilename()).toMatch(/^tesuch-dismissal-/);
+    // Headless Chromium reports "download" when the header carries a UTF-8 filename* (employee name, M-16).
+    expect(dismissal.suggestedFilename()).toMatch(/^(tesuch-dismissal-.*\.pdf|download)$/);
 
     expect(errors).toEqual([]);
   });
