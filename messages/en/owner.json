@@ -61,6 +61,12 @@
       "ready": "We have it",
       "viewerNote": "Only the owner and the accountant can tick.",
       "error": "Could not save. Try again."
+    },
+    "metrics": {
+      "score": "Score",
+      "tasks": "Tasks this week",
+      "checklist": "Checklist items checked",
+      "of": "of {total}"
     }
   }
 }

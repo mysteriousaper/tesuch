@@ -1,5 +1,6 @@
 "use client";
 
+import { GlassMeter } from "@/components/ui/glass-meter";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { setChecklistTick } from "@/app/[locale]/app/actions";
@@ -32,7 +33,8 @@ export function DocumentsReady({ locale, companyId, groups, initialTicked, canEd
   };
 
   return (
-    <section className="rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="docs-h" data-testid="documents-ready">
+    <section className="glass p-5" aria-labelledby="docs-h" data-testid="documents-ready">
+      <GlassMeter value={ticked.size} max={total} label={t("summary", { done: ticked.size, total })} className="mb-1" />
       <details>
         <summary id="docs-h" className="min-h-11 cursor-pointer py-2 text-lg font-semibold" data-testid="documents-summary">
           {t("summary", { done: ticked.size, total })}
