@@ -1,3 +1,5 @@
+import { AlertTriangle, CalendarClock } from "lucide-react";
+import { GlassMetric } from "@/components/ui/glass-metric";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { todayIso } from "@/components/dashboard/queries";
 import { emailsFor, orgSession } from "@/components/members/server";
@@ -138,17 +140,24 @@ export default async function InboxPage({ params, searchParams }: {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
+      <div className="glass px-5 py-4" data-glass-enter>
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="text-sm text-muted">{t("intro", { org: org.name })}</p>
       </div>
+
+      {!failed && total > 0 && (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <GlassMetric label={t("overdueGroup")} icon={<AlertTriangle className="size-4" />} value={overdue.length} tone={overdue.length ? "danger" : "ok"} />
+          <GlassMetric label={t("upcomingGroup")} icon={<CalendarClock className="size-4" />} value={upcoming.length} tone={upcoming.length ? "warn" : "ok"} />
+        </div>
+      )}
 
       <InboxFilters query={q} companies={companies} showAssignee={withAssignee} />
 
       {failed ? (
         <p role="alert" className="text-sm text-danger">{t("error")}</p>
       ) : total === 0 ? (
-        <p className="rounded-theme border border-line bg-surface p-6 text-center text-sm text-muted">{filtered ? t("emptyFiltered") : t("empty")}</p>
+        <p className="glass p-6 text-center text-sm text-muted">{filtered ? t("emptyFiltered") : t("empty")}</p>
       ) : (
         <>
           <p className="text-sm text-muted" role="status" data-testid="inbox-total">{t("total", { count: total })}</p>

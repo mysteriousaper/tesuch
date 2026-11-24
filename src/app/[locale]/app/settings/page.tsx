@@ -42,7 +42,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
 
   return (
     <div className="flex max-w-2xl flex-col gap-6">
-      <h1 className="text-2xl font-bold">{t("settings.title")}</h1>
+      <h1 className="glass px-5 py-4 text-2xl font-bold" data-glass-enter>{t("settings.title")}</h1>
 
       {org && (
         <section className="flex flex-col gap-4 glass p-4" aria-labelledby="org-h">

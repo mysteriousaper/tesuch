@@ -49,7 +49,7 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
 
   return (
     <section className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
+      <header className="glass flex flex-col gap-2 px-5 py-4" data-glass-enter>
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="max-w-2xl text-muted">{t("intro")}</p>
       </header>

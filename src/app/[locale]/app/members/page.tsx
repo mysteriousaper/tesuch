@@ -42,7 +42,7 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
 
   return (
     <div className="flex max-w-3xl flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="glass flex flex-wrap items-end justify-between gap-2 px-5 py-4" data-glass-enter>
         <div>
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-sm text-muted">{org.name}</p>

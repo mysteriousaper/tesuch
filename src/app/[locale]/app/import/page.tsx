@@ -22,7 +22,7 @@ export default async function ImportPage({ params }: { params: Promise<{ locale:
 
   return (
     <div className="flex max-w-4xl flex-col gap-6">
-      <header>
+      <header className="glass px-5 py-4" data-glass-enter>
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="mt-1 text-muted">{t("intro")}</p>
       </header>

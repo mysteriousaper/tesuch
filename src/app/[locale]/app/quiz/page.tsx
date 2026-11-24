@@ -106,7 +106,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
 
   return (
     <section className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
+      <header className="glass flex flex-col gap-2 px-5 py-4" data-glass-enter>
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="text-muted">
           {t("intro")} · <span className="font-medium text-ink">{t("week", { year: week.year, week: week.week })}</span>
