@@ -11,8 +11,8 @@ export async function SiteFooter() {
   const g = await getTranslations("guide");
   const tr = await getTranslations("trust");
   return (
-    <footer className="border-t border-line">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto]">
+    <footer className="px-2 pb-4 pt-6 sm:px-4">
+      <div className="glass mx-auto grid max-w-6xl gap-8 px-5 py-8 sm:px-8 md:grid-cols-[1fr_auto]">
         <div className="flex max-w-2xl flex-col gap-3">
           <div className="flex items-center gap-2.5 font-bold">
             <LogoMark width={26} height={26} />

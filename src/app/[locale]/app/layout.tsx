@@ -6,6 +6,7 @@ import { ModeToggle } from "@/components/theme/mode-toggle";
 import { redirect } from "@/i18n/navigation";
 import { supabaseForUser } from "@/lib/supabase/server";
 import { signOut } from "./actions";
+import { GlassyShell } from "@/components/ui/glassy-dashboard";
 import { AppNav } from "./app-nav";
 
 export const dynamic = "force-dynamic";
@@ -24,21 +25,22 @@ export default async function AppLayout({ children, params }: { children: React.
   const c = await getTranslations("common");
   const a = await getTranslations("auth");
   return (
-    <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
-      <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <span className="text-lg font-bold">{c("appName")}</span>
-        <div className="flex items-center gap-3">
+    <GlassyShell
+      brand={<span className="text-lg">{c("appName")}</span>}
+      actions={
+        <>
           <SupportHeaderLink />
           <ModeToggle />
           <LocaleSwitcher />
           <form action={async () => { "use server"; await signOut(); redirect({ href: "/login", locale }); }}>
-            <button className="py-1 text-sm text-muted hover:text-ink">{a("signOut")}</button>
+            <button className="min-h-11 rounded-full px-3 text-sm text-muted hover:text-ink">{a("signOut")}</button>
           </form>
-        </div>
-      </header>
-      <AppNav />
-      <main className="py-6">{children}</main>
+        </>
+      }
+      nav={<AppNav />}
+    >
+      {children}
       <SupportFooter />
-    </div>
+    </GlassyShell>
   );
 }

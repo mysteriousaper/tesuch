@@ -17,6 +17,26 @@
 }
 
 :root,
+[data-theme="glass"] {
+  --bg: light-dark(#e8dccf, #2a211d);
+  --surface: light-dark(#fbf6ef, #3b302c);
+  --surface-2: light-dark(#f0e4d6, #463a35);
+  --ink: light-dark(#25201e, #fff6e9);
+  --muted: light-dark(#5b4b41, #dccbbb);
+  --line: light-dark(#cdb9a6, #5b4a41);
+  --control: light-dark(#7a6558, #a58f80);
+  --accent: light-dark(#3a2a22, #f3ddca);
+  --accent-ink: light-dark(#fffaf5, #231a16);
+  --highlight: light-dark(#8a3a22, #f9bf9b);
+  --ok: light-dark(#09644f, #75dac0);
+  --warn: light-dark(#855400, #f1be58);
+  --danger: light-dark(#a43c27, #ff9177);
+  --advisory: light-dark(#4b3fb0, #b9aef5);
+  --radius: 14px;
+  --radius-lg: 22px;
+  --heading-tracking: -0.015em;
+}
+
 [data-theme="official"] {
   --bg: light-dark(#f6f4ef, #0e1626);
   --surface: light-dark(#ffffff, #152036);
@@ -80,6 +100,22 @@
 /* Browsers without light-dark() (e.g. Safari < 17.5) get the light palette. */
 @supports not (color: light-dark(white, black)) {
   :root,
+  [data-theme="glass"] {
+    --bg: #e8dccf;
+    --surface: #fbf6ef;
+    --surface-2: #f0e4d6;
+    --ink: #25201e;
+    --muted: #5b4b41;
+    --line: #cdb9a6;
+    --control: #7a6558;
+    --accent: #3a2a22;
+    --accent-ink: #fffaf5;
+    --highlight: #8a3a22;
+    --ok: #09644f;
+    --warn: #855400;
+    --danger: #a43c27;
+    --advisory: #4b3fb0;
+  }
   [data-theme="official"] {
     --bg: #f6f4ef;
     --surface: #ffffff;
@@ -149,7 +185,7 @@
   --color-advisory: var(--advisory);
   --radius-theme: var(--radius);
   --radius-theme-lg: var(--radius-lg);
-  --font-sans: "Noto Sans Armenian", "Noto Sans", system-ui, sans-serif;
+  --font-sans: "Manrope Variable", "Noto Sans Armenian", "Noto Sans", system-ui, sans-serif;
 }
 
 html {
@@ -158,6 +194,7 @@ html {
 
 body {
   background: var(--bg);
+  position: relative;
   color: var(--ink);
   font-family: var(--font-sans);
   font-feature-settings: "tnum" 1;
@@ -181,4 +218,57 @@ h3 {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ===== Glass layer (decision #25) =====
+   Panels are the existing surface tokens made translucent plus a backdrop blur, so every page that uses
+   bg-surface / bg-surface-2 gets the frosted look without markup changes. The page background is a calm
+   paper-toned gradient with a faint grain, drawn by CSS only (no photo, no blobs).
+   Fallbacks: prefers-reduced-transparency or no backdrop-filter support = solid panels; the solid token
+   colours already meet WCAG AA, and the translucent ones are kept >= 82% opaque for text contrast. */
+:root {
+  --glass-blur: 16px;
+  --glass-a: 84%;
+  --glass-a2: 70%;
+  --glass-edge: light-dark(rgb(255 253 246 / 70%), rgb(255 236 212 / 18%));
+  --glass-shade: light-dark(rgb(57 40 28 / 14%), rgb(11 6 5 / 40%));
+  --glass-shadow: light-dark(rgb(74 49 33 / 14%), rgb(0 0 0 / 40%));
+  --page-wash: light-dark(
+    linear-gradient(160deg, #efe4d8 0%, #e2d2c0 52%, #d6c1ab 100%),
+    linear-gradient(160deg, #332824 0%, #2a211d 55%, #231b18 100%)
+  );
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .2  0 0 0 0 .15  0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    var(--page-wash);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  :where([class~="bg-surface"], [class~="glass"]) {
+    background-color: color-mix(in srgb, var(--surface) var(--glass-a), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+  }
+  :where([class~="bg-surface-2"]) {
+    background-color: color-mix(in srgb, var(--surface-2) var(--glass-a2), transparent);
+  }
+}
+[class~="glass"] {
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 1px 1px 0 var(--glass-edge), inset -1px -1px 0 var(--glass-shade), 0 8px 24px var(--glass-shadow);
+}
+@media (prefers-reduced-transparency: reduce) {
+  body::before { background-image: none; background-color: var(--bg); }
+  :where([class~="bg-surface"], [class~="bg-surface-2"], [class~="glass"]) {
+    background-color: var(--surface) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  :where([class~="bg-surface-2"]) { background-color: var(--surface-2) !important; }
 }

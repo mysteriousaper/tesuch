@@ -1,3 +1,4 @@
+import "@fontsource-variable/manrope";
 import "@fontsource/noto-sans-armenian/400.css";
 import "@fontsource/noto-sans-armenian/600.css";
 import "@fontsource/noto-sans-armenian/700.css";

@@ -1,10 +1,10 @@
 // App-wide theme settings. Token values live in design/tokens.json (mirrored in src/app/globals.css).
 
-export const THEMES = ["official", "fintech", "warm"] as const;
+export const THEMES = ["glass", "official", "fintech", "warm"] as const;
 export type Theme = (typeof THEMES)[number];
 
 /** The theme the whole app renders with. Change here once the final design is picked. */
-export const DEFAULT_THEME: Theme = "official";
+export const DEFAULT_THEME: Theme = "glass";
 
 /** "system" follows prefers-color-scheme; "light"/"dark" force a mode. */
 export const MODES = ["system", "light", "dark"] as const;

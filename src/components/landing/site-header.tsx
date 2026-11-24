@@ -11,8 +11,8 @@ export async function SiteHeader({ sections = false }: { sections?: boolean }) {
   const t = await getTranslations("landing.nav");
   const c = await getTranslations("common");
   return (
-    <header className="sticky top-0 z-30 border-b border-line/70 backdrop-blur-md" style={{ background: "color-mix(in oklab, var(--bg) 82%, transparent)" }}>
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+    <header className="sticky top-2 z-30 px-2 pt-2 sm:px-4">
+      <div className="glass mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 !rounded-full px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 font-bold" aria-label={c("appName")}>
           <LogoMark width={30} height={30} />
           <span className="text-lg">{c("appName")}</span>
