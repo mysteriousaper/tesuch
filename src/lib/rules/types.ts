@@ -30,6 +30,8 @@ export interface Contract {
   terminationInitiator: TerminationInitiator | null;
   noticeGivenOn: IsoDate | null;
   workforceReduction: boolean;
+  /** Code of the legal ground for the termination, e.g. "113(1)(3)" (Labour Code 113(1) points 1-13, "93(1)" for probation). null/undefined = not recorded. */
+  terminationGroundCode?: string | null;
 }
 
 export type LeaveType = "annual" | "maternity" | "cash_compensation" | "other";

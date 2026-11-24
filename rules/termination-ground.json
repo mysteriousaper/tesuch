@@ -1,12 +1,38 @@
 {
-  "id": "termination-ground", "version": 1, "article": "113", "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
-  "basis": "law-firm summary (not yet checked against arlis.am)",
-  "scope": "contract", "severity": "red",
-  "title": { "hy": "Աշխատանքային պայմանագրի լուծման հիմքը նշված չէ", "ru": "Не указано основание расторжения трудового договора", "en": "Termination ground is not stated" },
-  "conditions": { "all": [
-    { "fact": "isTerminated", "operator": "equal", "value": true },
-    { "fact": "hasTerminationGround", "operator": "equal", "value": false }
-  ] },
-  "due": { "date": "asOf", "offsetDays": 0 },
-  "edge_cases": []
+  "id": "termination-ground",
+  "version": 2,
+  "article": "109",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 109(1) lists all grounds; 109(2): termination is formalised by the employer's individual legal act; Art. 113 lists employer-initiated grounds; Art. 112 employee-initiated; Art. 115(3)(1): the notice states the ground and reason.",
+  "scope": "contract",
+  "severity": "red",
+  "title": {
+    "hy": "Աշխատանքային պայմանագրի լուծման հիմքը նշված չէ",
+    "ru": "Не указано основание расторжения трудового договора",
+    "en": "Termination ground is not stated"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "isTerminated",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "hasTerminationGround",
+        "operator": "equal",
+        "value": false
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Data-completeness check: a terminated contract with no ground text. For employer terminations the ground code is checked by termination-ground-code."
+  ]
 }

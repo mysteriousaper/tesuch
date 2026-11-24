@@ -99,9 +99,13 @@ describe("probation-max (Art. 92)", () => {
     expect(probationOverrunDays(con({ startDate: "2027-11-30", probationEnd: "2028-02-28" }), 3)).toBe(0);
     expect(probationOverrunDays(con({ startDate: "2027-11-30", probationEnd: "2028-02-29" }), 3)).toBe(1);
   });
-  it("allows up to 12 months in special cases", async () => {
-    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2027-01-14" } })).not.toContain("probation-max");
-    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2027-01-15" } })).toContain("probation-max");
+  it("allows up to 6 months in special cases (Art. 92(2)), not 12", async () => {
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2026-07-14" } })).not.toContain("probation-max");
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2026-07-15" } })).toContain("probation-max");
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2027-01-14" } })).toContain("probation-max");
+  });
+  it("a special case with 3 months or less never fires", async () => {
+    expect(await ruleIds({ c: { probationSpecialCase: true, probationEnd: "2026-04-14" } })).not.toContain("probation-max");
   });
 });
 
@@ -177,26 +181,40 @@ describe("annual-leave-min", () => {
     const c = { startDate: "2025-01-15" };
     expect(await ruleIds({ c, asOf: "2026-02-01", l: [] })).not.toContain("annual-leave-min");
   });
-  const c = { startDate: "2025-01-15" };
-  it("is silent before a full working year", async () => {
-    expect(await ruleIds({ c, asOf: "2026-01-14" })).not.toContain("annual-leave-min");
+  // Working year 1 = 2022-01-15 .. 2023-01-15; its 18-month window (Art. 167(3)) ends 2024-07-15.
+  const c = { startDate: "2022-01-15" };
+  const asOf = "2026-02-01";
+  it("is silent while the 18-month window has not passed", async () => {
+    expect(await ruleIds({ c, asOf: "2024-07-14", l: [{ startDate: "2023-07-01", days: 20 }, { startDate: "2022-01-20", days: 1 }] })).not.toContain("annual-leave-min");
+    const s = { startDate: "2024-01-15" };
+    expect(await ruleIds({ c: s, asOf: "2025-06-01", l: [{ startDate: "2024-07-01", days: 1 }] })).not.toContain("annual-leave-min");
+  });
+  it("judges the first year the day its window ends", async () => {
+    const l = [{ startDate: "2022-07-01", days: 19 }];
+    expect(await ruleIds({ c, asOf: "2024-07-14", l })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf: "2024-07-15", l })).toContain("annual-leave-min");
   });
   it("flags fewer than 20 days on a five-day week", async () => {
-    expect(await ruleIds({ c, l: [{ startDate: "2025-07-01", days: 19 }] })).toContain("annual-leave-min");
-    expect(await ruleIds({ c, l: [{ startDate: "2025-07-01", days: 20 }] })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2024-07-01", days: 19 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2024-07-01", days: 20 }] })).not.toContain("annual-leave-min");
   });
   it("requires 24 days on a six-day week", async () => {
-    expect(await ruleIds({ c, e: { sixDayWeek: true }, l: [{ startDate: "2025-07-01", days: 20 }] })).toContain("annual-leave-min");
-    expect(await ruleIds({ c, e: { sixDayWeek: true }, l: [{ startDate: "2025-07-01", days: 24 }] })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, e: { sixDayWeek: true }, l: [{ startDate: "2024-07-01", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, e: { sixDayWeek: true }, l: [{ startDate: "2024-07-01", days: 24 }] })).not.toContain("annual-leave-min");
   });
-  it("counts only leave inside the last completed working year", async () => {
-    expect(await ruleIds({ c, l: [{ startDate: "2026-01-15", days: 20 }] })).toContain("annual-leave-min");
+  it("judges the latest year past its window: leave in the year and in the window counts (carry-over)", async () => {
+    // At 2026-02-01 the latest judged year is 2023-01-15 .. 2024-01-15 (window to 2025-07-15).
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2022-07-01", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2025-07-14", days: 20 }] })).not.toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2025-07-15", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2023-01-14", days: 20 }] })).toContain("annual-leave-min");
+    expect(await ruleIds({ c, asOf, l: [{ startDate: "2023-01-15", days: 20 }] })).not.toContain("annual-leave-min");
   });
   it("counts service from the first contract with the employer", async () => {
     const findings = await evaluateCompany(RULES, {
       employees: [emp()],
-      contracts: [con({ id: "old", startDate: "2024-03-01", terminatedOn: "2025-12-31", terminationGround: "x", terminationInitiator: "mutual" }), con({ id: "new", startDate: "2026-01-01" })],
-      leave: [leave({ startDate: "2024-06-01", days: 5 })],
+      contracts: [con({ id: "old", startDate: "2022-03-01", terminatedOn: "2025-12-31", terminationGround: "x", terminationInitiator: "mutual" }), con({ id: "new", startDate: "2026-01-01" })],
+      leave: [leave({ startDate: "2023-06-01", days: 5 })],
     }, "2026-02-01");
     expect(findings.map((f) => f.ruleId)).toContain("annual-leave-min");
   });
@@ -212,7 +230,7 @@ describe("leave-cash-swap", () => {
 });
 
 describe("notice-period", () => {
-  const term = (o: Partial<Contract>) => ({ terminationInitiator: "employer" as const, terminationGround: "x", ...o });
+  const term = (o: Partial<Contract>) => ({ terminationInitiator: "employer" as const, terminationGround: "x", terminationGroundCode: "113(1)(3)", ...o });
   it("needs 14 days under 1 year of service", async () => {
     expect(await ruleIds({ c: term({ noticeGivenOn: "2026-01-01", terminatedOn: "2026-01-15" }) })).not.toContain("notice-period");
     expect(await ruleIds({ c: term({ noticeGivenOn: "2026-01-02", terminatedOn: "2026-01-15" }) })).toContain("notice-period");
@@ -228,9 +246,37 @@ describe("notice-period", () => {
     expect(await ruleIds({ c: { ...c, terminatedOn: "2025-12-31" } })).not.toContain("notice-period");
   });
   it("needs 2 months for workforce reduction", async () => {
-    const c = term({ workforceReduction: true, startDate: "2025-06-01", noticeGivenOn: "2025-11-30", terminatedOn: "2026-01-29" });
+    const c = term({ workforceReduction: true, terminationGroundCode: null, startDate: "2025-06-01", noticeGivenOn: "2025-11-30", terminatedOn: "2026-01-29" });
     expect(await ruleIds({ c })).toContain("notice-period");
     expect(await ruleIds({ c: { ...c, terminatedOn: "2026-01-30" } })).not.toContain("notice-period");
+  });
+  it("workforce reduction ground code gives the same 2 months as the flag", async () => {
+    const c = term({ terminationGroundCode: "113(1)(1)", startDate: "2025-06-01", noticeGivenOn: "2025-11-30", terminatedOn: "2026-01-29" });
+    expect(await ruleIds({ c })).toContain("notice-period");
+    expect(await ruleIds({ c: { ...c, terminatedOn: "2026-01-30" } })).not.toContain("notice-period");
+  });
+  it("applies the length-of-service tiers to 113(1)(7), 113(1)(11) and 105(2) too", async () => {
+    for (const code of ["113(1)(7)", "113(1)(11)", "105(2)"]) {
+      const c = term({ terminationGroundCode: code, noticeGivenOn: "2026-01-02", terminatedOn: "2026-01-15" });
+      expect(await ruleIds({ c }), code).toContain("notice-period");
+    }
+  });
+  it("3 days for 113(1)(12), 113(1)(13) and probation dismissal 93(1)", async () => {
+    for (const code of ["113(1)(12)", "113(1)(13)", "93(1)"]) {
+      const c = term({ terminationGroundCode: code, noticeGivenOn: "2026-01-10", terminatedOn: "2026-01-13" });
+      expect(await ruleIds({ c }), code).not.toContain("notice-period");
+      expect(await ruleIds({ c: { ...c, terminatedOn: "2026-01-12" } }), code).toContain("notice-period");
+    }
+  });
+  it("fault grounds need no notice by the Code text, so they never fire", async () => {
+    for (const code of ["113(1)(5)", "113(1)(6)", "113(1)(8)", "113(1)(9)", "113(1)(10)", "113(1)(4)"]) {
+      expect(await ruleIds({ c: term({ terminationGroundCode: code, terminatedOn: "2026-01-31" }) }), code).not.toContain("notice-period");
+    }
+  });
+  it("is skipped, not resolved, while the ground is unknown", async () => {
+    const r = await evaluateCompanyDetailed(RULES, { employees: [emp()], contracts: [con(term({ terminationGroundCode: null, terminatedOn: "2026-01-31" }))], leave: [] }, "2026-02-01");
+    expect(r.findings.map((f) => f.ruleId)).not.toContain("notice-period");
+    expect(r.skipped).toContain("notice-period|e1|c1");
   });
   it("treats a missing notice date as no notice", async () => {
     expect(await ruleIds({ c: term({ terminatedOn: "2026-01-31" }) })).toContain("notice-period");
@@ -322,13 +368,13 @@ describe("unknown input is skipped, never resolved", () => {
     expect(planSync("org", fixed.findings, [open], fixed.skipped).autoResolve).toEqual(["f1"]);
   });
   it("leave is company-level: no leave anywhere skips, any leave checks employees with none", async () => {
-    const c = (id: string, employeeId: string) => con({ id, employeeId, startDate: "2025-01-15" });
+    const c = (id: string, employeeId: string) => con({ id, employeeId, startDate: "2022-01-15" });
     const base = { employees: [emp(), emp({ id: "e2" })], contracts: [c("c1", "e1"), c("c2", "e2")] };
     const none = await evaluateCompanyDetailed(RULES, { ...base, leave: [] }, "2026-02-01");
     expect(none.findings.map((f) => f.ruleId)).not.toContain("annual-leave-min");
     expect(none.skipped).toEqual(expect.arrayContaining(["annual-leave-min|e1|", "annual-leave-min|e2|"]));
     expect(planSync("org", none.findings, [storedOpen("annual-leave-min", null)], none.skipped).autoResolve).toEqual([]);
-    const some = await evaluateCompanyDetailed(RULES, { ...base, leave: [leave({ employeeId: "e1", startDate: "2025-07-01", days: 20 })] }, "2026-02-01");
+    const some = await evaluateCompanyDetailed(RULES, { ...base, leave: [leave({ employeeId: "e1", startDate: "2023-07-01", days: 20 })] }, "2026-02-01");
     const hits = some.findings.filter((f) => f.ruleId === "annual-leave-min").map((f) => f.employeeId);
     expect(hits).toEqual(["e2"]);
     expect(some.skipped).not.toContain("annual-leave-min|e2|");

@@ -35,24 +35,38 @@ export function hasSuccessorContract(c: Contract, contracts: Contract[], asOf: I
   return contracts.some((o) => o.id !== c.id && (o.startDate >= end || (o.endDate === null && isActive(o, asOf))));
 }
 
-/** Days past the last allowed probation day. Last allowed day = start + maxMonths - 1 day. */
+/** Days past the last allowed probation day. Last allowed day = start + maxMonths - 1 day (counting rule per Art. 29: lawyer to confirm). Art. 92(3) absences are not modelled. */
 export function probationOverrunDays(c: Contract, maxMonths: number): number {
   if (!c.probationEnd) return 0;
   const lastAllowed = addDays(addMonths(d(c.startDate), maxMonths), -1);
   return differenceInCalendarDays(d(c.probationEnd), lastAllowed);
 }
 
-/** Shortfall of annual leave started within the last completed working year. 0 if no full year yet. */
-export function annualLeaveShortfallDays(ctx: RuleContext, fiveDayWeek: number, sixDayWeek: number): number {
-  const start = d(serviceStart(ctx));
-  const asOf = d(ctx.asOf);
-  const completedYears = differenceInYears(asOf, start);
-  if (completedYears < 1) return 0;
-  const yearStart = addYears(start, completedYears - 1);
-  const yearEnd = addYears(start, completedYears); // exclusive
+/**
+ * The working year an annual-leave check looks at (Art. 164(1): years run from the hire date).
+ * Art. 167(3): a postponed leave may be granted up to `windowMonths` (18) after the end of its working year,
+ * so a year is only judged once that window has passed. Returns the latest such year, or null if none yet.
+ */
+export function leaveYearToCheck(serviceStartIso: IsoDate, asOfIso: IsoDate, windowMonths: number): { start: Date; end: Date; windowEnd: Date } | null {
+  const start = d(serviceStartIso);
+  const asOf = d(asOfIso);
+  let n = differenceInYears(asOf, start);
+  while (n >= 1 && addMonths(addYears(start, n), windowMonths) > asOf) n--;
+  if (n < 1) return null;
+  const end = addYears(start, n);
+  return { start: addYears(start, n - 1), end, windowEnd: addMonths(end, windowMonths) };
+}
+
+/**
+ * Shortfall of annual leave for the latest working year whose 18-month postponement window (Art. 167(3)) has passed.
+ * Leave starting inside the year or inside the window counts (carry-over is allowed), which can only hide a shortfall, never invent one.
+ */
+export function annualLeaveShortfallDays(ctx: RuleContext, fiveDayWeek: number, sixDayWeek: number, windowMonths = 18): number {
+  const year = leaveYearToCheck(serviceStart(ctx), ctx.asOf, windowMonths);
+  if (!year) return 0;
   const taken = ctx.leave
     .filter((l) => l.type === "annual")
-    .filter((l) => d(l.startDate) >= yearStart && d(l.startDate) < yearEnd)
+    .filter((l) => d(l.startDate) >= year.start && d(l.startDate) < year.windowEnd)
     .reduce((sum, l) => sum + l.days, 0);
   const minimum = ctx.employee.sixDayWeek ? sixDayWeek : fiveDayWeek;
   return Math.max(0, minimum - taken);
@@ -61,16 +75,31 @@ export function annualLeaveShortfallDays(ctx: RuleContext, fiveDayWeek: number, 
 export interface NoticeParams {
   tiers: { minYears: number; days: number }[];
   workforceReductionMonths: number;
+  /** Ground code → notice rule: "tiers" = length-of-service tiers (Art. 115(1)), "months" = workforceReductionMonths, a number = fixed days. Codes not listed need no notice. */
+  groundNotice: Record<string, "tiers" | "months" | number>;
 }
 
-/** Days of notice missing for an employer-initiated termination. */
+/** Ground code actually in force: the recorded code, or 113(1)(2) when the contract is flagged as a workforce reduction. */
+export function effectiveGroundCode(c: Contract): string | null {
+  const code = (c.terminationGroundCode ?? "").trim();
+  if (code) return code;
+  return c.workforceReduction ? "113(1)(2)" : null;
+}
+
+/** Days of notice missing for an employer-initiated termination. Ground-aware (Art. 113(2), 115(1), 115(1.1), 93(1)). */
 export function noticeShortfallDays(ctx: RuleContext, p: NoticeParams): number {
   const c = ctx.contract;
   if (!c.terminatedOn) return 0;
+  const code = effectiveGroundCode(c);
+  if (!code) return 0; // unknown ground: the rule is skipped by the noticeGroundKnown guard
+  const kind = p.groundNotice[code];
+  if (kind === undefined) return 0; // fault grounds etc.: the Code states no notice period
   const noticeOn = c.noticeGivenOn ?? c.terminatedOn;
   let earliestEnd: Date;
-  if (c.workforceReduction) {
+  if (kind === "months") {
     earliestEnd = addMonths(d(noticeOn), p.workforceReductionMonths);
+  } else if (typeof kind === "number") {
+    earliestEnd = addDays(d(noticeOn), kind);
   } else {
     const years = differenceInYears(d(noticeOn), d(serviceStart(ctx)));
     const tier = [...p.tiers].sort((a, b) => b.minYears - a.minYears).find((t) => years >= t.minYears);
@@ -100,6 +129,8 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
     isTerminated: terminated,
     hasTerminationGround: (c.terminationGround ?? "").trim().length > 0,
     isEmployerTermination: terminated && c.terminationInitiator === "employer",
+    // Guard: notice rule needs to know the ground (recorded code, or the workforce-reduction flag).
+    noticeGroundKnown: effectiveGroundCode(c) !== null,
     cashCompensatedLeaveCount: ctx.leave.filter((l) => l.type === "cash_compensation").length,
     shortestMaternityLeaveDays: maternity.length ? Math.min(...maternity) : Number.POSITIVE_INFINITY,
     srcRegistered: c.srcRegistered,
@@ -112,6 +143,6 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
 /** Facts that take parameters from the rule JSON, so thresholds live in versioned rules, not code. */
 export const paramFacts: Record<string, (ctx: RuleContext, params: Record<string, unknown>) => number> = {
   probationOverrunDays: (ctx, p) => probationOverrunDays(ctx.contract, Number(p.maxMonths)),
-  annualLeaveShortfallDays: (ctx, p) => annualLeaveShortfallDays(ctx, Number(p.fiveDayWeek), Number(p.sixDayWeek)),
+  annualLeaveShortfallDays: (ctx, p) => annualLeaveShortfallDays(ctx, Number(p.fiveDayWeek), Number(p.sixDayWeek), Number(p.postponementMonths ?? 18)),
   noticeShortfallDays: (ctx, p) => noticeShortfallDays(ctx, p as unknown as NoticeParams),
 };

@@ -1,11 +1,34 @@
 {
-  "id": "maternity-min", "version": 1, "article": null, "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
-  "basis": "brief: 140/155/180 days; article number missing",
-  "scope": "employee", "severity": "amber",
-  "title": { "hy": "Հղիության և ծննդաբերության արձակուրդը նվազագույնից կարճ է", "ru": "Отпуск по беременности и родам короче минимального", "en": "Maternity leave is shorter than the minimum" },
-  "conditions": { "all": [
-    { "fact": "shortestMaternityLeaveDays", "operator": "lessThan", "value": 140 }
-  ] },
-  "due": { "date": "asOf", "offsetDays": 0 },
-  "edge_cases": ["Only the 140-day base is checked; 155/180 depend on medical facts we do not store."]
+  "id": "maternity-min",
+  "version": 2,
+  "article": "172",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 172(1): 140 days (70 before, 70 after birth); 155 days for complicated birth; 180 days for more than one child.",
+  "scope": "employee",
+  "severity": "amber",
+  "title": {
+    "hy": "Հղիության և ծննդաբերության արձակուրդը նվազագույնից կարճ է",
+    "ru": "Отпуск по беременности и родам короче минимального",
+    "en": "Maternity leave is shorter than the minimum"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "shortestMaternityLeaveDays",
+        "operator": "lessThan",
+        "value": 140
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Only the 140-day base is checked; 155/180 depend on medical facts we do not store.",
+    "Art. 172(2),(2.1): adoptive parents and surrogacy parents are entitled to less (until the newborn is 70 days old; 110 days for twins). Use the rule for women on birth leave only; do not record those cases as maternity leave."
+  ]
 }

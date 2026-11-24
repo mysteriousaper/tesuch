@@ -1,13 +1,53 @@
 {
-  "id": "annual-leave-min", "version": 2, "article": null, "status": "needs_lawyer_review", "reviewed_on": null, "source_url": "https://www.arlis.am/", "source_note": "Labour Code of the Republic of Armenia. Exact arlis.am DocumentView link and article wording to be confirmed by a lawyer.",
-  "basis": "brief: 20 working days (24 on a six-day week); article number missing",
-  "scope": "employee", "severity": "amber",
-  "title": { "hy": "Վերջին աշխատանքային տարում տրամադրված տարեկան արձակուրդը նվազագույնից պակաս է", "ru": "За последний рабочий год ежегодного отпуска предоставлено меньше минимума", "en": "Annual leave granted in the last working year is below the minimum" },
-  "conditions": { "all": [
-    { "fact": "isActive", "operator": "equal", "value": true },
-    { "fact": "hasLeaveRecords", "operator": "equal", "value": true },
-    { "fact": "annualLeaveShortfallDays", "params": { "fiveDayWeek": 20, "sixDayWeek": 24 }, "operator": "greaterThan", "value": 0 }
-  ] },
-  "due": { "date": "asOf", "offsetDays": 30 },
-  "edge_cases": ["Skipped only when the company has no leave records at all (leave data not provided); once any leave exists, employees with none are checked (0 days taken). A skipped rule never auto-resolves an open finding.", "Only fires after a full working year of service.", "Carry-over and deferral rules not modelled yet.", "Counts recorded working days, not calendar days."]
+  "id": "annual-leave-min",
+  "version": 3,
+  "article": "159",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 159(1): minimum 20 working days (five-day week) / 24 (six-day week). Art. 164(1): working year counted from the hire date. Art. 167(3): postponed leave may be granted within 18 months after the end of the working year.",
+  "scope": "employee",
+  "severity": "amber",
+  "title": {
+    "hy": "Վերջին աշխատանքային տարում տրամադրված տարեկան արձակուրդը նվազագույնից պակաս է",
+    "ru": "За последний рабочий год ежегодного отпуска предоставлено меньше минимума",
+    "en": "Annual leave granted in the last working year is below the minimum"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "isActive",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "hasLeaveRecords",
+        "operator": "equal",
+        "value": true
+      },
+      {
+        "fact": "annualLeaveShortfallDays",
+        "params": {
+          "fiveDayWeek": 20,
+          "sixDayWeek": 24,
+          "postponementMonths": 18
+        },
+        "operator": "greaterThan",
+        "value": 0
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 30
+  },
+  "edge_cases": [
+    "Judges only the latest working year whose 18-month postponement window (Art. 167(3)) has passed, so a recent year is never flagged.",
+    "Leave starting inside that year or inside the window counts (carry-over allowed); this can only hide a shortfall.",
+    "Skipped only when the company has no leave records at all; once any leave exists, employees with none are checked (0 days taken). A skipped rule never auto-resolves an open finding.",
+    "Checks the minimum only: extended and additional leave (Art. 160, 161) are above the floor and not modelled; part-time does not shorten leave (Art. 159(2)).",
+    "Split-leave rule (Art. 163: one part at least 10/12 working days) not modelled.",
+    "Counts recorded working days, not calendar days."
+  ]
 }

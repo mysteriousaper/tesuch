@@ -1,4 +1,5 @@
 import { addDays, addMonths, addYears, differenceInYears, format, parseISO } from "date-fns";
+import { leaveYearToCheck } from "../../../lib/rules/facts";
 import type { ContractType, LeaveType, TerminationInitiator } from "@/lib/rules/types";
 
 // Fictional demo data for one firm: 5 companies, 8 employees each. Names are random
@@ -106,6 +107,7 @@ export function generateDemoCompanies(asOfIso: string, seed: number, companies =
           break;
         case "leaveShort":
           leaveDays = between(5, 12);
+          start = addDays(asOf, -between(1300, 3000)); // a working year past its 18-month postponement window (Art. 167(3))
           break;
         case "noticeShort": {
           const term = addDays(asOf, -between(5, 40));
@@ -119,10 +121,12 @@ export function generateDemoCompanies(asOfIso: string, seed: number, companies =
       }
       c.start_date = iso(start);
 
-      // Annual leave inside the last completed working year, so compliant people stay compliant.
+      // Annual leave inside the working year the rule judges (past the 18-month window), so compliant people stay compliant.
+      const year = leaveYearToCheck(c.start_date, asOfIso, 18);
       const years = differenceInYears(asOf, start);
-      const leave = years >= 1
-        ? [{ type: "annual" as const, start_date: iso(addDays(addYears(start, years - 1), between(30, 200))), days: leaveDays }]
+      const leaveYearStart = year ? year.start : years >= 1 ? addYears(start, years - 1) : null;
+      const leave = leaveYearStart
+        ? [{ type: "annual" as const, start_date: iso(addDays(leaveYearStart, between(30, 200))), days: leaveDays }]
         : [];
 
       return { fullName: `${pick(FIRST)} ${pick(LAST)}`, birthDate: iso(birth), sixDayWeek, contract: c, leave };

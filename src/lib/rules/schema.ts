@@ -9,7 +9,8 @@ export const ruleSchema = z
     id: z.string().regex(/^[a-z0-9-]+$/),
     version: z.number().int().positive(),
     // Never invented: null until a lawyer supplies the article number.
-    article: z.string().regex(/^\d+(\.\d+)?$/).nullable(),
+    // Article number, optionally with paragraphs/points as quoted in the Code, e.g. "92", "95(2.1)", "109(1)(2)".
+    article: z.string().regex(/^\d+(\.\d+)?(\(\d+(\.\d+)?\))*$/).nullable(),
     status: z.enum(["verified", "needs_lawyer_review"]),
     /** Date a lawyer last reviewed this rule against arlis.am (YYYY-MM-DD). null = not yet reviewed by a lawyer. */
     reviewed_on: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),

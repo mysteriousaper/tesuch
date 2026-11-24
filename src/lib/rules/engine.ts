@@ -53,7 +53,7 @@ export function primaryContract(contracts: Contract[], asOf: IsoDate): Contract 
 }
 
 /** Guard facts that mean "input unknown": a rule failing only on one of these is skipped, not satisfied. */
-const UNKNOWN_GUARDS = new Set(["fixedTermGroundKnown", "srcRegisteredKnown", "hasLeaveRecords"]);
+const UNKNOWN_GUARDS = new Set(["fixedTermGroundKnown", "srcRegisteredKnown", "hasLeaveRecords", "noticeGroundKnown"]);
 
 /** A rule that stops firing because another rule took over: its open finding must not auto-resolve (key: superseded, value: successor rule). */
 const SUPERSEDED_BY: Record<string, string> = { "fixed-term-ending": "fixed-term-expired" };

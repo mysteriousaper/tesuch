@@ -27,7 +27,7 @@ export async function emailsFor(ids: string[]): Promise<Map<string, string>> {
 }
 
 const EMPLOYEE_COLS = "id, company_id, full_name, birth_date, six_day_week, external_ref, archived_at, created_at";
-const CONTRACT_COLS = "id, employee_id, type, start_date, end_date, probation_end, probation_special_case, hired_by_transfer, fixed_term_ground, src_registered, terminated_on, termination_ground, termination_initiator, notice_given_on, workforce_reduction, created_at";
+const CONTRACT_COLS = "id, employee_id, type, start_date, end_date, probation_end, probation_special_case, hired_by_transfer, fixed_term_ground, src_registered, terminated_on, termination_ground, termination_initiator, notice_given_on, workforce_reduction, termination_ground_code, created_at";
 const LEAVE_COLS = "id, employee_id, type, start_date, days, created_at";
 const FINDING_COLS = "id, company_id, employee_id, contract_id, rule_id, rule_version, severity, due_date, status, first_seen_at, last_seen_at, resolved_at";
 

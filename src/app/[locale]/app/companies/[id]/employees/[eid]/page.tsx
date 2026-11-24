@@ -27,7 +27,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
 
   const { data: emp } = await supabase
     .from("employees")
-    .select("id, full_name, birth_date, six_day_week, org_id, companies(name), contracts(id, type, start_date, end_date, probation_end, probation_special_case, hired_by_transfer, fixed_term_ground, src_registered, terminated_on, termination_ground, termination_initiator, notice_given_on, workforce_reduction), leave_records(type, start_date, days)")
+    .select("id, full_name, birth_date, six_day_week, org_id, companies(name), contracts(id, type, start_date, end_date, probation_end, probation_special_case, hired_by_transfer, fixed_term_ground, src_registered, terminated_on, termination_ground, termination_initiator, notice_given_on, workforce_reduction, termination_ground_code), leave_records(type, start_date, days)")
     .eq("id", eid).eq("company_id", id).maybeSingle();
   if (!emp) notFound();
 
