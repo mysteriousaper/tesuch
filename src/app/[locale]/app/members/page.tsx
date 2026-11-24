@@ -54,7 +54,7 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
       </div>
 
       {isOwner && (
-        <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="invite-h">
+        <section className="flex flex-col gap-3 glass p-4" aria-labelledby="invite-h">
           <h2 id="invite-h" className="text-lg font-semibold">{t("invite.title")}</h2>
           <p className="text-sm text-muted">{t("invite.hint")}</p>
           <InviteForm action={inviteMember.bind(null, locale)} />
@@ -63,7 +63,7 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
 
       {supportEmail && <AssistedInviteCard action={inviteMember.bind(null, locale)} email={supportEmail} />}
 
-      <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="members-h">
+      <section className="flex flex-col gap-3 glass p-4" aria-labelledby="members-h">
         <h2 id="members-h" className="text-lg font-semibold">{t("members.title", { count: members.length })}</h2>
         {!isOwner && <p className="text-sm text-muted">{t("members.ownerOnly")}</p>}
         <ul className="divide-y divide-line rounded-theme border border-line" data-testid="member-list">
@@ -101,7 +101,7 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
       </section>
 
       {isOwner && (
-        <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="pending-h">
+        <section className="flex flex-col gap-3 glass p-4" aria-labelledby="pending-h">
           <h2 id="pending-h" className="text-lg font-semibold">{t("pending.title")}</h2>
           {invites.error ? (
             <p role="alert" className="text-sm text-danger">{t("errors.generic")}</p>

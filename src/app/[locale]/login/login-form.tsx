@@ -53,8 +53,8 @@ export function LoginForm({ configured, linkFailed }: { configured: boolean; lin
     window.location.assign(`/${locale}/app`);
   }
 
-  const input = "rounded-theme border border-control bg-surface px-3 py-2.5 text-base";
-  const primary = "rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink disabled:opacity-60";
+  const input = "rounded-full border border-control bg-surface px-3 py-2.5 text-base";
+  const primary = "rounded-full bg-accent px-4 py-2.5 font-semibold text-accent-ink disabled:opacity-60";
 
   return (
     <div className="flex flex-col gap-3">

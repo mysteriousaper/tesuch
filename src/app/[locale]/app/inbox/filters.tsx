@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { ASSIGNEES, DEFAULT_QUERY, inboxSearch, SEVERITIES, WINDOWS, type InboxQuery } from "@/lib/inbox/filters";
 
-const selectCls = "min-h-11 rounded-theme border border-control bg-surface px-3 text-base";
+const selectCls = "min-h-11 rounded-full border border-control bg-surface px-3 text-base";
 
 /** Filter bar. Changing a control updates the URL (page resets to 1); the server page re-reads the query. */
 export function InboxFilters({ query, companies, showAssignee }: {
@@ -25,7 +25,7 @@ export function InboxFilters({ query, companies, showAssignee }: {
 
   return (
     <form role="search" aria-label={t("filters")} aria-busy={pending} onSubmit={(e) => e.preventDefault()}
-      className="grid grid-cols-1 gap-3 rounded-theme-lg border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
+      className="grid grid-cols-1 gap-3 glass p-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="flex flex-col gap-1 text-sm font-medium">
         {t("window")}
         <select value={query.window} onChange={(e) => set({ window: e.target.value as InboxQuery["window"] })} className={selectCls}>

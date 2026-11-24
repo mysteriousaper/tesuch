@@ -25,9 +25,9 @@ const REQUIRED_PRIVACY: TargetField[] = ["start_date"];
 const PREVIEW_ROWS = 10;
 const ERRORS_SHOWN = 50;
 
-const btn = "rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-50";
-const btnGhost = "rounded-theme border border-control px-4 py-2.5 text-sm font-medium hover:bg-surface-2";
-const card = "rounded-theme-lg border border-line bg-surface";
+const btn = "rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-50";
+const btnGhost = "rounded-full border border-control px-4 py-2.5 text-sm font-medium hover:bg-surface-2";
+const card = "glass";
 
 function cellText(v: RawCell): string {
   if (v === null || v === undefined) return "";
@@ -266,7 +266,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
         <section className={`${card} flex flex-col gap-4 p-5`}>
           <div className="flex flex-col gap-1.5">
             <label htmlFor={ids.company} className="text-sm font-medium">{t("company")}</label>
-            <select id={ids.company} value={companyId} onChange={(e) => setCompanyId(e.target.value)} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base">
+            <select id={ids.company} value={companyId} onChange={(e) => setCompanyId(e.target.value)} className="rounded-full border border-control bg-surface px-3 py-2.5 text-base">
               {companies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
@@ -307,13 +307,13 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
                 value={headerRow}
                 onChange={(e) => onHeaderRow(e.target.value)}
                 aria-describedby={`${ids.headerRow}-hint`}
-                className="w-24 rounded-theme border border-control bg-surface px-3 py-2 text-base tabular-nums"
+                className="w-24 rounded-full border border-control bg-surface px-3 py-2 text-base tabular-nums"
               />
             </div>
             {encoding && (
               <div className="flex flex-col gap-1.5">
                 <label htmlFor={ids.encoding} className="text-sm font-medium">{t("encoding")}</label>
-                <select id={ids.encoding} value={encoding} onChange={(e) => onEncoding(e.target.value as CsvEncoding)} className="rounded-theme border border-control bg-surface px-3 py-2 text-sm">
+                <select id={ids.encoding} value={encoding} onChange={(e) => onEncoding(e.target.value as CsvEncoding)} className="rounded-full border border-control bg-surface px-3 py-2 text-sm">
                   <option value="utf-8">UTF-8</option>
                   <option value="windows-1251">windows-1251</option>
                 </select>
@@ -345,7 +345,7 @@ export function ImportWizard({ locale, companies }: { locale: Locale; companies:
                     id={selectId}
                     value={value}
                     onChange={(e) => setMapping((m) => ({ ...m, [g.column]: (e.target.value || null) as TargetField | null }))}
-                    className="w-full min-w-0 rounded-theme border border-control bg-surface px-2 py-2 text-sm"
+                    className="w-full min-w-0 rounded-full border border-control bg-surface px-2 py-2 text-sm"
                   >
                     <option value="">{t("skip")}</option>
                     {selectableFields(privacy).map((f) => (

@@ -37,7 +37,7 @@ export async function SiteHeader({ sections = false }: { sections?: boolean }) {
           <Link href="/login" className="hidden whitespace-nowrap rounded-theme px-3 py-2 text-sm font-medium text-muted hover:text-ink md:inline-block">
             {t("login")}
           </Link>
-          <Link href="/check" className="whitespace-nowrap rounded-theme bg-accent px-3.5 py-2 text-sm font-semibold text-accent-ink transition-transform hover:-translate-y-px">
+          <Link href="/check" className="whitespace-nowrap rounded-full bg-accent px-3.5 py-2 text-sm font-semibold text-accent-ink transition-transform hover:-translate-y-px">
             {t("check")}
           </Link>
         </div>

@@ -16,12 +16,12 @@ export function OrgSwitcher({ locale, orgs, current }: { locale: string; orgs: {
         name="org_id"
         defaultValue={current}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        className="max-w-[16rem] rounded-theme border border-control bg-surface px-3 py-2 text-sm"
+        className="max-w-[16rem] rounded-full border border-control bg-surface px-3 py-2 text-sm"
       >
         {orgs.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
       </select>
       <noscript>
-        <button className="rounded-theme border border-control px-3 py-2 text-sm">{t("switch")}</button>
+        <button className="rounded-full border border-control px-3 py-2 text-sm">{t("switch")}</button>
       </noscript>
     </form>
   );

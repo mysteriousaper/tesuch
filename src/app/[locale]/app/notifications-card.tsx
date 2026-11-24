@@ -11,7 +11,7 @@ export function NotificationsCard({ locale, linked, email }: { locale: Locale; l
   const [pending, start] = useTransition();
 
   return (
-    <section className="flex flex-col gap-4 rounded-theme-lg border border-line bg-surface p-4">
+    <section className="flex flex-col gap-4 glass p-4">
       <h2 className="text-lg font-semibold">{t("title")}</h2>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm">
@@ -23,7 +23,7 @@ export function NotificationsCard({ locale, linked, email }: { locale: Locale; l
           </form>
         ) : (
           <form action={connectTelegram}>
-            <button className="rounded-theme bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t("connect")}</button>
+            <button className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t("connect")}</button>
           </form>
         )}
       </div>
@@ -35,7 +35,7 @@ export function NotificationsCard({ locale, linked, email }: { locale: Locale; l
           const sent = await sendTestAlert(locale);
           setResult(sent.length ? t("testSent", { channels: sent.join(", ") }) : t("testNone"));
         })}
-        className="self-start rounded-theme border border-control px-4 py-2 text-sm font-medium disabled:opacity-60"
+        className="self-start rounded-full border border-control px-4 py-2 text-sm font-medium disabled:opacity-60"
       >
         {t("test")}
       </button>

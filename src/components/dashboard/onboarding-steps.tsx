@@ -17,10 +17,10 @@ export async function OnboardingSteps({ staffAdded, telegramLinked, assisted }: 
   const label = (s: StepState) => (s === "done" ? t("onboard.skip") : s === "now" ? t("onboard.now") : t("onboard.next"));
   const badge = (s: StepState) =>
     `rounded-full px-2 py-0.5 text-xs font-semibold ${s === "done" ? "bg-ok/15 text-ok" : s === "now" ? "bg-accent text-accent-ink" : "bg-surface-2 text-muted"}`;
-  const btn = "inline-flex min-h-11 items-center rounded-theme bg-accent px-5 py-2.5 text-sm font-semibold text-accent-ink";
+  const btn = "inline-flex min-h-11 items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-ink";
   const steps = [1, 2, 3] as const;
   return (
-    <section className="flex flex-col gap-4 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="onboard-h" data-testid="onboarding-steps">
+    <section className="flex flex-col gap-4 glass p-4" aria-labelledby="onboard-h" data-testid="onboarding-steps">
       <h2 id="onboard-h" className="text-lg font-semibold">{t("onboard.title")}</h2>
       <ol className="flex flex-col gap-4">
         {steps.map((n) => {

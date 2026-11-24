@@ -30,7 +30,7 @@ function Cards({ items }: { items: Item[] }) {
   return (
     <ul className="mt-4 grid gap-3 sm:grid-cols-2">
       {items.map((i) => (
-        <li key={i.t} className="break-inside-avoid rounded-theme-lg border border-line bg-surface p-4">
+        <li key={i.t} className="break-inside-avoid glass p-4">
           <h4 className="font-semibold">{i.t}</h4>
           <p className="mt-1 text-sm leading-relaxed text-muted">{i.d}</p>
         </li>
@@ -86,7 +86,7 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
           <p className="mt-1 text-sm text-muted">{t("hero.demoNote")}</p>
         </header>
 
-        <nav aria-label={t("toc")} className="mt-8 rounded-theme-lg border border-line bg-surface p-4 print:hidden">
+        <nav aria-label={t("toc")} className="mt-8 glass p-4 print:hidden">
           <p className="mb-2 text-sm font-semibold">{t("toc")}</p>
           <ul className="flex flex-wrap gap-2">
             {SECTIONS.map((s) => (
@@ -212,7 +212,7 @@ export default async function GuidePage({ params }: { params: Promise<{ locale: 
           </dl>
         </section>
 
-        <section aria-labelledby="cta-h" className="mt-14 break-inside-avoid rounded-theme-lg border border-line bg-surface-2 p-6 sm:p-8">
+        <section aria-labelledby="cta-h" className="mt-14 break-inside-avoid glass-2 p-6 sm:p-8">
           <h2 id="cta-h" className="text-2xl font-bold">{t("cta.title")}</h2>
           <p className="mt-2 max-w-2xl leading-relaxed text-muted">{t("cta.text")}</p>
           <div className="mt-5 flex flex-wrap gap-3">

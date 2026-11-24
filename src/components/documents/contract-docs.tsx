@@ -17,7 +17,7 @@ interface Labels {
   download: string;
 }
 
-const link = "inline-flex items-center gap-1 rounded-theme border border-control px-3 py-2 text-sm hover:bg-surface-2";
+const link = "inline-flex items-center gap-1 rounded-full border border-control px-3 py-2 text-sm hover:bg-surface-2";
 
 /** Only the documents that apply to this contract: probation orders need a probation end, the end notice a fixed term. */
 export function ContractDocs({ contract: c, today, labels }: { contract: ContractRow; today: string; labels: Labels }) {
@@ -40,7 +40,7 @@ export function ContractDocs({ contract: c, today, labels }: { contract: Contrac
         <input type="hidden" name="contract" value={c.id} />
         <label className="flex flex-col gap-1 text-xs text-muted">
           {labels.noticeDate}
-          <input type="date" name="date" defaultValue={today} required className="rounded-theme border border-control bg-surface px-2 py-1.5 text-sm text-ink" />
+          <input type="date" name="date" defaultValue={today} required className="rounded-full border border-control bg-surface px-2 py-1.5 text-sm text-ink" />
         </label>
         <button className={link}><span aria-hidden="true">⬇</span> {labels.dismissal}</button>
       </form>

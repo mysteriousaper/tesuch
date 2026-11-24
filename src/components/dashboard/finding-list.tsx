@@ -96,16 +96,16 @@ export function FindingList({ open, total, closed, closedTotal, params, pages, l
       <form method="get" className="flex flex-wrap items-end gap-3 border-b border-line px-4 py-3" role="search" aria-label={t("findingFilters.label")}>
         <label className="flex flex-col gap-1 text-xs font-medium">
           {t("findingFilters.severity")}
-          <select name="sev" defaultValue={params.sev ?? ""} className="min-h-11 rounded-theme border border-control bg-surface px-2 text-sm">
+          <select name="sev" defaultValue={params.sev ?? ""} className="min-h-11 rounded-full border border-control bg-surface px-2 text-sm">
             <option value="">{t("findingFilters.all")}</option>
             {SEVERITIES.map((s) => <option key={s} value={s}>{c(`severity.${s}`)}</option>)}
           </select>
         </label>
         <label className="flex min-w-40 flex-1 flex-col gap-1 text-xs font-medium">
           {t("findingFilters.employee")}
-          <input name="q" type="search" defaultValue={params.q} maxLength={60} autoComplete="off" className="min-h-11 rounded-theme border border-control bg-surface px-3 text-sm" />
+          <input name="q" type="search" defaultValue={params.q} maxLength={60} autoComplete="off" className="min-h-11 rounded-full border border-control bg-surface px-3 text-sm" />
         </label>
-        <button type="submit" className="min-h-11 rounded-theme border border-control bg-surface px-4 text-sm font-medium hover:bg-surface-2">{t("findingFilters.apply")}</button>
+        <button type="submit" className="min-h-11 rounded-full border border-control bg-surface px-4 text-sm font-medium hover:bg-surface-2">{t("findingFilters.apply")}</button>
         {filtered && <Link href={`/app/companies/${companyId}${findingsHref({})}`} className="min-h-11 content-center text-sm text-accent underline">{t("findingFilters.clear")}</Link>}
       </form>
       {canEdit && total > 0 && <FindingBulkBar locale={locale} companyId={companyId} />}

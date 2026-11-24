@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 interface Row { id: number; at: string; actor: string | null; action: string; table_name: string; row_id: string | null; old_row: Record<string, unknown> | null; new_row: Record<string, unknown> | null }
 
-const selectCls = "rounded-theme border border-control bg-surface px-3 py-2.5 text-base";
+const selectCls = "rounded-full border border-control bg-surface px-3 py-2.5 text-base";
 
 /** Owners only. RLS on audit_log already limits rows to orgs the caller owns; the role check here gives a clear message. */
 export default async function AuditPage({ params, searchParams }: {
@@ -50,7 +50,7 @@ export default async function AuditPage({ params, searchParams }: {
         <p className="text-sm text-muted">{t("intro", { org: org.name })}</p>
       </div>
 
-      <form className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4 sm:flex-row sm:items-end" aria-label={t("filters")}>
+      <form className="flex flex-col gap-3 glass p-4 sm:flex-row sm:items-end" aria-label={t("filters")}>
         <label className="flex flex-col gap-1 text-sm font-medium">
           {t("table")}
           <select name="table" defaultValue={q.table ?? ""} className={selectCls}>
@@ -69,7 +69,7 @@ export default async function AuditPage({ params, searchParams }: {
           <input type="checkbox" name="system" value="1" defaultChecked={q.system} className="size-4" />
           {t("showSystem")}
         </label>
-        <button className="rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{t("apply")}</button>
+        <button className="rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{t("apply")}</button>
         {(q.table || q.action || q.system) && <a href="?" className="py-2.5 text-sm text-muted underline">{t("reset")}</a>}
       </form>
 
@@ -92,7 +92,7 @@ export default async function AuditPage({ params, searchParams }: {
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-theme-lg border border-line bg-surface sm:block">
+          <div className="hidden overflow-x-auto glass sm:block">
             <table className="w-full text-left text-sm">
               <caption className="sr-only">{t("title")}</caption>
               <thead className={`bg-surface-2 text-xs text-muted${locale === "hy" ? "" : " uppercase"}`}>
@@ -122,9 +122,9 @@ export default async function AuditPage({ params, searchParams }: {
 
       {pages > 1 && (
         <nav aria-label={t("pagination")} className="flex items-center justify-between gap-2 text-sm">
-          {q.page > 1 ? <a href={auditHref(q, q.page - 1)} rel="prev" className="rounded-theme border border-control px-3 py-2 hover:bg-surface-2">← {t("prev")}</a> : <span />}
+          {q.page > 1 ? <a href={auditHref(q, q.page - 1)} rel="prev" className="rounded-full border border-control px-3 py-2 hover:bg-surface-2">← {t("prev")}</a> : <span />}
           <span className="text-muted">{t("page", { page: q.page, pages })}</span>
-          {q.page < pages ? <a href={auditHref(q, q.page + 1)} rel="next" className="rounded-theme border border-control px-3 py-2 hover:bg-surface-2">{t("next")} →</a> : <span />}
+          {q.page < pages ? <a href={auditHref(q, q.page + 1)} rel="next" className="rounded-full border border-control px-3 py-2 hover:bg-surface-2">{t("next")} →</a> : <span />}
         </nav>
       )}
     </div>

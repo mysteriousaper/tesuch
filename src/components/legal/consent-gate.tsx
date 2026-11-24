@@ -31,7 +31,7 @@ export function ConsentGate({ next = "/app" }: { next?: string }) {
 
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-5" data-testid="consent-gate">
-      <ul className="flex flex-col gap-2 rounded-theme-lg border border-line bg-surface p-4 text-sm leading-relaxed sm:p-5">
+      <ul className="flex flex-col gap-2 glass p-4 text-sm leading-relaxed sm:p-5">
         {(t.raw("points") as string[]).map((p) => (
           <li key={p} className="flex gap-2">
             <span aria-hidden="true" className="text-ok">✓</span>
@@ -61,7 +61,7 @@ export function ConsentGate({ next = "/app" }: { next?: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-theme bg-accent px-4 py-3 font-semibold text-accent-ink transition-opacity disabled:opacity-60 sm:self-start"
+        className="rounded-full bg-accent px-4 py-3 font-semibold text-accent-ink transition-opacity disabled:opacity-60 sm:self-start"
       >
         {pending ? t("saving") : t("submit")}
       </button>

@@ -44,7 +44,7 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
           <p className="mt-3 max-w-2xl text-sm text-muted" data-testid="checklist-coverage">{t("hero.coverage", checklistCoverage())}</p>
         </header>
 
-        <nav aria-label={t("hero.eyebrow")} className="mt-8 rounded-theme-lg border border-line bg-surface p-4">
+        <nav aria-label={t("hero.eyebrow")} className="mt-8 glass p-4">
           <ul className="flex flex-wrap gap-2">
             {SECTIONS.map((s) => (
               <li key={s}>
@@ -79,7 +79,7 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
           <p className="mt-3 max-w-3xl text-muted">{t("processors.intro")}</p>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {processors.map((p) => (
-              <li key={p.name} className="rounded-theme-lg border border-line bg-surface p-4">
+              <li key={p.name} className="glass p-4">
                 <h3 className="font-semibold">{p.name}</h3>
                 <p className="text-sm text-muted">{p.role}</p>
                 <p className="mt-2 text-sm leading-relaxed">

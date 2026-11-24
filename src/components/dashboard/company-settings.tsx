@@ -8,7 +8,7 @@ import { ActionForm, inputCls, labelCls } from "./action-form";
 export function CompanySettings({ locale, companyId, name, taxId }: { locale: string; companyId: string; name: string; taxId: string | null }) {
   const t = useTranslations("dashboard");
   return (
-    <details className="rounded-theme-lg border border-line bg-surface">
+    <details className="glass">
       <summary className="cursor-pointer px-4 py-3 font-semibold">{t("companySettings")}</summary>
       <div className="flex flex-col gap-6 border-t border-line p-4">
         <ActionForm action={updateCompany.bind(null, locale, companyId)} submitLabel={t("save")} resetOnSuccess={false}>

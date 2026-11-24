@@ -67,7 +67,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
   return (
     <div className="flex max-w-3xl flex-col gap-6">
       <Link href={`/app/companies/${id}`} className="text-sm text-muted hover:text-ink">← {company?.name ?? t("back")}</Link>
-      <header className="rounded-theme-lg border border-line bg-surface p-4">
+      <header className="glass p-4">
         <h1 className="text-2xl font-bold">{emp.full_name}</h1>
         <p className="flex flex-wrap gap-x-3 text-sm text-muted">
           {emp.birth_date && (
@@ -77,13 +77,13 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
         </p>
       </header>
 
-      <section className="rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="timeline-h">
+      <section className="glass p-4" aria-labelledby="timeline-h">
         <h2 id="timeline-h" className="mb-2 font-semibold">{t("timeline")}</h2>
         <Timeline events={events} today={today} />
       </section>
 
       {canEdit && (
-        <section id="edit" className="scroll-mt-4 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="edit-h">
+        <section id="edit" className="scroll-mt-4 glass p-4" aria-labelledby="edit-h">
           <h2 id="edit-h" className="mb-3 font-semibold">{t("editEmployee")}</h2>
           {latest ? (
             <EditEmployeeForm
@@ -102,7 +102,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ local
       )}
 
       {canEdit && (
-        <section className="rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="leave-h">
+        <section className="glass p-4" aria-labelledby="leave-h">
           <h2 id="leave-h" className="mb-3 font-semibold">{t("addLeave")}</h2>
           <AddLeaveForm locale={locale} companyId={id} employeeId={eid} />
         </section>

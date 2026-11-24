@@ -49,23 +49,23 @@ export default async function DataRightsPage({ params, searchParams }: {
       </div>
 
       {org.role === "owner" && (
-        <section className="flex flex-col gap-2 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="org-export-h">
+        <section className="flex flex-col gap-2 glass p-4" aria-labelledby="org-export-h">
           <h2 id="org-export-h" className="text-lg font-semibold">{t("orgExport")}</h2>
           <p className="text-sm text-muted">{t("orgExportHint")}</p>
-          <a href={`/${locale}/app/members/data/export`} download className="self-start rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">
+          <a href={`/${locale}/app/members/data/export`} download className="self-start rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">
             {t("orgExportButton")}
           </a>
         </section>
       )}
 
-      <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="emp-h">
+      <section className="flex flex-col gap-3 glass p-4" aria-labelledby="emp-h">
         <h2 id="emp-h" className="text-lg font-semibold">{t("employees")}</h2>
         <form className="flex flex-col gap-2 sm:flex-row sm:items-end" role="search">
           <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
             {t("search")}
-            <input name="q" defaultValue={q} maxLength={100} className="w-full rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
+            <input name="q" defaultValue={q} maxLength={100} className="w-full rounded-full border border-control bg-surface px-3 py-2.5 text-base" />
           </label>
-          <button className="rounded-theme border border-control bg-surface px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("find")}</button>
+          <button className="rounded-full border border-control bg-surface px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("find")}</button>
         </form>
         {!canEdit && <p className="text-sm text-muted">{t("viewerNote")}</p>}
         {error ? (
@@ -85,7 +85,7 @@ export default async function DataRightsPage({ params, searchParams }: {
                     href={`/${locale}/app/members/data/employees/${e.id}`}
                     download
                     aria-label={t("exportFor", { name: e.name })}
-                    className="rounded-theme border border-control bg-surface px-3 py-2 text-sm font-medium hover:bg-surface-2"
+                    className="rounded-full border border-control bg-surface px-3 py-2 text-sm font-medium hover:bg-surface-2"
                   >
                     {t("export")}
                   </a>

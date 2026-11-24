@@ -57,7 +57,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
     const result = scoreQuiz(questions, questions.map((q) => chosenById.get(q.id) ?? null));
     body = (
       <div className="flex flex-col gap-4">
-        <p role="status" className="rounded-theme-lg border border-line bg-surface p-4">
+        <p role="status" className="glass p-4">
           <span className="text-2xl font-bold">{t("result", { correct: result.correct, total: result.total })}</span>
           <span className="mt-1 block text-sm text-muted">{t("alreadyTaken")}</span>
         </p>
@@ -66,7 +66,7 @@ export default async function QuizPage({ params, searchParams }: { params: Promi
             const a = result.answers[i];
             const rule = ruleById(q.ruleId);
             return (
-              <li key={q.id} className="rounded-theme-lg border border-line bg-surface p-4">
+              <li key={q.id} className="glass p-4">
                 <p className="flex items-start gap-2 font-medium">
                   <span aria-hidden>{a.correct ? "✅" : "❌"}</span>
                   <span>

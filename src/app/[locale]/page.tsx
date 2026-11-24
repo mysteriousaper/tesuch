@@ -76,12 +76,12 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/check-file"
-                  className="group inline-flex items-center gap-2 rounded-theme bg-accent px-5 py-3.5 font-semibold text-accent-ink shadow-[0_12px_30px_-12px_var(--accent)] transition-transform hover:-translate-y-0.5"
+                  className="group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3.5 font-semibold text-accent-ink shadow-[0_12px_30px_-12px_var(--accent)] transition-transform hover:-translate-y-0.5"
                 >
                   {t("hero.ctaCheck")}
                   <IconArrow width={18} height={18} className="transition-transform group-hover:translate-x-0.5" />
                 </Link>
-                <Link href="/check" className="rounded-theme border border-control bg-surface px-5 py-3.5 font-semibold transition-colors hover:bg-surface-2">
+                <Link href="/check" className="rounded-full border border-control bg-surface px-5 py-3.5 font-semibold transition-colors hover:bg-surface-2">
                   {t("hero.ctaQuiz")}
                 </Link>
               </div>
@@ -117,7 +117,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
               return (
                 <li key={s.t}>
                   <Reveal delay={i * 90} className="h-full">
-                    <div className="relative flex h-full flex-col gap-4 rounded-theme-lg border border-line bg-surface p-6">
+                    <div className="relative flex h-full flex-col gap-4 glass p-6">
                       <div className="flex items-center justify-between">
                         <span className="grid h-11 w-11 place-items-center rounded-theme bg-surface-2 text-highlight">
                           <Icon />
@@ -276,7 +276,7 @@ export default async function Landing({ params }: { params: Promise<{ locale: st
           <h2 id="faq-title" className="mb-8 text-3xl font-bold sm:text-4xl">{t("faq.title")}</h2>
           <div className="flex flex-col gap-3">
             {faq.map((f, i) => (
-              <details key={f.q} open={i === 0} className="group rounded-theme-lg border border-line bg-surface open:shadow-sm">
+              <details key={f.q} open={i === 0} className="group glass open:shadow-sm">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold [&::-webkit-details-marker]:hidden">
                   <span>{f.q}</span>
                   <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-2 text-lg leading-none transition-transform group-open:rotate-45">+</span>

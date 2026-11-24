@@ -30,10 +30,10 @@ export default function LocaleError({ error, reset }: { error: Error & { digest?
       <h1 id="err-title" className="text-2xl font-bold">{t("title")}</h1>
       <p className="text-muted">{t("body")}</p>
       <div className="flex flex-wrap gap-3">
-        <button type="button" onClick={retry} className="rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink">
+        <button type="button" onClick={retry} className="rounded-full bg-accent px-4 py-2.5 font-semibold text-accent-ink">
           {t("retry")}
         </button>
-        <Link href="/" className="rounded-theme border border-control bg-surface px-4 py-2.5 font-semibold">{t("home")}</Link>
+        <Link href="/" className="rounded-full border border-control bg-surface px-4 py-2.5 font-semibold">{t("home")}</Link>
       </div>
       {error.digest && (
         <p className="text-sm text-muted">

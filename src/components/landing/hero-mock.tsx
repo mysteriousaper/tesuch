@@ -33,7 +33,7 @@ export function HeroMock() {
         className="pointer-events-none absolute -inset-x-2 -inset-y-8 -z-10 rounded-[3rem] opacity-70 blur-2xl sm:-inset-8"
         style={{ background: "radial-gradient(60% 60% at 70% 30%, color-mix(in oklab, var(--accent) 22%, transparent), transparent 70%)" }}
       />
-      <div className="rounded-theme-lg border border-line bg-surface p-5 shadow-[0_30px_80px_-30px_color-mix(in_oklab,var(--ink)_35%,transparent)] sm:p-6">
+      <div className="glass p-5 shadow-[0_30px_80px_-30px_color-mix(in_oklab,var(--ink)_35%,transparent)] sm:p-6">
         <div className="flex items-center justify-between gap-3 border-b border-line pb-4">
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">{t("mockCompany")}</p>

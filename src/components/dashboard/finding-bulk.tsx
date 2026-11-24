@@ -27,12 +27,12 @@ export function FindingBulkBar({ locale, companyId }: { locale: string; companyI
       aria-label={t("findingBulk.title")} className="flex flex-col gap-2 border-b border-line bg-surface-2 px-4 py-3 text-sm">
       <p className="text-xs text-muted">{t("findingBulk.hint")}</p>
       <div className="flex flex-wrap items-end gap-2">
-        <button name="status" value="fixed" disabled={pending} className="min-h-11 rounded-theme bg-accent px-3 text-xs font-semibold text-accent-ink disabled:opacity-60">{t("findingBulk.fixed")}</button>
+        <button name="status" value="fixed" disabled={pending} className="min-h-11 rounded-full bg-accent px-3 text-xs font-semibold text-accent-ink disabled:opacity-60">{t("findingBulk.fixed")}</button>
         <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-medium">
           {t("findingBulk.reason")}
-          <input name="reason" maxLength={500} autoComplete="off" className="min-h-11 rounded-theme border border-control bg-surface px-3 text-sm" />
+          <input name="reason" maxLength={500} autoComplete="off" className="min-h-11 rounded-full border border-control bg-surface px-3 text-sm" />
         </label>
-        <button name="status" value="dismissed" disabled={pending} className="min-h-11 rounded-theme border border-control bg-surface px-3 text-xs font-medium hover:bg-surface-2 disabled:opacity-60">{t("findingBulk.dismiss")}</button>
+        <button name="status" value="dismissed" disabled={pending} className="min-h-11 rounded-full border border-control bg-surface px-3 text-xs font-medium hover:bg-surface-2 disabled:opacity-60">{t("findingBulk.dismiss")}</button>
       </div>
       <p role="status" aria-live="polite" className="text-xs">
         {state?.ok && <span className="text-ok">{t("findingBulk.done", { count: state.count ?? 0 })}</span>}

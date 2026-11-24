@@ -54,13 +54,13 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
         <p className="max-w-2xl text-muted">{t("intro")}</p>
       </header>
 
-      <div className="flex flex-col gap-4 rounded-theme-lg border border-line bg-surface p-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-4 glass p-4 sm:flex-row sm:items-end sm:justify-between">
         <CompanyPicker companies={companies} selected={company.id} label={t("company")} submit={t("choose")} />
         <div className="flex flex-col gap-1">
           <a
             href={`/api/pdf/checklist?company=${company.id}&locale=${locale}`}
             download
-            className="inline-flex items-center justify-center rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink"
+            className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink"
           >
             ⬇ {t("checklist")}
           </a>
@@ -74,16 +74,16 @@ export default async function DocumentsPage({ params, searchParams }: { params: 
           <input type="hidden" name="company" value={company.id} />
           <label className="flex flex-col gap-1 text-sm font-medium">
             {t("search")}
-            <input type="search" name="q" defaultValue={q} maxLength={100} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
+            <input type="search" name="q" defaultValue={q} maxLength={100} className="rounded-full border border-control bg-surface px-3 py-2.5 text-base" />
           </label>
-          <button className="rounded-theme border border-control px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("searchApply")}</button>
+          <button className="rounded-full border border-control px-4 py-2.5 text-sm font-medium hover:bg-surface-2">{t("searchApply")}</button>
         </form>
         {!shown.length ? (
           <p className="rounded-theme-lg border border-dashed border-line bg-surface p-6 text-muted">{q ? t("noMatches") : t("noEmployees")}</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {(shown as unknown as EmployeeRow[]).map((e) => (
-              <li key={e.id} className="rounded-theme-lg border border-line bg-surface p-4">
+              <li key={e.id} className="glass p-4">
                 <p className="font-semibold">{e.full_name}</p>
                 {e.contracts.length === 0 ? (
                   <p className="mt-1 text-sm text-muted">{t("noContracts")}</p>

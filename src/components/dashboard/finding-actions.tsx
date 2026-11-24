@@ -6,8 +6,8 @@ import { setFindingStatus } from "@/app/[locale]/app/actions";
 
 type Status = "open" | "fixed" | "dismissed";
 
-const primary = "whitespace-nowrap rounded-theme bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60";
-const secondary = "whitespace-nowrap rounded-theme border border-control px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:opacity-60";
+const primary = "whitespace-nowrap rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60";
+const secondary = "whitespace-nowrap rounded-full border border-control px-3 py-1.5 text-xs font-medium hover:bg-surface-2 disabled:opacity-60";
 
 function StatusButton({ locale, companyId, findingId, to, label, cls }: {
   locale: string; companyId: string; findingId: string; to: Status; label: string; cls: string;
@@ -36,7 +36,7 @@ function DismissButton({ locale, companyId, findingId }: { locale: string; compa
       <form action={action} className="absolute right-0 z-10 mt-1 flex w-64 flex-col gap-2 rounded-theme border border-line bg-surface p-3 shadow-lg">
         <label className="flex flex-col gap-1 text-xs font-medium">
           {t("findingBulk.dismissReason")}
-          <input name="reason" required minLength={3} maxLength={500} autoComplete="off" className="min-h-11 rounded-theme border border-control bg-surface px-3 text-sm" />
+          <input name="reason" required minLength={3} maxLength={500} autoComplete="off" className="min-h-11 rounded-full border border-control bg-surface px-3 text-sm" />
         </label>
         <button type="submit" disabled={pending} aria-busy={pending} className={primary}>{pending ? "…" : t("findingBulk.dismissConfirm")}</button>
         {state && !state.ok && <span role="status" aria-live="polite" className="text-xs text-danger">{t(`errors.${state.error}`)}</span>}

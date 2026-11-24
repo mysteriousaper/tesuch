@@ -36,8 +36,8 @@ export default async function AppHome({ params, searchParams }: { params: Promis
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <form action={createOrg.bind(null, locale)} className="flex flex-col gap-3">
           <label htmlFor="name" className="text-sm font-medium">{t("name")}</label>
-          <input id="name" name="name" required maxLength={200} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
-          <button className="rounded-theme bg-accent px-4 py-2.5 font-semibold text-accent-ink">{t("create")}</button>
+          <input id="name" name="name" required maxLength={200} className="rounded-full border border-control bg-surface px-3 py-2.5 text-base" />
+          <button className="rounded-full bg-accent px-4 py-2.5 font-semibold text-accent-ink">{t("create")}</button>
         </form>
       </section>
     );
@@ -74,7 +74,7 @@ export default async function AppHome({ params, searchParams }: { params: Promis
       <section className="flex flex-col gap-4">
         {showCodesNotice && <CodesNotice locale={locale} />}
         {rows.length === 1 && <Link href="/app" className="text-sm text-accent underline">{(await getTranslations("owner"))("backSimple")}</Link>}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-theme-lg border border-line bg-surface p-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 glass p-4">
           <div className="flex flex-col gap-2">
             <OrgSwitcher locale={locale} orgs={orgs} current={org.id} />
             <h1 className="text-2xl font-bold">{org.name}</h1>
@@ -88,7 +88,7 @@ export default async function AppHome({ params, searchParams }: { params: Promis
           )}
         </div>
 
-        <div className="rounded-theme-lg border border-line bg-surface">
+        <div className="glass">
           <h2 className="flex items-baseline justify-between border-b border-line px-4 py-3 font-semibold">
             {t("companies")} <span className="text-xs font-normal text-muted">{t("sortedByScore")}</span>
           </h2>
@@ -99,12 +99,12 @@ export default async function AppHome({ params, searchParams }: { params: Promis
       <aside className="flex flex-col gap-4">
         {canEdit ? (
           <>
-            <section className="rounded-theme-lg border border-line bg-surface p-4">
+            <section className="glass p-4">
               <h2 className="mb-3 font-semibold">{t("addCompany")}</h2>
               <AddCompanyForm locale={locale} />
             </section>
             {rows.every((r) => r.staff === 0) && (
-              <section className="rounded-theme-lg border border-line bg-surface p-4">
+              <section className="glass p-4">
                 <LoadDemoButton locale={locale} />
               </section>
             )}

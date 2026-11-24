@@ -8,9 +8,9 @@ import { ROLES, SUPPORT_INVITE_ROLE, type Role } from "./lib";
 
 type Action = (prev: MembersState, form: FormData) => Promise<MembersState>;
 
-export const inputCls = "w-full rounded-theme border border-control bg-surface px-3 py-2.5 text-base text-ink";
-export const primaryBtn = "rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-60";
-export const secondaryBtn = "rounded-theme border border-control bg-surface px-3 py-2 text-sm font-medium text-ink hover:bg-surface-2 disabled:opacity-60";
+export const inputCls = "w-full rounded-full border border-control bg-surface px-3 py-2.5 text-base text-ink";
+export const primaryBtn = "rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-60";
+export const secondaryBtn = "rounded-full border border-control bg-surface px-3 py-2 text-sm font-medium text-ink hover:bg-surface-2 disabled:opacity-60";
 export const dangerBtn = "rounded-theme border border-danger px-3 py-2 text-sm font-medium text-danger hover:bg-surface-2 disabled:opacity-60";
 
 function Status({ state, success }: { state: MembersState; success?: string }) {
@@ -85,7 +85,7 @@ export function AssistedInviteCard({ action, email }: { action: Action; email: s
   const t = useTranslations("members");
   const [state, formAction, pending] = useActionState(action, null);
   return (
-    <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="assisted-h" data-testid="assisted-invite">
+    <section className="flex flex-col gap-3 glass p-4" aria-labelledby="assisted-h" data-testid="assisted-invite">
       <h2 id="assisted-h" className="text-lg font-semibold">{t("assisted.title")}</h2>
       <p className="text-sm text-muted">{t("assisted.intro")}</p>
       <p className="text-sm font-medium">{t("assisted.target", { email })}</p>
@@ -115,7 +115,7 @@ export function RoleForm({ action, userId, role, label }: { action: Action; user
   return (
     <form action={formAction} className="flex flex-wrap items-center gap-2" aria-busy={pending}>
       <input type="hidden" name="user_id" value={userId} />
-      <select name="role" defaultValue={role} aria-label={label} className="rounded-theme border border-control bg-surface px-2 py-2 text-sm">
+      <select name="role" defaultValue={role} aria-label={label} className="rounded-full border border-control bg-surface px-2 py-2 text-sm">
         {ROLES.map((r) => <option key={r} value={r}>{t(`roles.${r}`)}</option>)}
       </select>
       <button type="submit" disabled={pending} className={secondaryBtn}>{pending ? "…" : t("members.saveRole")}</button>
@@ -148,7 +148,7 @@ export function ConfirmForm({
     <div className="flex flex-wrap items-center gap-2">
       <button type="button" className={dangerBtn} aria-label={triggerLabel} onClick={() => dialog.current?.showModal()}>{trigger}</button>
       <Status state={state} />
-      <dialog ref={dialog} aria-labelledby={titleId} className="m-auto w-[min(26rem,calc(100vw-2rem))] rounded-theme-lg border border-line bg-surface p-5 text-ink backdrop:bg-black/50">
+      <dialog ref={dialog} aria-labelledby={titleId} className="m-auto w-[min(26rem,calc(100vw-2rem))] glass p-5 text-ink backdrop:bg-black/50">
         <form action={formAction} className="flex flex-col gap-4">
           {Object.entries(fields).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
           <h2 id={titleId} className="text-lg font-semibold">{title}</h2>

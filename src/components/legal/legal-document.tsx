@@ -42,7 +42,7 @@ export async function LegalDocument({
         <p className="mt-2 text-sm text-muted">{t("updated", { version, date: updated })}</p>
         <p className="mt-4 text-lg leading-relaxed text-muted">{intro}</p>
 
-        <nav aria-label={t("toc")} className="mt-8 rounded-theme-lg border border-line bg-surface p-4 sm:p-5">
+        <nav aria-label={t("toc")} className="mt-8 glass p-4 sm:p-5">
           <p className="mb-2 text-sm font-semibold">{t("toc")}</p>
           <ol className="list-decimal pl-5 text-sm sm:columns-2 sm:gap-x-12">
             {sections.map((s) => (
@@ -81,7 +81,7 @@ export async function LegalDocument({
 
         <nav aria-label={t("relatedLabel")} className="mt-12 flex flex-wrap gap-3 border-t border-line pt-6 text-sm">
           {related.map((r) => (
-            <Link key={r} href={HREF[r]} className="rounded-theme border border-control px-3 py-2 text-muted hover:text-ink">
+            <Link key={r} href={HREF[r]} className="rounded-full border border-control px-3 py-2 text-muted hover:text-ink">
               {t(`related.${r}`)}
             </Link>
           ))}

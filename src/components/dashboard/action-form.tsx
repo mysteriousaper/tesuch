@@ -4,10 +4,10 @@ import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef } from "react";
 import type { ActionState } from "@/app/[locale]/app/dashboard-logic";
 
-export const inputCls = "w-full rounded-theme border border-control bg-surface px-3 py-2.5 text-base text-ink";
+export const inputCls = "w-full rounded-full border border-control bg-surface px-3 py-2.5 text-base text-ink";
 export const labelCls = "flex flex-col gap-1 text-sm font-medium";
-export const primaryBtn = "rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-60";
-export const secondaryBtn = "rounded-theme border border-control bg-surface px-4 py-2.5 text-sm font-medium text-ink hover:bg-surface-2 disabled:opacity-60";
+export const primaryBtn = "rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink disabled:opacity-60";
+export const secondaryBtn = "rounded-full border border-control bg-surface px-4 py-2.5 text-sm font-medium text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /**
  * Form bound to a server action returning ActionState. Shows pending, success and error states

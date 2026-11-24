@@ -1,3 +1,5 @@
+import { Gauge, ListChecks, Users } from "lucide-react";
+import { GlassMetric } from "@/components/ui/glass-metric";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoreGauge } from "@/components/score-gauge";
@@ -74,7 +76,7 @@ export default async function CompanyPage({ params, searchParams }: { params: Pr
     <div className="flex flex-col gap-6">
       <Link href="/app" className="text-sm text-muted hover:text-ink">← {t("back")}</Link>
 
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-theme-lg border border-line bg-surface p-4">
+      <section className="flex flex-wrap items-center justify-between gap-4 glass p-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold">{company.name}</h1>
           <p className="text-sm text-muted">
@@ -86,7 +88,7 @@ export default async function CompanyPage({ params, searchParams }: { params: Pr
           <div className="flex max-w-[220px] flex-col items-center gap-2 text-center">
             <p className="text-lg font-semibold">{t("noScore")}</p>
             <p className="text-sm text-muted">{t("noScoreHint")}</p>
-            {canEdit && <Link href="/app/import" className="rounded-theme bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t("importEmployees")}</Link>}
+            {canEdit && <Link href="/app/import" className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">{t("importEmployees")}</Link>}
           </div>
         ) : (
           <div className="flex max-w-[220px] flex-col items-center gap-1">
@@ -97,8 +99,14 @@ export default async function CompanyPage({ params, searchParams }: { params: Pr
         )}
       </section>
 
+      <div className="grid gap-5 sm:grid-cols-3">
+        <GlassMetric label={t("employees")} icon={<Users className="size-4" />} value={stats.staff} />
+        <GlassMetric label={t("findings")} icon={<ListChecks className="size-4" />} value={stats.open} tone={stats.open ? "warn" : "ok"} />
+        <GlassMetric label={c("score")} icon={<Gauge className="size-4" />} value={score ?? "–"} caption={score === null ? undefined : "/ 100"} tone={score === null ? "neutral" : score >= 80 ? "ok" : score >= 50 ? "warn" : "danger"} />
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <section className="rounded-theme-lg border border-line bg-surface" aria-labelledby="findings-h">
+        <section className="glass" aria-labelledby="findings-h">
           <h2 id="findings-h" className="border-b border-line px-4 py-3 font-semibold">{t("findings")}</h2>
           <FindingList
             open={open} total={openRes.count ?? open.length} closed={closed} closedTotal={closedRes.count ?? closed.length}
@@ -107,7 +115,7 @@ export default async function CompanyPage({ params, searchParams }: { params: Pr
         </section>
 
         <section className="flex flex-col gap-4" aria-labelledby="employees-h">
-          <div className="rounded-theme-lg border border-line bg-surface">
+          <div className="glass">
             <h2 id="employees-h" className="border-b border-line px-4 py-3 font-semibold">{t("employees")}</h2>
             {employees.length ? (
               <ul className="divide-y divide-line">
@@ -137,7 +145,7 @@ export default async function CompanyPage({ params, searchParams }: { params: Pr
             )}
           </div>
           {canEdit && (
-            <details className="rounded-theme-lg border border-line bg-surface">
+            <details className="glass">
               <summary className="cursor-pointer px-4 py-3 font-semibold">{t("addEmployee")}</summary>
               <div className="border-t border-line p-4"><AddEmployeeForm locale={locale} companyId={company.id} privacy={privacy} /></div>
             </details>

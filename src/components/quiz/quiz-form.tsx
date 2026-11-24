@@ -36,7 +36,7 @@ export function QuizForm({ locale, companyId, week, questions }: { locale: "hy" 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       {questions.map((q, qi) => (
-        <fieldset key={q.id} className="rounded-theme-lg border border-line bg-surface p-4">
+        <fieldset key={q.id} className="glass p-4">
           <legend className="px-1 text-xs font-semibold uppercase tracking-wide text-muted">
             {t("question", { n: qi + 1, total: questions.length })}
           </legend>
@@ -64,7 +64,7 @@ export function QuizForm({ locale, companyId, week, questions }: { locale: "hy" 
         </fieldset>
       ))}
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
-      <button disabled={pending || !ready} className="self-start rounded-theme bg-accent px-5 py-2.5 font-semibold text-accent-ink disabled:opacity-60">
+      <button disabled={pending || !ready} className="self-start rounded-full bg-accent px-5 py-2.5 font-semibold text-accent-ink disabled:opacity-60">
         {t("submit")}
       </button>
     </form>

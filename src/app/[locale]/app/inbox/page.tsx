@@ -180,7 +180,7 @@ export default async function InboxPage({ params, searchParams }: {
           </div>
 
           {/* Table from md up. */}
-          <div className="hidden overflow-x-auto rounded-theme-lg border border-line bg-surface md:block">
+          <div className="hidden overflow-x-auto glass md:block">
             <table className="w-full text-left text-sm">
               <caption className="sr-only">{t("caption")}</caption>
               <thead className="bg-surface-2 text-xs uppercase text-muted">
@@ -222,9 +222,9 @@ export default async function InboxPage({ params, searchParams }: {
 
       {pages > 1 && (
         <nav aria-label={t("pagination")} className="flex items-center justify-between gap-2 text-sm">
-          {q.page > 1 ? <Link href={href(q.page - 1)} rel="prev" className="inline-flex min-h-11 items-center rounded-theme border border-control px-3 hover:bg-surface-2">← {t("prev")}</Link> : <span />}
+          {q.page > 1 ? <Link href={href(q.page - 1)} rel="prev" className="inline-flex min-h-11 items-center rounded-full border border-control px-3 hover:bg-surface-2">← {t("prev")}</Link> : <span />}
           <span className="text-muted">{t("page", { page: q.page, pages })}</span>
-          {q.page < pages ? <Link href={href(q.page + 1)} rel="next" className="inline-flex min-h-11 items-center rounded-theme border border-control px-3 hover:bg-surface-2">{t("next")} →</Link> : <span />}
+          {q.page < pages ? <Link href={href(q.page + 1)} rel="next" className="inline-flex min-h-11 items-center rounded-full border border-control px-3 hover:bg-surface-2">{t("next")} →</Link> : <span />}
         </nav>
       )}
     </div>

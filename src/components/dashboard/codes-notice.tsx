@@ -6,7 +6,7 @@ import { primaryBtn, secondaryBtn } from "./action-form";
 export async function CodesNotice({ locale }: { locale: string }) {
   const t = await getTranslations("dashboard");
   return (
-    <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="codes-notice-h">
+    <section className="flex flex-col gap-3 glass p-4" aria-labelledby="codes-notice-h">
       <h2 id="codes-notice-h" className="text-lg font-semibold">{t("settings.codesNotice.title")}</h2>
       <p className="text-sm text-muted">{t("settings.codesNotice.body")}</p>
       <div className="flex flex-wrap gap-3">

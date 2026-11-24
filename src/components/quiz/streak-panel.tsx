@@ -11,7 +11,7 @@ export function StreakPanel({
   labels: { streak: string; longest: string; currentWeeks: string; longestWeeks: string; badges: string; noBadges: string; rule: string };
 }) {
   return (
-    <aside className="flex flex-col gap-4 rounded-theme-lg border border-line bg-surface p-4" aria-label={labels.streak}>
+    <aside className="flex flex-col gap-4 glass p-4" aria-label={labels.streak}>
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-theme bg-surface-2 p-3">
           <p className="text-xs text-muted">{labels.streak}</p>

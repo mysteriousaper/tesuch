@@ -2,7 +2,7 @@
 // Presentational only: callers pass translated strings, so it works in server and client components.
 export function CoverageNote({ titles, summary, listLabel, note, reviewed }: { titles: string[]; summary: string; listLabel: string; note: string; /** "Rules last reviewed: <date>" or the not-yet-reviewed line. */ reviewed: string }) {
   return (
-    <div className="rounded-theme-lg border border-line bg-surface p-4 text-sm" data-testid="coverage-note">
+    <div className="glass p-4 text-sm" data-testid="coverage-note">
       <details>
         <summary className="min-h-11 cursor-pointer py-2 font-medium" data-testid="coverage-summary">{summary}</summary>
         <p className="mt-1 font-semibold">{listLabel}</p>

@@ -40,7 +40,7 @@ export default async function DpaPage({ params }: { params: Promise<{ locale: st
         <p className="mt-4 max-w-3xl leading-relaxed text-muted print:hidden">{t("dpa.intro")}</p>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted print:hidden">{t("dpa.howTo")}</p>
 
-        <section aria-labelledby="dpa-parties" className="mt-8 rounded-theme-lg border border-line bg-surface p-4 sm:p-5 print:border-black print:bg-white">
+        <section aria-labelledby="dpa-parties" className="mt-8 glass p-4 sm:p-5 print:border-black print:bg-white">
           <h2 id="dpa-parties" className="mb-3 font-bold">
             <span lang="hy">Կողմեր</span> · <span lang="en">Parties</span>
           </h2>
@@ -99,8 +99,8 @@ export default async function DpaPage({ params }: { params: Promise<{ locale: st
         </section>
 
         <nav aria-label={t("relatedLabel")} className="mt-12 flex flex-wrap gap-3 border-t border-line pt-6 text-sm print:hidden">
-          <Link href="/terms" className="rounded-theme border border-control px-3 py-2 text-muted hover:text-ink">{t("related.terms")}</Link>
-          <Link href="/privacy" className="rounded-theme border border-control px-3 py-2 text-muted hover:text-ink">{t("related.privacy")}</Link>
+          <Link href="/terms" className="rounded-full border border-control px-3 py-2 text-muted hover:text-ink">{t("related.terms")}</Link>
+          <Link href="/privacy" className="rounded-full border border-control px-3 py-2 text-muted hover:text-ink">{t("related.privacy")}</Link>
         </nav>
       </main>
       <div className="print:hidden">

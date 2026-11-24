@@ -53,7 +53,7 @@ export function CheckFlow({ questions }: { questions: FlowQuestion[] }) {
   const q = questions[step];
   const progress = Math.round((step / questions.length) * 100);
   return (
-    <div className="rounded-theme-lg border border-line bg-surface p-5 shadow-[0_30px_70px_-40px_color-mix(in_oklab,var(--ink)_40%,transparent)] sm:p-8">
+    <div className="glass p-5 shadow-[0_30px_70px_-40px_color-mix(in_oklab,var(--ink)_40%,transparent)] sm:p-8">
       <div className="mb-6 flex items-center justify-between gap-4 text-sm text-muted">
         <span aria-live="polite">{t("progress", { n: step + 1, total: questions.length })}</span>
         {step > 0 && (
@@ -113,7 +113,7 @@ function Result({
 
   return (
     <div className="flex flex-col gap-6">
-      <section aria-labelledby="result-title" className="rounded-theme-lg border border-line bg-surface p-5 sm:p-8">
+      <section aria-labelledby="result-title" className="glass p-5 sm:p-8">
         <h2 id="result-title" ref={headingRef} tabIndex={-1} className="mb-6 text-2xl font-bold outline-none">{t("result.title")}</h2>
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
           <ScoreGauge value={score} label={t("result.scoreLabel")} size={200} />
@@ -127,7 +127,7 @@ function Result({
       </section>
 
       {issues.length > 0 && (
-        <section aria-labelledby="issues-title" className="rounded-theme-lg border border-line bg-surface p-5 sm:p-8">
+        <section aria-labelledby="issues-title" className="glass p-5 sm:p-8">
           <h3 id="issues-title" className="mb-4 text-lg font-semibold">{t("result.issuesTitle")}</h3>
           <ul className="flex flex-col gap-3">
             {issues.map((q) => {
@@ -154,7 +154,7 @@ function Result({
       )}
 
       {ok.length > 0 && (
-        <details className="rounded-theme-lg border border-line bg-surface p-5 sm:px-8">
+        <details className="glass p-5 sm:px-8">
           <summary className="cursor-pointer font-semibold">
             {t("result.okTitle")} · {ok.length}/{questions.length}
           </summary>
@@ -173,7 +173,7 @@ function Result({
 
       <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-xl">ⓘ {t("result.disclaimer")}</p>
-        <button type="button" onClick={onRestart} className="shrink-0 rounded-theme border border-control px-4 py-2 font-medium text-ink hover:bg-surface-2">
+        <button type="button" onClick={onRestart} className="shrink-0 rounded-full border border-control px-4 py-2 font-medium text-ink hover:bg-surface-2">
           {t("result.restart")}
         </button>
       </div>
@@ -195,9 +195,9 @@ function LeadForm({ answers }: { answers: Record<string, Answer> }) {
     );
   }
 
-  const input = "w-full rounded-theme border border-control bg-bg px-3 py-2.5 text-base";
+  const input = "w-full rounded-full border border-control bg-bg px-3 py-2.5 text-base";
   return (
-    <section aria-labelledby="lead-title" className="rounded-theme-lg border border-line bg-surface p-5 sm:p-8">
+    <section aria-labelledby="lead-title" className="glass p-5 sm:p-8">
       <h3 id="lead-title" className="text-lg font-semibold">{t("title")}</h3>
       <p className="mb-5 mt-1 text-muted">{t("desc")}</p>
       <form
@@ -245,7 +245,7 @@ function LeadForm({ answers }: { answers: Record<string, Answer> }) {
           <span>{t("consent")}</span>
         </label>
         <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
-          <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-theme bg-accent px-5 py-3 font-semibold text-accent-ink disabled:opacity-60">
+          <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 font-semibold text-accent-ink disabled:opacity-60">
             {pending ? t("sending") : t("submit")}
             {!pending && <IconArrow width={18} height={18} />}
           </button>

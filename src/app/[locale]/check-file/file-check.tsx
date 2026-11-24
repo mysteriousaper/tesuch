@@ -54,11 +54,11 @@ export function FileCheck({ locale }: { locale: Locale }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="rounded-theme-lg border border-line bg-surface p-4 text-sm leading-relaxed" data-testid="no-upload-note">
+      <p className="glass p-4 text-sm leading-relaxed" data-testid="no-upload-note">
         <strong>{t("privacy.title")}</strong> {t("privacy.body")}
       </p>
 
-      <div className="rounded-theme-lg border border-line bg-surface p-5">
+      <div className="glass p-5">
         <label htmlFor={inputId} className="block font-semibold">{t("pick")}</label>
         <p className="mt-1 text-sm text-muted">{t("pickHint")}</p>
         <input
@@ -93,7 +93,7 @@ export function FileCheck({ locale }: { locale: Locale }) {
                 <h2 id="cf-issues" className="text-xl font-bold">{t("issues.title")}</h2>
                 <ul className="mt-3 flex flex-col gap-3">
                   {result.groups.map((g) => (
-                    <li key={g.ruleId} className="rounded-theme-lg border border-line bg-surface p-4">
+                    <li key={g.ruleId} className="glass p-4">
                       <h3 className="font-semibold">{g.title[locale]}</h3>
                       <p className="mt-1 text-sm text-muted">{t("issues.affected", { n: g.codes.length, codes: g.codes.slice(0, 6).join(", ") + (g.codes.length > 6 ? " …" : "") })}</p>
                     </li>
@@ -101,7 +101,7 @@ export function FileCheck({ locale }: { locale: Locale }) {
                 </ul>
               </section>
             ) : (
-              <p className="rounded-theme-lg border border-line bg-surface p-4">{t("issues.none")}</p>
+              <p className="glass p-4">{t("issues.none")}</p>
             )}
 
             {result.errors.length > 0 && (

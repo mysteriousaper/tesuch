@@ -36,7 +36,7 @@ export function AssignSelect({ locale, findingId, value, options, label }: {
         disabled={pending}
         aria-busy={pending}
         onChange={(e) => onChange(e.target.value)}
-        className="min-h-11 w-full rounded-theme border border-control bg-surface px-2 text-sm"
+        className="min-h-11 w-full rounded-full border border-control bg-surface px-2 text-sm"
       >
         <option value="">{t("unassigned")}</option>
         {options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}

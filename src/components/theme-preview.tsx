@@ -59,7 +59,7 @@ export function ThemePreview({ theme, n, findings }: { theme: "official" | "fint
         </div>
       </header>
 
-      <div className="flex items-center justify-between gap-4 rounded-theme-lg border border-line bg-surface p-4">
+      <div className="flex items-center justify-between gap-4 glass p-4">
         <ScoreGauge value={77} label={t("firmScore")} size={150} />
         <div className="flex flex-col items-end gap-2 text-right">
           <span className="rounded-full bg-surface-2 px-3 py-1 text-xs font-semibold text-ok">🔥 {t("streak", { count: 3 })}</span>
@@ -67,7 +67,7 @@ export function ThemePreview({ theme, n, findings }: { theme: "official" | "fint
         </div>
       </div>
 
-      <div className="rounded-theme-lg border border-line bg-surface">
+      <div className="glass">
         <h3 className="flex items-baseline justify-between border-b border-line px-4 py-3 text-sm font-semibold">
           {t("companies")} <span className="text-xs font-normal text-muted">{t("sortedByScore")} ↑</span>
         </h3>
@@ -87,7 +87,7 @@ export function ThemePreview({ theme, n, findings }: { theme: "official" | "fint
         </ul>
       </div>
 
-      <div className="rounded-theme-lg border border-line bg-surface">
+      <div className="glass">
         <h3 className="border-b border-line px-4 py-3 text-sm font-semibold">{t("fixThisWeek")}</h3>
         <ul>
           {findings.map((f, i) => (
@@ -106,7 +106,7 @@ export function ThemePreview({ theme, n, findings }: { theme: "official" | "fint
                   type="button"
                   onClick={() => setFixed((s) => new Set(s).add(i))}
                   disabled={fixed.has(i)}
-                  className="shrink-0 whitespace-nowrap rounded-theme bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60"
+                  className="shrink-0 whitespace-nowrap rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink disabled:opacity-60"
                 >
                   {t("markFixed")}
                 </button>

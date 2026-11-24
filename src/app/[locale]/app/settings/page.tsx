@@ -45,7 +45,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
       <h1 className="text-2xl font-bold">{t("settings.title")}</h1>
 
       {org && (
-        <section className="flex flex-col gap-4 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="org-h">
+        <section className="flex flex-col gap-4 glass p-4" aria-labelledby="org-h">
           <h2 id="org-h" className="text-lg font-semibold">{t("settings.org")}</h2>
           <OrgSwitcher locale={locale} orgs={orgs} current={org.id} />
           {org.role === "owner" ? (
@@ -75,7 +75,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
       )}
 
       {org?.role === "owner" && (
-        <section className="flex flex-col gap-3 rounded-theme-lg border border-line bg-surface p-4" aria-labelledby="privacy-h">
+        <section className="flex flex-col gap-3 glass p-4" aria-labelledby="privacy-h">
           <h2 id="privacy-h" className="text-lg font-semibold">{t("settings.privacy.title")}</h2>
           <p className="text-sm text-muted">{t("settings.privacy.intro")}</p>
           <p className="text-sm text-muted">{t("settings.privacy.table")}</p>
@@ -86,14 +86,14 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
 
       <NotificationsCard locale={locale as Locale} linked={Boolean(link)} email={user.email ?? null} />
 
-      <details className="rounded-theme-lg border border-line bg-surface">
+      <details className="glass">
         <summary className="cursor-pointer px-4 py-3 font-semibold">{t("org.createAnother")}</summary>
         <form action={createOrg.bind(null, locale)} className="flex flex-col gap-3 border-t border-line p-4">
           <label className="flex flex-col gap-1 text-sm font-medium">
             {o("name")}
-            <input name="name" required maxLength={200} className="rounded-theme border border-control bg-surface px-3 py-2.5 text-base" />
+            <input name="name" required maxLength={200} className="rounded-full border border-control bg-surface px-3 py-2.5 text-base" />
           </label>
-          <button className="self-start rounded-theme bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{o("create")}</button>
+          <button className="self-start rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink">{o("create")}</button>
         </form>
       </details>
     </div>
