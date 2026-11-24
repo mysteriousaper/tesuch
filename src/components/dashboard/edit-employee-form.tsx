@@ -25,6 +25,8 @@ export interface EmployeeValues {
   notice_given_on: string | null;
   workforce_reduction: boolean;
   termination_ground_code: string | null;
+  position_stated: boolean | null;
+  pay_stated: boolean | null;
 }
 
 const FLAG_LABEL = { six_day_week: "sixDayWeek", probation_special_case: "probationSpecial", hired_by_transfer: "hiredByTransfer" } as const;
@@ -95,6 +97,22 @@ export function EditEmployeeForm({ locale, companyId, employeeId, contractId, va
       <label className={`${labelCls} sm:col-span-2`}>
         {t("fields.srcRegistered")}
         <select name="src_registered" defaultValue={values.src_registered === null ? "" : values.src_registered ? "yes" : "no"} className={inputCls}>
+          <option value="">{t("fields.srcUnknown")}</option>
+          <option value="yes">{t("fields.srcYes")}</option>
+          <option value="no">{t("fields.srcNo")}</option>
+        </select>
+      </label>
+      <label className={labelCls}>
+        {t("fields.positionStated")}
+        <select name="position_stated" defaultValue={values.position_stated === null ? "" : values.position_stated ? "yes" : "no"} className={inputCls}>
+          <option value="">{t("fields.srcUnknown")}</option>
+          <option value="yes">{t("fields.srcYes")}</option>
+          <option value="no">{t("fields.srcNo")}</option>
+        </select>
+      </label>
+      <label className={labelCls}>
+        {t("fields.payStated")}
+        <select name="pay_stated" defaultValue={values.pay_stated === null ? "" : values.pay_stated ? "yes" : "no"} className={inputCls}>
           <option value="">{t("fields.srcUnknown")}</option>
           <option value="yes">{t("fields.srcYes")}</option>
           <option value="no">{t("fields.srcNo")}</option>

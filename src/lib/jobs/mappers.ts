@@ -8,7 +8,7 @@ export interface ContractRow {
   id: string; employee_id: string; type: Contract["type"]; start_date: string; end_date: string | null; probation_end: string | null;
   probation_special_case: boolean; hired_by_transfer: boolean; fixed_term_ground: string | null; src_registered: boolean | null;
   terminated_on: string | null; termination_ground: string | null; termination_initiator: Contract["terminationInitiator"];
-  notice_given_on: string | null; workforce_reduction: boolean; termination_ground_code?: string | null;
+  notice_given_on: string | null; workforce_reduction: boolean; termination_ground_code?: string | null; position_stated?: boolean | null; pay_stated?: boolean | null;
 }
 export interface LeaveRow { id: string; employee_id: string; type: LeaveRecord["type"]; start_date: string; days: number }
 
@@ -19,6 +19,7 @@ export const toContract = (r: ContractRow): Contract => ({
   probationSpecialCase: r.probation_special_case, hiredByTransfer: r.hired_by_transfer, fixedTermGround: r.fixed_term_ground,
   srcRegistered: r.src_registered, terminatedOn: r.terminated_on, terminationGround: r.termination_ground,
   terminationInitiator: r.termination_initiator, noticeGivenOn: r.notice_given_on, workforceReduction: r.workforce_reduction, terminationGroundCode: r.termination_ground_code ?? null,
+  positionStated: r.position_stated ?? null, payStated: r.pay_stated ?? null,
 });
 
 export const toLeave = (r: LeaveRow): LeaveRecord => ({ id: r.id, employeeId: r.employee_id, type: r.type, startDate: r.start_date, days: r.days });

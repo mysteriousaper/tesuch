@@ -54,7 +54,9 @@
       "optional": "optional",
       "srcUnknown": "Not known",
       "srcYes": "Yes",
-      "srcNo": "No"
+      "srcNo": "No",
+      "positionStated": "The contract states the position or job functions",
+      "payStated": "The contract states the basic pay or how it is set"
     },
     "save": "Save",
     "saved": "Saved.",

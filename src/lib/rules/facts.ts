@@ -108,6 +108,26 @@ export function noticeShortfallDays(ctx: RuleContext, p: NoticeParams): number {
   return Math.max(0, differenceInCalendarDays(earliestEnd, d(c.terminatedOn)));
 }
 
+/** Art. 95(2.1): an earlier fixed-term contract with this employer ended no more than one month before this one starts (or overlaps it). */
+export function priorFixedTermWithinMonth(c: Contract, contracts: Contract[]): boolean {
+  return contracts.some((o) =>
+    o.id !== c.id && o.type === "fixed_term" && o.endDate !== null && o.startDate < c.startDate &&
+    d(c.startDate) <= addMonths(d(o.endDate), 1));
+}
+
+/** Art. 114(1)(2), (2.1): employer termination date falls inside annual leave, or maternity leave plus one month. Leave end is a lower bound (days counted as calendar days), so it never over-flags. */
+export function terminatedDuringLeave(c: Contract, leave: LeaveRecord[]): boolean {
+  if (!c.terminatedOn) return false;
+  const t = d(c.terminatedOn);
+  return leave.some((l) => {
+    if (l.type !== "annual" && l.type !== "maternity") return false;
+    const start = d(l.startDate);
+    const lastDay = addDays(start, l.days - 1);
+    const end = l.type === "maternity" ? addMonths(lastDay, 1) : lastDay;
+    return t >= start && t <= end;
+  });
+}
+
 /** Base facts. Unknown values use sentinels that can never satisfy a rule (e.g. age = Infinity). */
 export function baseFacts(ctx: RuleContext): Record<string, unknown> {
   const c = ctx.contract;
@@ -131,6 +151,16 @@ export function baseFacts(ctx: RuleContext): Record<string, unknown> {
     isEmployerTermination: terminated && c.terminationInitiator === "employer",
     // Guard: notice rule needs to know the ground (recorded code, or the workforce-reduction flag).
     noticeGroundKnown: effectiveGroundCode(c) !== null,
+    // Art. 113(1): an employer termination needs one of the listed grounds; the code (or the workforce-reduction flag) says which.
+    terminationGroundCodeMissing: terminated && c.terminationInitiator === "employer" && effectiveGroundCode(c) === null,
+    priorFixedTermWithinMonth: priorFixedTermWithinMonth(c, ctx.contracts),
+    // Art. 114(3): liquidation (113(1)(1)) is not restricted.
+    terminatedDuringLeave: terminated && c.terminationInitiator === "employer" && effectiveGroundCode(c) !== "113(1)(1)" && terminatedDuringLeave(c, ctx.leave),
+    // Art. 84(1)(6),(7): items we can check. Unknown (null) is skipped, never "missing".
+    contractItemsKnown: (c.positionStated ?? null) !== null || (c.payStated ?? null) !== null,
+    contractItemsMissing: (c.positionStated === false ? 1 : 0) + (c.payStated === false ? 1 : 0),
+    // Art. 14 / 102: an employee with no contract on file (company has contracts for others).
+    hasNoContract: ctx.contracts.length === 0,
     cashCompensatedLeaveCount: ctx.leave.filter((l) => l.type === "cash_compensation").length,
     shortestMaternityLeaveDays: maternity.length ? Math.min(...maternity) : Number.POSITIVE_INFINITY,
     srcRegistered: c.srcRegistered,

@@ -1,0 +1,35 @@
+{
+  "id": "termination-ground-code",
+  "version": 1,
+  "article": "113",
+  "status": "needs_lawyer_review",
+  "reviewed_on": null,
+  "source_url": "https://www.arlis.am/",
+  "source_note": "Labour Code of the Republic of Armenia ՀՕ-124-Ն (arlis.am redaction 23.12.2022-06.04.2023; owner confirmed current 22 Nov 2026). Quotes and article reading in docs/legal/PRE_REVIEW.md. Lawyer must confirm.",
+  "basis": "Art. 113(1) lists the grounds on which the employer may terminate (points 1-13); Art. 115(3)(1): the notice states the ground and reason. Official checklist N 5.1 question 20 first asks whether an Art. 113 ground exists.",
+  "scope": "contract",
+  "severity": "amber",
+  "title": {
+    "hy": "Գործատուի նախաձեռնությամբ լուծման իրավական հիմքը (113-րդ հոդված) նշված չէ",
+    "ru": "Не указано правовое основание увольнения по инициативе работодателя (ст. 113)",
+    "en": "Legal ground for employer termination (Art. 113) not recorded"
+  },
+  "conditions": {
+    "all": [
+      {
+        "fact": "terminationGroundCodeMissing",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  "due": {
+    "date": "asOf",
+    "offsetDays": 0
+  },
+  "edge_cases": [
+    "Data-completeness check: an employer termination with no ground code (and no workforce-reduction flag, which counts as 113(1)(2)).",
+    "Codes: 113(1)(1)-(13) and 93(1) for dismissal on probation. Whether the ground is lawful in the case is not judged.",
+    "Also makes notice-period checkable (that rule is skipped until the ground is known)."
+  ]
+}

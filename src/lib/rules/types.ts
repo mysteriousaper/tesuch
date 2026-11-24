@@ -32,6 +32,10 @@ export interface Contract {
   workforceReduction: boolean;
   /** Code of the legal ground for the termination, e.g. "113(1)(3)" (Labour Code 113(1) points 1-13, "93(1)" for probation). null/undefined = not recorded. */
   terminationGroundCode?: string | null;
+  /** Art. 84(1)(6): the contract states the position / functions. null/undefined = unknown. */
+  positionStated?: boolean | null;
+  /** Art. 84(1)(7): the contract states the basic pay or how it is set. null/undefined = unknown. */
+  payStated?: boolean | null;
 }
 
 export type LeaveType = "annual" | "maternity" | "cash_compensation" | "other";

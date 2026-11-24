@@ -53,7 +53,7 @@ export function primaryContract(contracts: Contract[], asOf: IsoDate): Contract 
 }
 
 /** Guard facts that mean "input unknown": a rule failing only on one of these is skipped, not satisfied. */
-const UNKNOWN_GUARDS = new Set(["fixedTermGroundKnown", "srcRegisteredKnown", "hasLeaveRecords", "noticeGroundKnown"]);
+const UNKNOWN_GUARDS = new Set(["fixedTermGroundKnown", "srcRegisteredKnown", "hasLeaveRecords", "noticeGroundKnown", "contractItemsKnown"]);
 
 /** A rule that stops firing because another rule took over: its open finding must not auto-resolve (key: superseded, value: successor rule). */
 const SUPERSEDED_BY: Record<string, string> = { "fixed-term-ending": "fixed-term-expired" };
@@ -116,8 +116,23 @@ export async function evaluateCompanyDetailed(rules: RuleDefinition[], data: Com
     }
   };
 
+  // Employees with no contract row: only the rules that ask for it run (the placeholder contract carries no data).
+  const noContractRules = employeeRulesList.filter((r) => JSON.stringify(r.conditions).includes('"hasNoContract"'));
+  const noContractEngine = buildEngine(noContractRules);
+
   for (const employee of data.employees) {
     const contracts = data.contracts.filter((c) => c.employeeId === employee.id);
+    if (contracts.length === 0) {
+      if (data.contracts.length > 0 && noContractRules.length > 0) {
+        const placeholder: Contract = {
+          id: "", employeeId: employee.id, type: "indefinite", startDate: asOf, endDate: null, probationEnd: null, probationSpecialCase: false,
+          hiredByTransfer: false, fixedTermGround: null, srcRegistered: null, terminatedOn: null, terminationGround: null,
+          terminationInitiator: null, noticeGivenOn: null, workforceReduction: false,
+        };
+        await run(noContractEngine, noContractRules, { asOf, employee, contract: placeholder, contracts, leave: [], companyHasLeave }, null);
+      }
+      continue;
+    }
     const leave = data.leave.filter((l) => l.employeeId === employee.id);
     for (const contract of contracts) {
       await run(contractEngine, contractRulesList, { asOf, employee, contract, contracts, leave, companyHasLeave }, contract.id);
